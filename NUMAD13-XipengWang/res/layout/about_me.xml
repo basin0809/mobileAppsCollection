@@ -1,0 +1,34 @@
+<ScrollView
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   android:layout_width="fill_parent"
+   android:layout_height="fill_parent"
+   android:padding="10dip">
+   
+	<RelativeLayout 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    >
+   		<TextView
+      	 android:id="@+id/name_text"
+     	 android:layout_width="wrap_content"
+     	 android:layout_height="wrap_content"
+      	 android:text="Name: Xipeng Wang" />
+   		<TextView 
+      	 android:id="@+id/mail_text"
+      	 android:layout_width="wrap_content"
+      	 android:layout_height="wrap_content"
+      	 android:text="E-mail: wang.xip@husky.neu.edu"
+       	 android:layout_below="@+id/name_text"/>
+   		<ImageView
+         android:id="@+id/head_image"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:src="@drawable/head"
+         android:layout_below="@+id/mail_text"/>
+   
+	</RelativeLayout>
+</ScrollView>
