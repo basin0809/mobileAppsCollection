@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="edu.neu.madcourse.xipengwang"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="7"
+        android:targetSdkVersion="7" />
+	<uses-permission android:name="android.permission.INTERNET"/>
+		<uses-permission android:name="android.permission.READ_PHONE_DATA"/>
+		<uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+	<uses-permission android:name="android.permission.WRITE_EXETERNAL_STORAGE"/>
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="edu.neu.madcourse.xipengwang.MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+         <activity android:name=".AboutMe"
+              android:label="AboutMe"
+              android:theme="@android:style/Theme.Dialog">
+        </activity>
+        <activity android:name=".Warning"
+              android:label="Warning"
+              android:theme="@android:style/Theme.Dialog">
+        </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.sudoku.Sudoku"
+              android:label="@string/app_name">
+        </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.sudoku.About"
+              android:label="@string/about_title"
+              android:theme="@android:style/Theme.Dialog">
+        </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.sudoku.Prefs"
+              android:label="@string/settings_title">
+        </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.sudoku.Game"
+              android:label="@string/game_title"/>
+    </application>
+
+</manifest>
