@@ -13,14 +13,14 @@
         android:id="@+id/about_button"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:text="About"
+        android:text="About Me"
         android:layout_marginTop="60dp"/>
     
     <Button 
         android:id="@+id/sudoku_button"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:text="Sudoku"
+        android:text="Play Sudoku"
         android:layout_below="@+id/about_button"/>
     
     <Button 

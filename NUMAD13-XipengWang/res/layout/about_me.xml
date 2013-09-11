@@ -23,12 +23,17 @@
       	 android:layout_height="wrap_content"
       	 android:text="E-mail: wang.xip@husky.neu.edu"
        	 android:layout_below="@+id/name_text"/>
+   		<TextView 
+   		 android:id="@+id/phoneid_text"
+      	 android:layout_width="wrap_content"
+      	 android:layout_height="wrap_content"
+       	 android:layout_below="@+id/mail_text"/>
    		<ImageView
          android:id="@+id/head_image"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
          android:src="@drawable/head"
-         android:layout_below="@+id/mail_text"/>
+         android:layout_below="@+id/phoneid_text"/>
    
 	</RelativeLayout>
 </ScrollView>

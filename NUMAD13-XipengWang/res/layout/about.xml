@@ -16,5 +16,5 @@
       android:id="@+id/about_content"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="about" />
+      android:text="@string/about_text" />
 </ScrollView>
