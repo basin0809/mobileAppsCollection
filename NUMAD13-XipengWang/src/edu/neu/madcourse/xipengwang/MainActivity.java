@@ -25,8 +25,10 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-
+		setTitle("Xipeng Wang");
+		
 		PhoneCheckAPI.doAuthorization(this);
+
 		aboutButton = (Button)findViewById(R.id.about_button);
 		sudokuButton = (Button)findViewById(R.id.sudoku_button);
 		errorButton = (Button)findViewById(R.id.error_button);
