@@ -1,5 +1,6 @@
 package edu.neu.madcourse.xipengwang;
 
+import edu.neu.madcourse.xipengwang.dict.Dictionary;
 import edu.neu.madcourse.xipengwang.sudoku.Sudoku;
 import edu.neu.mobileClass.*;
 
@@ -20,6 +21,7 @@ public class MainActivity extends Activity {
 	private Button sudokuButton;
 	private Button errorButton;
 	private Button quitButton;
+	private Button dictButton;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -27,15 +29,17 @@ public class MainActivity extends Activity {
 		
 		setTitle("Xipeng Wang");
 		
-		PhoneCheckAPI.doAuthorization(this);
+		//PhoneCheckAPI.doAuthorization(this);
 
 		aboutButton = (Button)findViewById(R.id.about_button);
 		sudokuButton = (Button)findViewById(R.id.sudoku_button);
 		errorButton = (Button)findViewById(R.id.error_button);
+		dictButton = (Button)findViewById(R.id.dict_button);
 		quitButton = (Button)findViewById(R.id.exit_button);
 		sudokuButton.setOnClickListener(new SudokuButtonListener());
 		aboutButton.setOnClickListener(new AboutButtonListener());
 		errorButton.setOnClickListener(new ErrorButtonListener());
+		dictButton.setOnClickListener(new DictButtonListener());
 		quitButton.setOnClickListener(new ExitButtonListener());
 		
 	}
@@ -76,6 +80,17 @@ public class MainActivity extends Activity {
 		public void onClick(View arg0) {
 			// TODO Auto-generated method stub
 		 int error = 1/0;
+		}
+		
+	}
+	class DictButtonListener implements OnClickListener{
+
+		@Override
+		public void onClick(View arg0) {
+			// TODO Auto-generated method stub
+		 Intent intent =new Intent();
+		 intent.setClass(MainActivity.this, Dictionary.class);
+		 startActivity(intent);
 		}
 		
 	}

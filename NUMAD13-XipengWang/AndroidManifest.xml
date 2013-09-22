@@ -35,6 +35,7 @@
               android:screenOrientation="portrait"
               android:theme="@android:style/Theme.Dialog">
         </activity>
+        
         <activity android:name=".Warning"
               android:label="Warning"
               android:screenOrientation="portrait"
@@ -56,6 +57,10 @@
         <activity android:name="edu.neu.madcourse.xipengwang.sudoku.Game"
               android:label="@string/game_title"
               android:screenOrientation="portrait"/>
+         <activity android:name="edu.neu.madcourse.xipengwang.dict.Dictionary"
+              android:label="Dictionary"
+              android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>

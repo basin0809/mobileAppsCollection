@@ -30,11 +30,18 @@
         android:layout_below="@+id/sudoku_button"
         android:text="Generate Error"/>
     
+    <Button 
+        android:id="@+id/dict_button"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_below="@+id/error_button"
+        android:text="Dictionary"/>
+    
     <Button
         android:id="@+id/exit_button"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:layout_below="@+id/error_button"
+        android:layout_below="@+id/dict_button"
         android:text="Quit"/>"
 
 </RelativeLayout>

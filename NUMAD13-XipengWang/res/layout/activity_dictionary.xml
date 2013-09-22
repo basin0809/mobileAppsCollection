@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    <EditText 
+        android:id="@+id/editText"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_marginTop="20dp"/>
+
+
+    <Button
+        android:id="@+id/Acknowledgements_button"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/return_button"
+        
+        android:text="Acknowledgements" />
+
+    <Button
+        android:id="@+id/return_button"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/clear_button"
+        
+        android:text="Return to menu" />
+
+    <Button
+        android:id="@+id/clear_button"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/editText"
+        
+        android:text="Clear" />
+   
+
+    <TextView
+        android:id="@+id/display"
+        android:layout_width="150dp"
+        android:layout_height="200dp"
+        android:layout_alignRight="@+id/editText"
+        android:layout_alignTop="@+id/clear_button"
+        android:scrollHorizontally="true"
+        android:scrollbars="vertical"/>
+
+  
+
+  
+    
+</RelativeLayout>
