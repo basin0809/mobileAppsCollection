@@ -61,6 +61,10 @@
               android:label="Dictionary"
               android:screenOrientation="portrait">
         </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.dict.Acknowledgements"
+              android:label="ack"
+              android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>

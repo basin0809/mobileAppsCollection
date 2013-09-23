@@ -47,7 +47,7 @@
         android:singleLine="false"
         android:scrollbars="vertical"
         android:fadeScrollbars="false"   
-        android:maxLines="20"
+        android:maxLines="10"
         />
   
 
