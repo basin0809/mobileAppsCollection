@@ -114,13 +114,15 @@ public class Dictionary extends Activity{
 	}
 	private class TextWatcherListener implements TextWatcher {
 		private CharSequence inputCharSequence;
+		private String paste;
 		private int onstart;
-		private int atend;
+		private int atend=0;
 		@Override
 		public void onTextChanged(CharSequence s, int start, int before, int count) {
 			// TODO Auto-generated method stub
 			//atend = before;
 			//textView.setText(s);
+			atend = count;
 		}
 		
 		@Override
@@ -129,26 +131,37 @@ public class Dictionary extends Activity{
 			// TODO Auto-generated method stub
 			//inputCharSequence = s;
 			//onstart = after;
+			
+			//System.out.println("pasted "+atend);
 		}
 		
 		@Override
 		public void afterTextChanged(Editable s) {
-			//textView.setText(s);
-			//editText.removeTextChangedListener(this);
-			//editText.setText(s);
-			//String text;
-			/*text=editText.getText().toString();
-			if(text!=null)
-			{
-				textView.setText(text);
+			System.out.println(s+" length: "+s.length()+" count: "+atend);
+			if(atend>1&&s.length()>2){
+				for(int i=0; i<s.toString().length()-1;i++){
+					
+					paste=s.toString().substring(0, s.length()-i);
+					System.out.println("paste: "+paste);
+					if(words.containsKey(paste)){
+						if(countBack<200){
+							wordsBack[countBack]=paste;
+							countBack++;
+							}
+						words.remove(paste.toString());
+						System.out.println("detect match");
+						result=result+paste.toString()+"\n";
+						textView.setMovementMethod(new ScrollingMovementMethod()); 
+						textView.setText(result);
+					
+						
+						
+					    tg.startTone(ToneGenerator.TONE_PROP_BEEP);
+					}
+				}
 			}
-			else {
-				textView.setText("You Have Not type anything");
-			 
-			}*/
-			// TODO Auto-generated method stub
-			System.out.println(s+" length: "+s.length());
-			if((s.length()>2)){
+			
+			if(atend==1&&(s.length()>2)){
 				//int[] res = search(inputCharSequence.toString());
 				if(words.containsKey(s.toString())){
 					if(countBack<200){
