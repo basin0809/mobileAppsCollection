@@ -73,7 +73,7 @@
       	 android:layout_width="match_parent"
       	 android:layout_height="wrap_content"
       	 android:singleLine="false"
-      	 android:text="Huaqi Yi: He helped me sovle the problem about scrollBar of textView."
+      	 android:text="Temporarily none."
       	 android:layout_marginTop="5dp"
        	 android:layout_below="@+id/helper_text"/>
    		<Button 

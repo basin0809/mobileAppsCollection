@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/return_button"
-        
+        android:textSize="13sp"
         android:text="Acknowledgements" />
 
     <Button
@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/clear_button"
-        
+        android:textSize="13sp"
         android:text="Return to menu" />
 
     <Button
@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/editText"
-        
+        android:textSize="13sp"
         android:text="Clear" />
    
     <TextView
@@ -49,6 +49,36 @@
         android:fadeScrollbars="false"   
         android:maxLines="10"
         />
-  
+   	
+
+   	
+   	<TextView
+   	    android:id="@+id/loadtext"
+   	    android:layout_width="wrap_content"
+   	    android:layout_height="wrap_content"
+   	    android:layout_below="@+id/Acknowledgements_button"
+   	    android:layout_centerHorizontal="true"
+   	    android:layout_marginTop="26dp"
+   	    android:text=""/>
+   	<TextView
+   	    android:id="@+id/mesgtext"
+   	    android:layout_width="wrap_content"
+   	    android:layout_height="wrap_content"
+   	    android:layout_below="@+id/loadtext"
+   	    
+   	    android:singleLine="false"
+   	    android:text="Tip:"
+   	    android:layout_marginTop="26dp"
+   	    />
+   	<TextView
+   	    android:id="@+id/mesgtext2"
+   	    android:layout_width="wrap_content"
+   	    android:layout_height="wrap_content"
+   	    android:layout_below="@+id/mesgtext"
+   	    android:layout_centerHorizontal="true"
+   	    android:singleLine="false"
+   	    android:text="You can use the dicitonary while it is loading, but some words may not be found before the dictionary loads completely."
+   	    android:layout_marginTop="6dp"
+   	   />
 
 </RelativeLayout>
