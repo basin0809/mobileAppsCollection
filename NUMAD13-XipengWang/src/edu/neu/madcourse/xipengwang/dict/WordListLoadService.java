@@ -54,7 +54,7 @@ public class WordListLoadService extends Service{
 		public void run() {
 			// TODO Auto-generated method stub
 			super.run();
-			try {
+			/*try {
 				
 				String line;
 				int i =0;
@@ -76,7 +76,7 @@ public class WordListLoadService extends Service{
 				// TODO Auto-generated catch block
 				System.out.println("file unreaded");
 				e.printStackTrace();
-			}
+			}*/
 		}
 		
 	}

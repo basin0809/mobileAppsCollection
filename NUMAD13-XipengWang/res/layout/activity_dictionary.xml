@@ -60,25 +60,6 @@
    	    android:layout_centerHorizontal="true"
    	    android:layout_marginTop="26dp"
    	    android:text=""/>
-   	<TextView
-   	    android:id="@+id/mesgtext"
-   	    android:layout_width="wrap_content"
-   	    android:layout_height="wrap_content"
-   	    android:layout_below="@+id/loadtext"
-   	    
-   	    android:singleLine="false"
-   	    android:text="Tip:"
-   	    android:layout_marginTop="26dp"
-   	    />
-   	<TextView
-   	    android:id="@+id/mesgtext2"
-   	    android:layout_width="wrap_content"
-   	    android:layout_height="wrap_content"
-   	    android:layout_below="@+id/mesgtext"
-   	    android:layout_centerHorizontal="true"
-   	    android:singleLine="false"
-   	    android:text="You can use the dicitonary while it is loading, but some words may not be found before the dictionary loads completely."
-   	    android:layout_marginTop="6dp"
-   	   />
+   	
 
 </RelativeLayout>
