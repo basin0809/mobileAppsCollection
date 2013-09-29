@@ -1,19 +1,16 @@
 package edu.neu.madcourse.xipengwang;
 
-import edu.neu.madcourse.xipengwang.dict.Dictionary;
-import edu.neu.madcourse.xipengwang.sudoku.Sudoku;
-import edu.neu.mobileClass.*;
-
-
-import android.R.integer;
-import android.os.Bundle;
-import android.os.Handler;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import edu.neu.madcourse.xipengwang.dabble.Dabble;
+import edu.neu.madcourse.xipengwang.dict.Dictionary;
+import edu.neu.madcourse.xipengwang.sudoku.Sudoku;
+import edu.neu.mobileClass.PhoneCheckAPI;
 
 public class MainActivity extends Activity {
 	
@@ -22,6 +19,7 @@ public class MainActivity extends Activity {
 	private Button errorButton;
 	private Button quitButton;
 	private Button dictButton;
+	private Button dabbleButton;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -35,11 +33,13 @@ public class MainActivity extends Activity {
 		sudokuButton = (Button)findViewById(R.id.sudoku_button);
 		errorButton = (Button)findViewById(R.id.error_button);
 		dictButton = (Button)findViewById(R.id.dict_button);
+		dabbleButton = (Button)findViewById(R.id.dabble_button);
 		quitButton = (Button)findViewById(R.id.exit_button);
 		sudokuButton.setOnClickListener(new SudokuButtonListener());
 		aboutButton.setOnClickListener(new AboutButtonListener());
 		errorButton.setOnClickListener(new ErrorButtonListener());
 		dictButton.setOnClickListener(new DictButtonListener());
+		dabbleButton.setOnClickListener(new DabbleButtonListener());
 		quitButton.setOnClickListener(new ExitButtonListener());
 		
 	}
@@ -90,6 +90,17 @@ public class MainActivity extends Activity {
 			// TODO Auto-generated method stub
 		 Intent intent =new Intent();
 		 intent.setClass(MainActivity.this, Dictionary.class);
+		 startActivity(intent);
+		}
+		
+	}
+	class DabbleButtonListener implements OnClickListener{
+
+		@Override
+		public void onClick(View arg0) {
+			// TODO Auto-generated method stub
+		 Intent intent =new Intent();
+		 intent.setClass(MainActivity.this, Dabble.class);
 		 startActivity(intent);
 		}
 		
