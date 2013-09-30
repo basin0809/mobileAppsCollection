@@ -18,4 +18,8 @@
    <color name="puzzle_hint_1">#6400ff80</color>
    <color name="puzzle_hint_2">#2000ff80</color>
    <color name="puzzle_selected">#64ff8000</color>
+   <color name="skyblue">#87CEEB</color>
+   <color name="silver">#C0C0C0</color>
+   <color name="black">#000000</color>
+   <color name="red">#FF0000</color>
 </resources>
