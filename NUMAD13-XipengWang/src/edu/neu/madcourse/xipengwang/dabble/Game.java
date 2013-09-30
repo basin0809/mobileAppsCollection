@@ -28,9 +28,13 @@ public class Game extends Activity{
 	private HashMap<String,String> words4 = new HashMap<String,String>();
 	private String[] wordsBack = new String[200];
 	private int countBack = 0;
+	private int score =0;
+	private int[] tempScore = new int[4];
 	private String result="";
 	private InputStream input = null;
 	private boolean[] buttonIsPressed = new boolean[18];
+	private ArrayList<Integer> buttonTwicePressed = new ArrayList<Integer>();
+	private boolean[] scoreLocates = new boolean[4];
 	private Button[] letterButtons = new Button[18];
 	private Button pauseButton, resumeButton, hintButton, backButton;
 	private TextView cdText, scoreText;
@@ -75,7 +79,7 @@ public class Game extends Activity{
 		backButton = (Button)findViewById(R.id.Backbutton);
 		cdText = (TextView)findViewById(R.id.CountDown);
 		scoreText = (TextView)findViewById(R.id.Score);
-		
+		scoreText.setText("0");
 		String string = (randomWord3()+randomWord4()+randomWord5()+randomWord6());
 		System.out.println("String: "+string);
 		ArrayList<String> sList = new ArrayList<String>();
@@ -104,6 +108,15 @@ public class Game extends Activity{
 		for (int i =0; i<18; i++) {
 			buttonIsPressed[i]= false;
 		}
+		
+		for (int i =0; i<4; i++) {
+			scoreLocates[i]= false;
+		}
+		for (int i =0; i<4; i++) {
+			tempScore[i]= 0;
+		}
+		
+		
 		System.out.println(letterButtons[0].getText().charAt(0));
 		System.out.println(letterButtons[6].getText().charAt(0));
 		System.out.println(letterButtons[11].getText().charAt(0));
@@ -112,7 +125,53 @@ public class Game extends Activity{
 		loadDict(letterButtons[6].getText().charAt(0),words2);
 		loadDict(letterButtons[11].getText().charAt(0),words3);
 		loadDict(letterButtons[15].getText().charAt(0),words4);
+		String line1 = String.valueOf(letterButtons[0].getText().charAt(0))+
+				String.valueOf(letterButtons[1].getText().charAt(0))+
+					String.valueOf(letterButtons[2].getText().charAt(0))+
+						String.valueOf(letterButtons[3].getText().charAt(0))+
+							String.valueOf(letterButtons[4].getText().charAt(0))+
+								String.valueOf(letterButtons[5].getText().charAt(0));
+		int pscore1 = Integer.parseInt(String.valueOf(letterButtons[0].getText().charAt(letterButtons[0].getText().length()-1)))+
+				Integer.parseInt(String.valueOf(letterButtons[1].getText().charAt(letterButtons[0].getText().length()-1)))+
+					Integer.parseInt(String.valueOf(letterButtons[2].getText().charAt(letterButtons[0].getText().length()-1)))+
+						Integer.parseInt(String.valueOf(letterButtons[3].getText().charAt(letterButtons[0].getText().length()-1)))+
+							Integer.parseInt(String.valueOf(letterButtons[4].getText().charAt(letterButtons[0].getText().length()-1)))+
+								Integer.parseInt(String.valueOf(letterButtons[5].getText().charAt(letterButtons[0].getText().length()-1)));
+		String line2 = String.valueOf(letterButtons[6].getText().charAt(0))+
+				String.valueOf(letterButtons[7].getText().charAt(0))+
+					String.valueOf(letterButtons[8].getText().charAt(0))+
+						String.valueOf(letterButtons[9].getText().charAt(0))+
+							String.valueOf(letterButtons[10].getText().charAt(0));
+		int pscore2 = Integer.parseInt(String.valueOf(letterButtons[6].getText().charAt(letterButtons[0].getText().length()-1)))+
+				Integer.parseInt(String.valueOf(letterButtons[7].getText().charAt(letterButtons[0].getText().length()-1)))+
+					Integer.parseInt(String.valueOf(letterButtons[8].getText().charAt(letterButtons[0].getText().length()-1)))+
+						Integer.parseInt(String.valueOf(letterButtons[9].getText().charAt(letterButtons[0].getText().length()-1)))+
+							Integer.parseInt(String.valueOf(letterButtons[10].getText().charAt(letterButtons[0].getText().length()-1)));
+		String line3 = String.valueOf(letterButtons[11].getText().charAt(0))+
+				String.valueOf(letterButtons[12].getText().charAt(0))+
+					String.valueOf(letterButtons[13].getText().charAt(0))+
+						String.valueOf(letterButtons[14].getText().charAt(0));
+		int pscore3 = Integer.parseInt(String.valueOf(letterButtons[11].getText().charAt(letterButtons[0].getText().length()-1)))+
+				Integer.parseInt(String.valueOf(letterButtons[12].getText().charAt(letterButtons[0].getText().length()-1)))+
+					Integer.parseInt(String.valueOf(letterButtons[13].getText().charAt(letterButtons[0].getText().length()-1)))+
+						Integer.parseInt(String.valueOf(letterButtons[14].getText().charAt(letterButtons[0].getText().length()-1)));						
+		String line4 = String.valueOf(letterButtons[15].getText().charAt(0))+
+				String.valueOf(letterButtons[16].getText().charAt(0))+
+					String.valueOf(letterButtons[17].getText().charAt(0));
+		int pscore4 = Integer.parseInt(String.valueOf(letterButtons[15].getText().charAt(letterButtons[0].getText().length()-1)))+
+				Integer.parseInt(String.valueOf(letterButtons[16].getText().charAt(letterButtons[0].getText().length()-1)))+
+					Integer.parseInt(String.valueOf(letterButtons[17].getText().charAt(letterButtons[0].getText().length()-1)));
+		int score1 = match(line1, words1, pscore1, 1);
+		displayword1(score1);
+		int score2 = match(line2, words2, pscore2, 2);
+		displayword2(score2);
+		int score3 = match(line3, words3, pscore3, 3);
+		displayword3(score3);
+		int score4 = match(line4, words4, pscore4, 4);
+		displayword4(score4);
+		buttonTwicePressed.add(18);
 		}
+		
 	class LetterButtonsListener implements OnClickListener{
 
 		@Override
@@ -122,131 +181,58 @@ public class Game extends Activity{
 			int buttonId = v.getId();
 			switch (buttonId) {
 			case R.id.button1:
-				buttonIsPressed[0]= true;
-				letterButtons[0].setTextColor(getResources().getColor(
-			            R.color.red));
-				
-				swapText(0);
-				
+				swapIfValid(0);
 				break;
 			case R.id.button2:
-				buttonIsPressed[1]= true;
-				letterButtons[1].setTextColor(getResources().getColor(
-			            R.color.red));
-				swapText(1);
-				
+				swapIfValid(1);
 				break;
 			case R.id.button3:
-				buttonIsPressed[2]= true;
-				letterButtons[2].setTextColor(getResources().getColor(
-			            R.color.red));
-				swapText(2);
-				
+				swapIfValid(2);
 				break;
 			case R.id.button4:
-				buttonIsPressed[3]= true;
-				letterButtons[3].setTextColor(getResources().getColor(
-			            R.color.red));
-				swapText(3);
-				
+				swapIfValid(3);
 				break;
 			case R.id.button5:
-				buttonIsPressed[4]= true;
-				letterButtons[4].setTextColor(getResources().getColor(
-			            R.color.red));
-				swapText(4);
-				
+				swapIfValid(4);
 				break;
 			case R.id.button6:
-				buttonIsPressed[5]= true;
-				letterButtons[5].setTextColor(getResources().getColor(
-			            R.color.red));
-				swapText(5);
-				
+				swapIfValid(5);
 				break;
 			case R.id.button7:
-				buttonIsPressed[6]= true;
-				letterButtons[6].setTextColor(getResources().getColor(
-			            R.color.red));
-				swapText(6);
-				
+				swapIfValid(6);
 				break;
 			case R.id.button8:
-				buttonIsPressed[7]= true;
-				letterButtons[7].setTextColor(getResources().getColor(
-			            R.color.red));
-				swapText(7);
-				
+				swapIfValid(7);
 				break;
 			case R.id.button9:
-				buttonIsPressed[8]= true;
-				letterButtons[8].setTextColor(getResources().getColor(
-			            R.color.red));
-				swapText(8);
-				
+				swapIfValid(8);
 				break;
 			case R.id.button10:
-				buttonIsPressed[9]= true;
-				letterButtons[9].setTextColor(getResources().getColor(
-			            R.color.red));
-				swapText(9);
-				
+				swapIfValid(9);
 				break;
 			case R.id.button11:
-				buttonIsPressed[10]= true;
-				letterButtons[10].setTextColor(getResources().getColor(
-			            R.color.red));
-				swapText(10);
-				
+				swapIfValid(10);
 				break;
 			case R.id.button12:
-				buttonIsPressed[11]= true;
-				letterButtons[11].setTextColor(getResources().getColor(
-			            R.color.red));
-				swapText(11);
-				
+				swapIfValid(11);
 				break;
 			case R.id.button13:
-				buttonIsPressed[12]= true;
-				letterButtons[12].setTextColor(getResources().getColor(
-			            R.color.red));
-				swapText(12);
-				
+				swapIfValid(12);
 				break;
 			case R.id.button14:
-				buttonIsPressed[13]= true;
-				letterButtons[13].setTextColor(getResources().getColor(
-			            R.color.red));
-				swapText(13);
-				
+				swapIfValid(13);
 				break;
 			case R.id.button15:
-				buttonIsPressed[14]= true;
-				letterButtons[14].setTextColor(getResources().getColor(
-			            R.color.red));
-				swapText(14);
-				
+				swapIfValid(14);
 				break;
 			case R.id.button16:
-				buttonIsPressed[15]= true;
-				letterButtons[15].setTextColor(getResources().getColor(
-			            R.color.red));
-				swapText(15);
-				
+				swapIfValid(15);
 				break;
 			case R.id.button17:
-				buttonIsPressed[16]= true;
-				letterButtons[16].setTextColor(getResources().getColor(
-			            R.color.red));
-				swapText(16);
-				
+				swapIfValid(16);
 				break;
 			case R.id.button18:
-				buttonIsPressed[17]= true;
-				letterButtons[17].setTextColor(getResources().getColor(
-			            R.color.red));
-				swapText(17);
-				
+				swapIfValid(17);
 				break;
 
 			default:
@@ -255,6 +241,22 @@ public class Game extends Activity{
 			//loadDict();
 		}
 		
+	}
+	public void swapIfValid(int index){
+		buttonIsPressed[index]= true;
+		buttonTwicePressed.add(index);
+		if(buttonTwicePressed.get(buttonTwicePressed.size()-1)!=buttonTwicePressed.get(buttonTwicePressed.size()-2)){
+			letterButtons[index].setTextColor(getResources().getColor(
+	            R.color.red));
+			swapText(index);
+			//buttonTwicePressed.add(18);
+		}
+		else {
+			letterButtons[index].setTextColor(getResources().getColor(
+		            R.color.black));
+			buttonIsPressed[index]= false;
+			buttonTwicePressed.add(18);
+		}
 	}
 	public void loadDict(char fir, HashMap<String,String> words){
 		switch (fir) {
@@ -421,9 +423,16 @@ public class Game extends Activity{
 			e.printStackTrace();
 		}
 	}
-	public int match(String s, HashMap<String,String> words) {
+	public int match(String s, HashMap<String,String> words, int pscore, int locate) {
+		
 		if(alreadyExistIn(s, wordsBack)){
+			scoreLocates[locate-1]=true;
 			
+			score= pscore+score-tempScore[locate-1];
+			tempScore[locate-1]=pscore;
+			scoreText.setText(score+"");
+			 tg.startTone(ToneGenerator.TONE_PROP_BEEP);
+			return 1;
 		}
 		else{
 		if(words.containsKey(s.toString())){
@@ -436,16 +445,30 @@ public class Game extends Activity{
 			result=result+s.toString()+"\n";
 			//textView.setMovementMethod(new ScrollingMovementMethod()); 
 			//textView.setText(result);
-		
+			
+			scoreLocates[locate-1]=true;
+			
+			score= pscore+score-tempScore[locate-1];
+			tempScore[locate-1]=pscore;
+			scoreText.setText(score+"");
+			
 			
 			
 		    tg.startTone(ToneGenerator.TONE_PROP_BEEP);
+		    return score;
 		}
 		else{
 			System.out.println("undetect match");
+			if(scoreLocates[locate-1]==true){
+				score= score-tempScore[locate-1];
+				scoreText.setText(score+"");
+				scoreLocates[locate-1]=false;
+				tempScore[locate-1]=0;
+			}
+			return 0;
 		}
 		}
-		return 0;
+		
 	}
 	
 	
@@ -458,12 +481,17 @@ public class Game extends Activity{
 	}
 	public void swapText(int firButton ) {
 		int secButton = -1;
+		
 		for (int i =0; i<18; i++) {
 			if(buttonIsPressed[i] == true && i!=firButton){;
 			secButton = i;
 			}
+			
 		}
+		
 		if(secButton>=0){
+			
+			
 			String temp= letterButtons[firButton].getText().toString();
 			letterButtons[firButton].setText(letterButtons[secButton].getText().toString());
 			letterButtons[secButton].setText(temp);
@@ -471,61 +499,214 @@ public class Game extends Activity{
 			buttonIsPressed[secButton]=false;
 			letterButtons[firButton].setTextColor(getResources().getColor(R.color.black));
 			letterButtons[secButton].setTextColor(getResources().getColor(R.color.black));
+			buttonTwicePressed.add(18);
 			String line1 = String.valueOf(letterButtons[0].getText().charAt(0))+
 								String.valueOf(letterButtons[1].getText().charAt(0))+
 									String.valueOf(letterButtons[2].getText().charAt(0))+
 										String.valueOf(letterButtons[3].getText().charAt(0))+
 											String.valueOf(letterButtons[4].getText().charAt(0))+
 												String.valueOf(letterButtons[5].getText().charAt(0));
+			int pscore1 = Integer.parseInt(String.valueOf(letterButtons[0].getText().charAt(letterButtons[0].getText().length()-1)))+
+								Integer.parseInt(String.valueOf(letterButtons[1].getText().charAt(letterButtons[0].getText().length()-1)))+
+									Integer.parseInt(String.valueOf(letterButtons[2].getText().charAt(letterButtons[0].getText().length()-1)))+
+										Integer.parseInt(String.valueOf(letterButtons[3].getText().charAt(letterButtons[0].getText().length()-1)))+
+											Integer.parseInt(String.valueOf(letterButtons[4].getText().charAt(letterButtons[0].getText().length()-1)))+
+												Integer.parseInt(String.valueOf(letterButtons[5].getText().charAt(letterButtons[0].getText().length()-1)));
 			String line2 = String.valueOf(letterButtons[6].getText().charAt(0))+
 								String.valueOf(letterButtons[7].getText().charAt(0))+
 									String.valueOf(letterButtons[8].getText().charAt(0))+
 										String.valueOf(letterButtons[9].getText().charAt(0))+
 											String.valueOf(letterButtons[10].getText().charAt(0));
+			int pscore2 = Integer.parseInt(String.valueOf(letterButtons[6].getText().charAt(letterButtons[0].getText().length()-1)))+
+								Integer.parseInt(String.valueOf(letterButtons[7].getText().charAt(letterButtons[0].getText().length()-1)))+
+									Integer.parseInt(String.valueOf(letterButtons[8].getText().charAt(letterButtons[0].getText().length()-1)))+
+										Integer.parseInt(String.valueOf(letterButtons[9].getText().charAt(letterButtons[0].getText().length()-1)))+
+											Integer.parseInt(String.valueOf(letterButtons[10].getText().charAt(letterButtons[0].getText().length()-1)));
 			String line3 = String.valueOf(letterButtons[11].getText().charAt(0))+
 								String.valueOf(letterButtons[12].getText().charAt(0))+
 									String.valueOf(letterButtons[13].getText().charAt(0))+
 										String.valueOf(letterButtons[14].getText().charAt(0));
-									
+			int pscore3 = Integer.parseInt(String.valueOf(letterButtons[11].getText().charAt(letterButtons[0].getText().length()-1)))+
+								Integer.parseInt(String.valueOf(letterButtons[12].getText().charAt(letterButtons[0].getText().length()-1)))+
+									Integer.parseInt(String.valueOf(letterButtons[13].getText().charAt(letterButtons[0].getText().length()-1)))+
+										Integer.parseInt(String.valueOf(letterButtons[14].getText().charAt(letterButtons[0].getText().length()-1)));						
 			String line4 = String.valueOf(letterButtons[15].getText().charAt(0))+
 								String.valueOf(letterButtons[16].getText().charAt(0))+
 									String.valueOf(letterButtons[17].getText().charAt(0));
-									
+			int pscore4 = Integer.parseInt(String.valueOf(letterButtons[15].getText().charAt(letterButtons[0].getText().length()-1)))+
+								Integer.parseInt(String.valueOf(letterButtons[16].getText().charAt(letterButtons[0].getText().length()-1)))+
+									Integer.parseInt(String.valueOf(letterButtons[17].getText().charAt(letterButtons[0].getText().length()-1)));
+		/*if((firButton==0|firButton==6|firButton==11|firButton==15)&&
+		   (secButton==0|secButton==6|secButton==11|secButton==15)){
+			int score1 = match(line1, words1, pscore1, 1);
+			displayword1(score1);
+			int score2 = match(line2, words2, pscore2, 2);
+			displayword2(score2);
+			int score3 = match(line3, words3, pscore3, 3);
+			displayword3(score3);
+			int score4 = match(line4, words4, pscore4, 4);
+			displayword4(score4);
+		}*/
+		
 			if(firButton==0|secButton==0){
 				loadDict(letterButtons[0].getText().charAt(0),words1);
-				int score1 = match(line1, words1);
-				
+				int score1 = match(line1, words1, pscore1, 1);
+				displayword1(score1);
 				
 			}
 			if(firButton==6|secButton==6){
 				loadDict(letterButtons[6].getText().charAt(0),words2);
-				int score2 = match(line2, words2);
+				int score2 = match(line2, words2, pscore2, 2);
+				displayword2(score2);
 			}
 			if(firButton==11|secButton==11){
 				loadDict(letterButtons[11].getText().charAt(0),words3);
-				int score3 = match(line3, words3);
+				int score3 = match(line3, words3, pscore3, 3);
+				displayword3(score3);
 			}
 			if(firButton==15|secButton==15){
 				loadDict(letterButtons[15].getText().charAt(0),words4);
-				int score4 = match(line4, words4);
+				int score4 = match(line4, words4, pscore4, 4);
+				displayword4(score4);
 			}
 			
 			if((0<firButton&&firButton<=5)|(0<secButton&&secButton<=5)){
-				int score = match(line1, words1);
+				int score1 = match(line1, words1, pscore1, 1);
+				displayword1(score1);
 			}
 			if((6<firButton&&firButton<=10)|(6<secButton&&secButton<=10)){
-				int score = match(line2, words2);
+				int score2 = match(line2, words2, pscore2, 2);
+				displayword2(score2);
 			}
 			if((11<firButton&&firButton<=14)|(11<secButton&&secButton<=14)){
-				int score = match(line3, words3);
+				int score3 = match(line3, words3, pscore3, 3);
+				displayword3(score3);
 			}
 			if((15<firButton&&firButton<=17)|(15<secButton&&secButton<=17)){
-				int score = match(line4, words4);
+				int score4 = match(line4, words4, pscore4, 4);
+				displayword4(score4);
 			}
+		
 		}
 		
+		
+		
+		
 	}
-
+	
+	public void displayword1(int score1) {
+        
+		if(score1>0){
+			letterButtons[0].setTextColor(getResources().getColor(
+		            R.color.red));
+			letterButtons[1].setTextColor(getResources().getColor(
+		            R.color.red));
+			letterButtons[2].setTextColor(getResources().getColor(
+		            R.color.red));
+			letterButtons[3].setTextColor(getResources().getColor(
+		            R.color.red));
+			letterButtons[4].setTextColor(getResources().getColor(
+		            R.color.red));
+			letterButtons[5].setTextColor(getResources().getColor(
+		            R.color.red));
+		}
+		else{
+			letterButtons[0].setTextColor(getResources().getColor(
+		            R.color.black));
+			letterButtons[1].setTextColor(getResources().getColor(
+		            R.color.black));
+			letterButtons[2].setTextColor(getResources().getColor(
+		            R.color.black));
+			letterButtons[3].setTextColor(getResources().getColor(
+		            R.color.black));
+			letterButtons[4].setTextColor(getResources().getColor(
+		            R.color.black));
+			letterButtons[5].setTextColor(getResources().getColor(
+		            R.color.black));
+		}
+	}
+	
+	public void displayword2(int score2) {
+        
+		if(score2>0){
+			letterButtons[6].setTextColor(getResources().getColor(
+		            R.color.red));
+			letterButtons[7].setTextColor(getResources().getColor(
+		            R.color.red));
+			letterButtons[8].setTextColor(getResources().getColor(
+		            R.color.red));
+			letterButtons[9].setTextColor(getResources().getColor(
+		            R.color.red));
+			letterButtons[10].setTextColor(getResources().getColor(
+		            R.color.red));
+			
+		}
+		else{
+			letterButtons[6].setTextColor(getResources().getColor(
+		            R.color.black));
+			letterButtons[7].setTextColor(getResources().getColor(
+		            R.color.black));
+			letterButtons[8].setTextColor(getResources().getColor(
+		            R.color.black));
+			letterButtons[9].setTextColor(getResources().getColor(
+		            R.color.black));
+			letterButtons[10].setTextColor(getResources().getColor(
+		            R.color.black));
+			
+		}
+	}
+	
+	public void displayword3(int score3) {
+        
+		if(score3>0){
+			letterButtons[11].setTextColor(getResources().getColor(
+		            R.color.red));
+			letterButtons[12].setTextColor(getResources().getColor(
+		            R.color.red));
+			letterButtons[13].setTextColor(getResources().getColor(
+		            R.color.red));
+			letterButtons[14].setTextColor(getResources().getColor(
+		            R.color.red));
+			
+			
+		}
+		else{
+			letterButtons[11].setTextColor(getResources().getColor(
+		            R.color.black));
+			letterButtons[12].setTextColor(getResources().getColor(
+		            R.color.black));
+			letterButtons[13].setTextColor(getResources().getColor(
+		            R.color.black));
+			letterButtons[14].setTextColor(getResources().getColor(
+		            R.color.black));
+			
+		}
+	}
+	
+	public void displayword4(int score4) {
+        
+		if(score4>0){
+			letterButtons[15].setTextColor(getResources().getColor(
+		            R.color.red));
+			letterButtons[16].setTextColor(getResources().getColor(
+		            R.color.red));
+			letterButtons[17].setTextColor(getResources().getColor(
+		            R.color.red));
+			
+		}
+		else{
+			letterButtons[15].setTextColor(getResources().getColor(
+		            R.color.black));
+			letterButtons[16].setTextColor(getResources().getColor(
+		            R.color.black));
+			letterButtons[17].setTextColor(getResources().getColor(
+		            R.color.black));
+			
+		}
+	}
+	
+	
+	
 	public static final String randomWord3() {
 	         
 	    random = new Random();
