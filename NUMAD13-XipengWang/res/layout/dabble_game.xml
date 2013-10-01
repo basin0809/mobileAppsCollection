@@ -178,4 +178,13 @@
     android:layout_alignTop="@+id/Hintbutton"
     android:text="Score:" />
 
+<TextView
+    android:id="@+id/inVisibleScore"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignLeft="@+id/button17"
+    android:layout_alignTop="@+id/Resume_button"
+    android:text="InvisibleScore:"
+    android:textColor="#FFFFFF" />
+
 </RelativeLayout>

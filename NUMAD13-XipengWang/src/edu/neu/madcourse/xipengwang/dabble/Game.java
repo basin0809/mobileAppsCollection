@@ -8,11 +8,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
 
+import org.xml.sax.Attributes;
+
 import android.R.integer;
 import android.app.Activity;
+import android.content.Intent;
+import android.location.GpsStatus.Listener;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Bundle;
+import android.sax.TextElementListener;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,7 +36,9 @@ public class Game extends Activity{
 	private String[] wordsBack = new String[200];
 	private int countBack = 0;
 	private int score =0;
+	private int invisibleScore =0;
 	private int[] tempScore = new int[4];
+	private int[] invisibleTempScore = new int[4];
 	private String result="";
 	private InputStream input = null;
 	private boolean[] buttonIsPressed = new boolean[18];
@@ -37,7 +46,7 @@ public class Game extends Activity{
 	private boolean[] scoreLocates = new boolean[4];
 	private Button[] letterButtons = new Button[18];
 	private Button pauseButton, resumeButton, hintButton, backButton;
-	private TextView cdText, scoreText;
+	private TextView cdText, scoreText, invisibleScoreText ;
 	private static Random random = null;
 	private static String[] scoreList = {"3","3","3","3","3","3","3","3","6","6","6","6","6","6","9","9","9","9"};
 	
@@ -79,6 +88,8 @@ public class Game extends Activity{
 		backButton = (Button)findViewById(R.id.Backbutton);
 		cdText = (TextView)findViewById(R.id.CountDown);
 		scoreText = (TextView)findViewById(R.id.Score);
+		invisibleScoreText = (TextView)findViewById(R.id.inVisibleScore);
+		invisibleScoreText.addTextChangedListener(new ScoreTextListener());
 		scoreText.setText("0");
 		String string = (randomWord3()+randomWord4()+randomWord5()+randomWord6());
 		System.out.println("String: "+string);
@@ -115,7 +126,9 @@ public class Game extends Activity{
 		for (int i =0; i<4; i++) {
 			tempScore[i]= 0;
 		}
-		
+		for (int i =0; i<4; i++) {
+			invisibleTempScore[i]= 0;
+		}
 		
 		System.out.println(letterButtons[0].getText().charAt(0));
 		System.out.println(letterButtons[6].getText().charAt(0));
@@ -171,6 +184,40 @@ public class Game extends Activity{
 		displayword4(score4);
 		buttonTwicePressed.add(18);
 		}
+	class ScoreTextListener implements TextWatcher{
+
+		@Override
+		public void afterTextChanged(Editable s) {
+			// TODO Auto-generated method stub
+			System.out.println("------------->Score: "+s);
+			if(Integer.parseInt(s.toString())==96){
+				finish();
+				Intent intent =new Intent();
+				intent.setClass(Game.this, Cong.class);
+				intent.putExtra("lastScore", scoreText.getText().toString());
+				startActivity(intent);
+			}
+		}
+
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count,
+				int after) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before,
+				int count) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		
+
+		
+		
+	}
 		
 	class LetterButtonsListener implements OnClickListener{
 
@@ -428,9 +475,14 @@ public class Game extends Activity{
 		if(alreadyExistIn(s, wordsBack)){
 			scoreLocates[locate-1]=true;
 			
-			score= pscore+score-tempScore[locate-1];
-			tempScore[locate-1]=pscore;
+			score= pscore*locate+score-tempScore[locate-1];
+			tempScore[locate-1]=pscore*locate;
 			scoreText.setText(score+"");
+			
+			invisibleScore= pscore+invisibleScore-invisibleTempScore[locate-1];
+			invisibleTempScore[locate-1]=pscore;
+			invisibleScoreText.setText(invisibleScore+"");
+			
 			 tg.startTone(ToneGenerator.TONE_PROP_BEEP);
 			return 1;
 		}
@@ -448,10 +500,14 @@ public class Game extends Activity{
 			
 			scoreLocates[locate-1]=true;
 			
-			score= pscore+score-tempScore[locate-1];
-			tempScore[locate-1]=pscore;
+			score= pscore*locate+score-tempScore[locate-1];
+			tempScore[locate-1]=pscore*locate;
 			scoreText.setText(score+"");
 			
+			
+			invisibleScore= pscore+invisibleScore-invisibleTempScore[locate-1];
+			invisibleTempScore[locate-1]=pscore;
+			invisibleScoreText.setText(invisibleScore+"");
 			
 			
 		    tg.startTone(ToneGenerator.TONE_PROP_BEEP);
@@ -462,8 +518,14 @@ public class Game extends Activity{
 			if(scoreLocates[locate-1]==true){
 				score= score-tempScore[locate-1];
 				scoreText.setText(score+"");
+				
+				invisibleScore= invisibleScore-invisibleTempScore[locate-1];
+				invisibleScoreText.setText(invisibleScore+"");
+				
 				scoreLocates[locate-1]=false;
+				
 				tempScore[locate-1]=0;
+				invisibleTempScore[locate-1]=0;
 			}
 			return 0;
 		}

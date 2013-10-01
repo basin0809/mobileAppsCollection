@@ -77,6 +77,10 @@
               android:label="TestGame"
               android:screenOrientation="portrait">
         </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.dabble.Cong"
+              android:label="Congratulation"
+              android:screenOrientation="portrait">
+        </activity>
         <service android:name="edu.neu.madcourse.xipengwang.dict.WordListLoadService" />
     </application>
 
