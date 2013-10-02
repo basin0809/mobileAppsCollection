@@ -8,25 +8,22 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
 
-import org.xml.sax.Attributes;
-
 import android.R.integer;
 import android.app.Activity;
 import android.content.Intent;
-import android.location.GpsStatus.Listener;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Bundle;
-import android.sax.TextElementListener;
+import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
-import edu.neu.madcourse.xipengwang.dabble.WordsList;
+
 import edu.neu.madcourse.xipengwang.R;
+
 
 public class Game extends Activity{
 	private HashMap<String,String> words1 = new HashMap<String,String>();
@@ -43,15 +40,19 @@ public class Game extends Activity{
 	private InputStream input = null;
 	private boolean[] buttonIsPressed = new boolean[18];
 	private ArrayList<Integer> buttonTwicePressed = new ArrayList<Integer>();
+	private ArrayList<Integer> pauseTwicePressed = new ArrayList<Integer>();
 	private boolean[] scoreLocates = new boolean[4];
 	private Button[] letterButtons = new Button[18];
-	private Button pauseButton, resumeButton, hintButton, backButton;
+	private Button pauseButton, hintButton, backButton;
 	private TextView cdText, scoreText, invisibleScoreText ;
 	private static Random random = null;
 	private static String[] scoreList = {"3","3","3","3","3","3","3","3","6","6","6","6","6","6","9","9","9","9"};
 	
 	private static String[] puzzle = new String[18];
 	private static String[] puzzleScore = new String[18];
+	
+	private MyCount mc;
+	private long timeLeft=30000;
 	final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
 	@Override
 	
@@ -59,6 +60,7 @@ public class Game extends Activity{
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dabble_game);
+		//pauseTwicePressed.add(0);
 		letterButtons[0]=(Button)findViewById(R.id.button1);
 		letterButtons[1]=(Button)findViewById(R.id.button2);
 		letterButtons[2]=(Button)findViewById(R.id.button3);
@@ -83,7 +85,7 @@ public class Game extends Activity{
 			letterButtons[i].setOnClickListener(new LetterButtonsListener());
 		}
 		pauseButton = (Button)findViewById(R.id.Pause_button);
-		resumeButton = (Button)findViewById(R.id.Resume_button);
+		
 		hintButton = (Button)findViewById(R.id.Hintbutton);
 		backButton = (Button)findViewById(R.id.Backbutton);
 		cdText = (TextView)findViewById(R.id.CountDown);
@@ -91,6 +93,7 @@ public class Game extends Activity{
 		invisibleScoreText = (TextView)findViewById(R.id.inVisibleScore);
 		invisibleScoreText.addTextChangedListener(new ScoreTextListener());
 		scoreText.setText("0");
+		cdText.setText("00:00");
 		String string = (randomWord3()+randomWord4()+randomWord5()+randomWord6());
 		System.out.println("String: "+string);
 		ArrayList<String> sList = new ArrayList<String>();
@@ -134,10 +137,10 @@ public class Game extends Activity{
 		System.out.println(letterButtons[6].getText().charAt(0));
 		System.out.println(letterButtons[11].getText().charAt(0));
 		System.out.println(letterButtons[15].getText().charAt(0));
-		loadDict(letterButtons[0].getText().charAt(0),words1);
-		loadDict(letterButtons[6].getText().charAt(0),words2);
-		loadDict(letterButtons[11].getText().charAt(0),words3);
-		loadDict(letterButtons[15].getText().charAt(0),words4);
+		loadDict(letterButtons[0].getText().charAt(0),words1,6);
+		loadDict(letterButtons[6].getText().charAt(0),words2,5);
+		loadDict(letterButtons[11].getText().charAt(0),words3,4);
+		loadDict(letterButtons[15].getText().charAt(0),words4,3);
 		String line1 = String.valueOf(letterButtons[0].getText().charAt(0))+
 				String.valueOf(letterButtons[1].getText().charAt(0))+
 					String.valueOf(letterButtons[2].getText().charAt(0))+
@@ -183,7 +186,87 @@ public class Game extends Activity{
 		int score4 = match(line4, words4, pscore4, 4);
 		displayword4(score4);
 		buttonTwicePressed.add(18);
+		pauseTwicePressed.add(0);
+		mc = new MyCount(300000, 1000);  
+        mc.start();
+        pauseButton.setOnClickListener(new PauseListener());
+        
+        
 		}
+	class PauseListener implements OnClickListener{
+
+		@Override
+		public void onClick(View v) {
+			if(pauseTwicePressed.get(pauseTwicePressed.size()-1)==0){
+				System.out.println("PAUSE");
+			// TODO Auto-generated method stub
+			mc.cancel();
+			for (int i =0; i<18; i++) {
+				//letterButtons[i].setTextColor(getResources().getColor(R.color.black));
+				letterButtons[i].getBackground().setAlpha(70);
+				letterButtons[i].setOnClickListener(null);
+			}
+			
+			hintButton.getBackground().setAlpha(70);
+			hintButton.setOnClickListener(null);
+			
+			backButton.getBackground().setAlpha(70);
+			backButton.setOnClickListener(null);
+			
+			pauseButton.setText("Continue");
+			pauseTwicePressed.add(1);
+			}
+			else{
+				System.out.println("CONTINUE");
+				for (int i =0; i<18; i++) {
+					//letterButtons[i].setTextColor(getResources().getColor(R.color.black));
+			
+					letterButtons[i].getBackground().setAlpha(255);
+					letterButtons[i].setOnClickListener(new LetterButtonsListener());
+				}
+				
+				hintButton.getBackground().setAlpha(255);
+				hintButton.setOnClickListener(null);
+				
+				backButton.getBackground().setAlpha(255);
+				backButton.setOnClickListener(null);
+				
+				pauseButton.setText("Pause");
+				mc = new MyCount(timeLeft, 1000);  
+		        mc.start();
+				pauseTwicePressed.add(0);
+			}
+		}
+		
+	}
+
+	class MyCount extends CountDownTimer {     
+        public MyCount(long millisInFuture, long countDownInterval) {     
+            super(millisInFuture, countDownInterval);     
+        }     
+        @Override     
+        public void onFinish() {     
+        	cdText.setText("finish");        
+        }     
+        @Override     
+        public void onTick(long millisUntilFinished) { 
+        	Integer miliSec = new Integer(new Double(millisUntilFinished).intValue());  
+        	Integer cdSecs = miliSec / 1000;  
+
+        	Integer minutes = (cdSecs % 3600) / 60;  
+        	Integer seconds = (cdSecs % 3600) % 60;    
+
+        	cdText.setText(String.format("%02d", minutes) + ":"  
+        	+ String.format("%02d", seconds));
+        	//cdText.setText(millisUntilFinished / 1000 +""); 
+        	if(cdSecs<=270){
+        		cdText.setTextColor(getResources().getColor(R.color.red));
+        		cdText.setTextSize(20);
+        	}
+        	timeLeft = millisUntilFinished ;
+           // Toast.makeText(NewActivity.this, millisUntilFinished / 1000 + "", Toast.LENGTH_LONG).show(); 
+        }    
+    }  
 	class ScoreTextListener implements TextWatcher{
 
 		@Override
@@ -305,139 +388,609 @@ public class Game extends Activity{
 			buttonTwicePressed.add(18);
 		}
 	}
-	public void loadDict(char fir, HashMap<String,String> words){
+	public void loadDict(char fir, HashMap<String,String> words, int line){
 		switch (fir) {
 		case 'a':
 			System.out.print("--------->switch to a");
-			input = getResources().openRawResource(R.raw.a);
-			load(input,words);
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.a3);
+				load(input,words);
+				break;
+			case 4:
+				input = getResources().openRawResource(R.raw.a4);
+				load(input,words);
+				break;
+			case 5:
+				input = getResources().openRawResource(R.raw.a5);
+				load(input,words);
+				break;
+			case 6:
+				input = getResources().openRawResource(R.raw.a6);
+				load(input,words);
+				break;
+
+			default:
+				break;
+			}
+			
 			//match(s.toString());
 			break;
 		case 'b':
 			System.out.print("--------->switch to b");
-			input = getResources().openRawResource(R.raw.b);
-			load(input,words);
-			//match(s.toString());
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.b3);
+				load(input,words);
+				break;
+			case 4:
+				input = getResources().openRawResource(R.raw.b4);
+				load(input,words);
+				break;
+			case 5:
+				input = getResources().openRawResource(R.raw.b5);
+				load(input,words);
+				break;
+			case 6:
+				input = getResources().openRawResource(R.raw.b6);
+				load(input,words);
+				break;
+
+			default:
+				break;
+			}
 			break;
 		case 'c':
-			System.out.print("--------->switch to c");
-			input = getResources().openRawResource(R.raw.c);
-			load(input,words);
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.c3);
+				load(input,words);
+				break;
+			case 4:
+				input = getResources().openRawResource(R.raw.c4);
+				load(input,words);
+				break;
+			case 5:
+				input = getResources().openRawResource(R.raw.c5);
+				load(input,words);
+				break;
+			case 6:
+				input = getResources().openRawResource(R.raw.c6);
+				load(input,words);
+				break;
+
+			default:
+				break;
+			}
 			break;
 		case 'd':
-			System.out.print("--------->switch to d");
-			input = getResources().openRawResource(R.raw.d);
-			load(input,words);
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.d3);
+				load(input,words);
+				break;
+			case 4:
+				input = getResources().openRawResource(R.raw.d4);
+				load(input,words);
+				break;
+			case 5:
+				input = getResources().openRawResource(R.raw.d5);
+				load(input,words);
+				break;
+			case 6:
+				input = getResources().openRawResource(R.raw.d6);
+				load(input,words);
+				break;
+
+			default:
+				break;
+			}
 			break;
 		case 'e':
-			System.out.print("--------->switch to e");
-			input = getResources().openRawResource(R.raw.e);
-			load(input,words);
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.e3);
+				load(input,words);
+				break;
+			case 4:
+				input = getResources().openRawResource(R.raw.e4);
+				load(input,words);
+				break;
+			case 5:
+				input = getResources().openRawResource(R.raw.e5);
+				load(input,words);
+				break;
+			case 6:
+				input = getResources().openRawResource(R.raw.e6);
+				load(input,words);
+				break;
+
+			default:
+				break;
+			}
 			break;
 		case 'f':
-			System.out.print("--------->switch to f");
-			input = getResources().openRawResource(R.raw.f);
-			load(input,words);
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.f3);
+				load(input,words);
+				break;
+			case 4:
+				input = getResources().openRawResource(R.raw.f4);
+				load(input,words);
+			break;
+				case 5:
+				input = getResources().openRawResource(R.raw.f5);
+				load(input,words);
+				break;
+			case 6:
+				input = getResources().openRawResource(R.raw.f6);
+				load(input,words);
+				break;
+
+			default:
+				break;
+			}
 			break;
 		case 'g':
-			System.out.print("--------->switch to g");
-			input = getResources().openRawResource(R.raw.g);
-			load(input,words);
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.g3);
+				load(input,words);
+				break;
+			case 4:
+				input = getResources().openRawResource(R.raw.g4);
+				load(input,words);
+			break;
+				case 5:
+				input = getResources().openRawResource(R.raw.g5);
+				load(input,words);
+				break;
+			case 6:
+				input = getResources().openRawResource(R.raw.g6);
+				load(input,words);
+				break;
+
+			default:
+				break;
+			}
 			break;
 		case 'h':
-			System.out.print("--------->switch to h");
-			input = getResources().openRawResource(R.raw.h);
-			load(input,words);
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.h3);
+				load(input,words);
+				break;
+			case 4:
+				input = getResources().openRawResource(R.raw.h4);
+				load(input,words);
+			break;
+				case 5:
+				input = getResources().openRawResource(R.raw.h5);
+				load(input,words);
+				break;
+			case 6:
+				input = getResources().openRawResource(R.raw.h6);
+				load(input,words);
+				break;
+
+			default:
+				break;
+			}
 			break;
 		case 'i':
-			System.out.print("--------->switch to i");
-			input = getResources().openRawResource(R.raw.i);
-			load(input,words);
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.i3);
+				load(input,words);
+				break;
+			case 4:
+				input = getResources().openRawResource(R.raw.i4);
+				load(input,words);
+			break;
+				case 5:
+				input = getResources().openRawResource(R.raw.i5);
+				load(input,words);
+				break;
+			case 6:
+				input = getResources().openRawResource(R.raw.i6);
+				load(input,words);
+				break;
+
+			default:
+				break;
+			}
 			break;
 		case 'j':
-			 System.out.print("--------->switch to j");
-			input = getResources().openRawResource(R.raw.j);
-			load(input,words);
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.j3);
+				load(input,words);
+				break;
+			case 4:
+				input = getResources().openRawResource(R.raw.j4);
+				load(input,words);
+			break;
+				case 5:
+				input = getResources().openRawResource(R.raw.j5);
+				load(input,words);
+				break;
+			case 6:
+				input = getResources().openRawResource(R.raw.j6);
+				load(input,words);
+				break;
+
+			default:
+				break;
+			}
 			break;
 		case 'k':
-			 System.out.print("--------->switch to k");
-			input = getResources().openRawResource(R.raw.k);
-			load(input,words);
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.k3);
+				load(input,words);
+				break;
+			case 4:
+				input = getResources().openRawResource(R.raw.k4);
+				load(input,words);
+			break;
+				case 5:
+				input = getResources().openRawResource(R.raw.k5);
+				load(input,words);
+				break;
+			case 6:
+				input = getResources().openRawResource(R.raw.k6);
+				load(input,words);
+				break;
+
+			default:
+				break;
+			}
 			break;
 		case 'l':
-			 System.out.print("--------->switch to l");
-			input = getResources().openRawResource(R.raw.l);
-			load(input,words);
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.l3);
+				load(input,words);
+				break;
+			case 4:
+				input = getResources().openRawResource(R.raw.l4);
+				load(input,words);
+			break;
+				case 5:
+				input = getResources().openRawResource(R.raw.l5);
+				load(input,words);
+				break;
+			case 6:
+				input = getResources().openRawResource(R.raw.l6);
+				load(input,words);
+				break;
+
+			default:
+				break;
+			}
 			break;
 		case 'm':
-			 System.out.print("--------->switch to m");
-			input = getResources().openRawResource(R.raw.m);
-			load(input,words);
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.m3);
+				load(input,words);
+				break;
+			case 4:
+				input = getResources().openRawResource(R.raw.m4);
+				load(input,words);
+			break;
+				case 5:
+				input = getResources().openRawResource(R.raw.m5);
+				load(input,words);
+				break;
+			case 6:
+				input = getResources().openRawResource(R.raw.m6);
+				load(input,words);
+				break;
+
+			default:
+				break;
+			}
 			break;
 		case 'n':
-			 System.out.print("--------->switch to n");
-			input = getResources().openRawResource(R.raw.n);
-			load(input,words);
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.n3);
+				load(input,words);
+				break;
+			case 4:
+				input = getResources().openRawResource(R.raw.n4);
+				load(input,words);
+			break;
+				case 5:
+				input = getResources().openRawResource(R.raw.n5);
+				load(input,words);
+				break;
+			case 6:
+				input = getResources().openRawResource(R.raw.n6);
+				load(input,words);
+				break;
+
+			default:
+				break;
+			}
 			break;
 		case 'o':
-			 System.out.print("--------->switch to o");
-			input = getResources().openRawResource(R.raw.o);
-			load(input,words);
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.o3);
+				load(input,words);
+				break;
+			case 4:
+				input = getResources().openRawResource(R.raw.o4);
+				load(input,words);
+			break;
+				case 5:
+				input = getResources().openRawResource(R.raw.o5);
+				load(input,words);
+				break;
+			case 6:
+				input = getResources().openRawResource(R.raw.o6);
+				load(input,words);
+				break;
+
+			default:
+				break;
+			}
 			break;
 		case 'p':
-			 System.out.print("--------->switch to p");
-			input = getResources().openRawResource(R.raw.p);
-			load(input,words);
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.p3);
+				load(input,words);
+				break;
+			case 4:
+				input = getResources().openRawResource(R.raw.p4);
+				load(input,words);
+			break;
+				case 5:
+				input = getResources().openRawResource(R.raw.p5);
+				load(input,words);
+				break;
+			case 6:
+				input = getResources().openRawResource(R.raw.p6);
+				load(input,words);
+				break;
+
+			default:
+				break;
+			}
 			break;
 		case 'q':
-			 System.out.print("--------->switch to q");
-			input = getResources().openRawResource(R.raw.q);
-			load(input,words);
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.q3);
+				load(input,words);
+				break;
+			case 4:
+				input = getResources().openRawResource(R.raw.q4);
+				load(input,words);
+			break;
+				case 5:
+				input = getResources().openRawResource(R.raw.q5);
+				load(input,words);
+				break;
+			case 6:
+				input = getResources().openRawResource(R.raw.q6);
+				load(input,words);
+				break;
+
+			default:
+				break;
+			}
 			break;
 		case 'r':
-			 System.out.print("--------->switch to r");
-			input = getResources().openRawResource(R.raw.r);
-			load(input,words);
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.r3);
+				load(input,words);
+				break;
+			case 4:
+				input = getResources().openRawResource(R.raw.r4);
+				load(input,words);
+			break;
+				case 5:
+				input = getResources().openRawResource(R.raw.r5);
+				load(input,words);
+				break;
+			case 6:
+				input = getResources().openRawResource(R.raw.r6);
+				load(input,words);
+				break;
+
+			default:
+				break;
+			}
 			break;
 		case 's':
-			 System.out.print("--------->switch to s");
-			input = getResources().openRawResource(R.raw.s);
-			load(input,words);
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.s3);
+				load(input,words);
+				break;
+			case 4:
+				input = getResources().openRawResource(R.raw.s4);
+				load(input,words);
+			break;
+				case 5:
+				input = getResources().openRawResource(R.raw.s5);
+				load(input,words);
+				break;
+			case 6:
+				input = getResources().openRawResource(R.raw.s6);
+				load(input,words);
+				break;
+
+			default:
+				break;
+			}
 			break;
 		case 't':
-			 System.out.print("--------->switch to t");
-			input = getResources().openRawResource(R.raw.t);
-			load(input,words);
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.t3);
+				load(input,words);
+				break;
+			case 4:
+				input = getResources().openRawResource(R.raw.t4);
+				load(input,words);
+			break;
+				case 5:
+				input = getResources().openRawResource(R.raw.t5);
+				load(input,words);
+				break;
+			case 6:
+				input = getResources().openRawResource(R.raw.t6);
+				load(input,words);
+				break;
+
+			default:
+				break;
+			}
 			break;
 		case 'u':
-			 System.out.print("--------->switch to u");
-			input = getResources().openRawResource(R.raw.u);
-			load(input,words);
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.u3);
+				load(input,words);
+				break;
+			case 4:
+				input = getResources().openRawResource(R.raw.u4);
+				load(input,words);
+			break;
+				case 5:
+				input = getResources().openRawResource(R.raw.u5);
+				load(input,words);
+				break;
+			case 6:
+				input = getResources().openRawResource(R.raw.u6);
+				load(input,words);
+				break;
+
+			default:
+				break;
+			}
 			break;
 		case 'v':
-			 System.out.print("--------->switch to v");
-			input = getResources().openRawResource(R.raw.v);
-			load(input,words);
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.v3);
+				load(input,words);
+				break;
+			case 4:
+				input = getResources().openRawResource(R.raw.v4);
+				load(input,words);
+			break;
+				case 5:
+				input = getResources().openRawResource(R.raw.v5);
+				load(input,words);
+				break;
+			case 6:
+				input = getResources().openRawResource(R.raw.v6);
+				load(input,words);
+				break;
+
+			default:
+				break;
+			}
 			break;
 		case 'w':
-			 System.out.print("--------->switch to w");
-			input = getResources().openRawResource(R.raw.w);
-			load(input,words);
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.w3);
+				load(input,words);
+				break;
+			case 4:
+				input = getResources().openRawResource(R.raw.w4);
+				load(input,words);
+			break;
+				case 5:
+				input = getResources().openRawResource(R.raw.w5);
+				load(input,words);
+				break;
+			case 6:
+				input = getResources().openRawResource(R.raw.w6);
+				load(input,words);
+				break;
+
+			default:
+				break;
+			}
 			break;
 		case 'x':
-			 System.out.print("--------->switch to x");
-			input = getResources().openRawResource(R.raw.x);
-			load(input,words);
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.x3);
+				load(input,words);
+				break;
+			case 4:
+				input = getResources().openRawResource(R.raw.x4);
+				load(input,words);
+			break;
+				case 5:
+				input = getResources().openRawResource(R.raw.x5);
+				load(input,words);
+				break;
+			case 6:
+				input = getResources().openRawResource(R.raw.x6);
+				load(input,words);
+				break;
+
+			default:
+				break;
+			}
 			break;
 		case 'y':
-			 System.out.print("--------->switch to y");
-			input = getResources().openRawResource(R.raw.y);
-			load(input,words);
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.y3);
+				load(input,words);
+				break;
+			case 4:
+				input = getResources().openRawResource(R.raw.y4);
+				load(input,words);
+			break;
+				case 5:
+				input = getResources().openRawResource(R.raw.y5);
+				load(input,words);
+				break;
+			case 6:
+				input = getResources().openRawResource(R.raw.y6);
+				load(input,words);
+				break;
+
+			default:
+				break;
+			}
 			break;
 		case 'z':
-			 System.out.print("--------->switch to z");
-			input = getResources().openRawResource(R.raw.z);
-			load(input,words);
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.z3);
+				load(input,words);
+				break;
+			case 4:
+				input = getResources().openRawResource(R.raw.z4);
+				load(input,words);
+			break;
+				case 5:
+				input = getResources().openRawResource(R.raw.z5);
+				load(input,words);
+				break;
+			case 6:
+				input = getResources().openRawResource(R.raw.z6);
+				load(input,words);
+				break;
+
+			default:
+				break;
+			}
 			break;
 			
 		default:
@@ -611,23 +1164,23 @@ public class Game extends Activity{
 		}*/
 		
 			if(firButton==0|secButton==0){
-				loadDict(letterButtons[0].getText().charAt(0),words1);
+				loadDict(letterButtons[0].getText().charAt(0),words1,6);
 				int score1 = match(line1, words1, pscore1, 1);
 				displayword1(score1);
 				
 			}
 			if(firButton==6|secButton==6){
-				loadDict(letterButtons[6].getText().charAt(0),words2);
+				loadDict(letterButtons[6].getText().charAt(0),words2,5);
 				int score2 = match(line2, words2, pscore2, 2);
 				displayword2(score2);
 			}
 			if(firButton==11|secButton==11){
-				loadDict(letterButtons[11].getText().charAt(0),words3);
+				loadDict(letterButtons[11].getText().charAt(0),words3,4);
 				int score3 = match(line3, words3, pscore3, 3);
 				displayword3(score3);
 			}
 			if(firButton==15|secButton==15){
-				loadDict(letterButtons[15].getText().charAt(0),words4);
+				loadDict(letterButtons[15].getText().charAt(0),words4,3);
 				int score4 = match(line4, words4, pscore4, 4);
 				displayword4(score4);
 			}

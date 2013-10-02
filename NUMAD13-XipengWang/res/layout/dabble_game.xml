@@ -154,13 +154,7 @@
     android:layout_toLeftOf="@+id/Hintbutton"
     android:text="Pause" />
 
-<Button
-    android:id="@+id/Resume_button"
-    android:layout_width="40dp"
-    android:layout_height="wrap_content"
-    android:layout_alignParentBottom="true"
-    android:layout_toLeftOf="@+id/Pause_button"
-    android:text="Resume" />
+
 
 <TextView
     android:id="@+id/CountDown"
@@ -182,9 +176,9 @@
     android:id="@+id/inVisibleScore"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_alignLeft="@+id/button17"
-    android:layout_alignTop="@+id/Resume_button"
-    android:text="InvisibleScore:"
-    android:textColor="#FFFFFF" />
+    android:layout_above="@+id/CountDown"
+    android:layout_alignParentLeft="true"
+    android:textColor="#FFFFFF"
+    android:text="InvisibleScore:" />
 
 </RelativeLayout>
