@@ -48,6 +48,8 @@ public class Game extends Activity{
 	private static Random random = null;
 	private static String[] scoreList = {"3","3","3","3","3","3","3","3","6","6","6","6","6","6","9","9","9","9"};
 	
+	private static char[] puzzleChar = {'a','b','c','d','e','f','g','h','i','j','k','l','m',
+										'n','o','p','q','r','s','t','u','v','w','x','y','z'};
 	private static String[] puzzle = new String[18];
 	private static String[] puzzleScore = new String[18];
 	
@@ -94,7 +96,7 @@ public class Game extends Activity{
 		invisibleScoreText.addTextChangedListener(new ScoreTextListener());
 		scoreText.setText("0");
 		cdText.setText("00:00");
-		String string = (randomWord3()+randomWord4()+randomWord5()+randomWord6());
+		String string = (randomWords(6)+randomWords(5)+randomWords(4)+randomWords(3));
 		System.out.println("String: "+string);
 		ArrayList<String> sList = new ArrayList<String>();
 		for (int i =0; i<18; i++) {
@@ -998,6 +1000,513 @@ public class Game extends Activity{
 		}
 	}
 	
+	
+	public String loadDictRandom(char fir, HashMap<String,String> words, int line){
+		switch (fir) {
+		case 'a':
+			System.out.print("--------->switch to a");
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.a3);
+				return loadRandom(input,words,152);
+			case 4:
+				input = getResources().openRawResource(R.raw.a4);
+				load(input,words);
+				return loadRandom(input,words,458);
+			case 5:
+				input = getResources().openRawResource(R.raw.a5);
+				return loadRandom(input,words,1195);
+			case 6:
+				input = getResources().openRawResource(R.raw.a6);
+				return loadRandom(input,words,2136);
+
+			default:
+				return "";
+			}
+			
+			//match(s.toString());
+			
+		case 'b':
+			System.out.print("--------->switch to b");
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.b3);
+				return loadRandom(input,words,93);
+			case 4:
+				input = getResources().openRawResource(R.raw.b4);
+				return loadRandom(input,words,479);
+			case 5:
+				input = getResources().openRawResource(R.raw.b5);
+				return loadRandom(input,words,1272);
+			case 6:
+				input = getResources().openRawResource(R.raw.b6);
+				return loadRandom(input,words,2384);
+
+			default:
+				return "";
+			}
+			 
+		case 'c':
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.c3);
+				return loadRandom(input,words,104);
+			case 4:
+				input = getResources().openRawResource(R.raw.c4);
+				return loadRandom(input,words,439);
+			case 5:
+				input = getResources().openRawResource(R.raw.c5);
+				return loadRandom(input,words,1277);
+			case 6:
+				input = getResources().openRawResource(R.raw.c6);
+				return loadRandom(input,words,2700);
+
+			default:
+				return "";
+			}
+			 
+		case 'd':
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.d3);
+				return loadRandom(input,words,100);
+			case 4:
+				input = getResources().openRawResource(R.raw.d4);
+				return loadRandom(input,words,407);
+			case 5:
+				input = getResources().openRawResource(R.raw.d5);
+				return loadRandom(input,words,910);
+			case 6:
+				input = getResources().openRawResource(R.raw.d6);
+				return loadRandom(input,words,1691);
+
+			default:
+				return "";
+			}
+			 
+		case 'e':
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.e3);
+				return loadRandom(input,words,98);
+			case 4:
+				input = getResources().openRawResource(R.raw.e4);
+				return loadRandom(input,words,252);
+			case 5:
+				input = getResources().openRawResource(R.raw.e5);
+				return loadRandom(input,words,470);
+			case 6:
+				input = getResources().openRawResource(R.raw.e6);
+				return loadRandom(input,words,1049);
+
+			default:
+				return "";
+			}
+			 
+		case 'f':
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.f3);
+				return loadRandom(input,words,80);
+			case 4:
+				input = getResources().openRawResource(R.raw.f4);
+				return loadRandom(input,words,323);
+				case 5:
+				input = getResources().openRawResource(R.raw.f5);
+				return loadRandom(input,words,750);
+			case 6:
+				input = getResources().openRawResource(R.raw.f6);
+				return loadRandom(input,words,1336);
+
+			default:
+				return "";
+			}
+			 
+		case 'g':
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.g3);
+				return loadRandom(input,words,94);
+			case 4:
+				input = getResources().openRawResource(R.raw.g4);
+				return loadRandom(input,words,381);
+				case 5:
+				input = getResources().openRawResource(R.raw.g5);
+				return loadRandom(input,words,832);
+			case 6:
+				input = getResources().openRawResource(R.raw.g6);
+				return loadRandom(input,words,1465);
+
+			default:
+				return "";
+			}
+			 
+		case 'h':
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.h3);
+				return loadRandom(input,words,86);
+			case 4:
+				input = getResources().openRawResource(R.raw.h4);
+				return loadRandom(input,words,343);
+				case 5:
+				input = getResources().openRawResource(R.raw.h5);
+				return loadRandom(input,words,664);
+			case 6:
+				input = getResources().openRawResource(R.raw.h6);
+				return loadRandom(input,words,1155);
+
+			default:
+				return "";
+			}
+			 
+		case 'i':
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.i3);
+				return loadRandom(input,words,74);
+			case 4:
+				input = getResources().openRawResource(R.raw.i4);
+				return loadRandom(input,words,146);
+				case 5:
+				input = getResources().openRawResource(R.raw.i5);
+				return loadRandom(input,words,299);
+			case 6:
+				input = getResources().openRawResource(R.raw.i6);
+				return loadRandom(input,words,647);
+
+			default:
+				return "";
+			}
+			 
+		case 'j':
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.j3);
+				return loadRandom(input,words,48);
+			case 4:
+				input = getResources().openRawResource(R.raw.j4);
+				return loadRandom(input,words,173);
+				case 5:
+				input = getResources().openRawResource(R.raw.j5);
+				return loadRandom(input,words,276);
+			case 6:
+				input = getResources().openRawResource(R.raw.j6);
+				return loadRandom(input,words,498);
+
+			default:
+				return "";
+			}
+			 
+		case 'k':
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.k3);
+				return loadRandom(input,words,67);
+			case 4:
+				input = getResources().openRawResource(R.raw.k4);
+				return loadRandom(input,words,285);
+			case 5:
+				input = getResources().openRawResource(R.raw.k5);
+				return loadRandom(input,words,553);
+			case 6:
+				input = getResources().openRawResource(R.raw.k6);
+				return loadRandom(input,words,852);
+
+			default:
+				return "";
+			}
+			 
+		case 'l':
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.l3);
+				return loadRandom(input,words,95);
+			case 4:
+				input = getResources().openRawResource(R.raw.l4);
+				return loadRandom(input,words,365);
+			case 5:
+				input = getResources().openRawResource(R.raw.l5);
+				return loadRandom(input,words,778);
+			case 6:
+				input = getResources().openRawResource(R.raw.l6);
+				return loadRandom(input,words,1261);
+			default:
+				return "";
+			}
+			 
+		case 'm':
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.m3);
+				return loadRandom(input,words,102);
+			case 4:
+				input = getResources().openRawResource(R.raw.m4);
+				return loadRandom(input,words,417);
+			case 5:
+				input = getResources().openRawResource(R.raw.m5);
+				return loadRandom(input,words,934);
+			case 6:
+				input = getResources().openRawResource(R.raw.m6);
+				return loadRandom(input,words,1745);
+
+			default:
+				return "";
+			}
+			 
+		case 'n':
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.n3);
+				return loadRandom(input,words,69);
+			case 4:
+				input = getResources().openRawResource(R.raw.n4);
+				return loadRandom(input,words,232);
+				case 5:
+				input = getResources().openRawResource(R.raw.n5);
+				return loadRandom(input,words,482);
+			case 6:
+				input = getResources().openRawResource(R.raw.n6);
+				return loadRandom(input,words,749);
+
+			default:
+				return "";
+			}
+			 
+		case 'o':
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.o3);
+				return loadRandom(input,words,96);
+			case 4:
+				input = getResources().openRawResource(R.raw.o4);
+				return loadRandom(input,words,225);
+			case 5:
+				input = getResources().openRawResource(R.raw.o5);
+				return loadRandom(input,words,363);
+			case 6:
+				input = getResources().openRawResource(R.raw.o6);
+				return loadRandom(input,words,777);
+
+			default:
+				return "";
+			}
+			 
+		case 'p':
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.p3);
+				return loadRandom(input,words,121);
+			case 4:
+				input = getResources().openRawResource(R.raw.p4);
+				return loadRandom(input,words,440);
+				case 5:
+				input = getResources().openRawResource(R.raw.p5);
+				return loadRandom(input,words,1109);
+			case 6:
+				input = getResources().openRawResource(R.raw.p6);
+				return loadRandom(input,words,2207);
+
+			default:
+				return "";
+			}
+			 
+		case 'q':
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.q3);
+				return loadRandom(input,words,13);
+			case 4:
+				input = getResources().openRawResource(R.raw.q4);
+				return loadRandom(input,words,35);
+				case 5:
+				input = getResources().openRawResource(R.raw.q5);
+				return loadRandom(input,words,100);
+			case 6:
+				input = getResources().openRawResource(R.raw.q6);
+				return loadRandom(input,words,178);
+
+			default:
+				return "";
+			}
+			 
+		case 'r':
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.r3);
+				return loadRandom(input,words,80);
+			case 4:
+				input = getResources().openRawResource(R.raw.r4);
+				return loadRandom(input,words,328);
+				case 5:
+				input = getResources().openRawResource(R.raw.r5);
+				return loadRandom(input,words,788);
+			case 6:
+				input = getResources().openRawResource(R.raw.r6);
+				return loadRandom(input,words,1759);
+
+			default:
+				return "";
+			}
+			 
+		case 's':
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.s3);
+				return loadRandom(input,words,125);
+			case 4:
+				input = getResources().openRawResource(R.raw.s4);
+				return loadRandom(input,words,659);
+				case 5:
+				input = getResources().openRawResource(R.raw.s5);
+				return loadRandom(input,words,2010);
+			case 6:
+				input = getResources().openRawResource(R.raw.s6);
+				return loadRandom(input,words,3670);
+
+			default:
+				return "";
+			}
+			 
+		case 't':
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.t3);
+				return loadRandom(input,words,128);
+			case 4:
+				input = getResources().openRawResource(R.raw.t4);
+				return loadRandom(input,words,446);
+				case 5:
+				input = getResources().openRawResource(R.raw.t5);
+				return loadRandom(input,words,1105);
+			case 6:
+				input = getResources().openRawResource(R.raw.t6);
+				return loadRandom(input,words,2041);
+
+			default:
+				return "";
+			}
+			 
+		case 'u':
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.u3);
+				return loadRandom(input,words,63);
+			case 4:
+				input = getResources().openRawResource(R.raw.u4);
+				return loadRandom(input,words,112);
+				case 5:
+				input = getResources().openRawResource(R.raw.u5);
+				return loadRandom(input,words,352);
+			case 6:
+				input = getResources().openRawResource(R.raw.u6);
+				return loadRandom(input,words,991);
+
+			default:
+				return "";
+			}
+			 
+		case 'v':
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.v3);
+				return loadRandom(input,words,41);
+			case 4:
+				input = getResources().openRawResource(R.raw.v4);
+				return loadRandom(input,words,135);
+				case 5:
+				input = getResources().openRawResource(R.raw.v5);
+				return loadRandom(input,words,320);
+			case 6:
+				input = getResources().openRawResource(R.raw.v6);
+				return loadRandom(input,words,595);
+
+			default:
+				return "";
+			}
+			 
+		case 'w':
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.w3);
+				return loadRandom(input,words,70);
+			case 4:
+				input = getResources().openRawResource(R.raw.w4);
+				return loadRandom(input,words,296);
+				case 5:
+				input = getResources().openRawResource(R.raw.w5);
+				return loadRandom(input,words,530);
+			case 6:
+				input = getResources().openRawResource(R.raw.w6);
+				return loadRandom(input,words,876);
+
+			default:
+				return "";
+			}
+			 
+		case 'x':
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.x3);
+				return loadRandom(input,words,11);
+			case 4:
+				input = getResources().openRawResource(R.raw.x4);
+				return loadRandom(input,words,18);
+				case 5:
+				input = getResources().openRawResource(R.raw.x5);
+				return loadRandom(input,words,27);
+			case 6:
+				input = getResources().openRawResource(R.raw.x6);
+				return loadRandom(input,words,32);
+
+			default:
+				return "";
+			}
+			 
+		case 'y':
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.y3);
+				return loadRandom(input,words,51);
+			case 4:
+				input = getResources().openRawResource(R.raw.y4);
+				return loadRandom(input,words,171);
+				case 5:
+				input = getResources().openRawResource(R.raw.y5);
+				return loadRandom(input,words,219);
+			case 6:
+				input = getResources().openRawResource(R.raw.y6);
+				return loadRandom(input,words,255);
+
+			default:
+				return "";
+			}
+			 
+		case 'z':
+			switch (line) {
+			case 3:
+				input = getResources().openRawResource(R.raw.z3);
+				return loadRandom(input,words,24);
+			case 4:
+				input = getResources().openRawResource(R.raw.z4);
+				return loadRandom(input,words,59);
+				case 5:
+				input = getResources().openRawResource(R.raw.z5);
+				return loadRandom(input,words,91);
+			case 6:
+				input = getResources().openRawResource(R.raw.z6);
+				return loadRandom(input,words,144);
+
+			default:
+				return "";
+			}
+			 
+			
+		default:
+			return "";
+		}
+	}
+	
 	public void load(InputStream input,HashMap<String,String> words) {
 		try {
 			words.clear();
@@ -1023,6 +1532,41 @@ public class Game extends Activity{
 			e.printStackTrace();
 		}
 	}
+	
+	public String loadRandom(InputStream input,HashMap<String,String> words, int len) {
+		try {
+			words.clear();
+			String line;
+			String selStr="";
+			Random random = new Random();
+			int selStrIndex = random.nextInt(len-3)+1;
+			int i =0;
+			//InputStream input = getResources().openRawResource(R.raw.wordlist);
+			InputStreamReader inputStreamReader = new InputStreamReader(input, "GBK");
+			BufferedReader reader =new BufferedReader(inputStreamReader);
+			System.out.println("file loaded!!! ");
+			while ((line = reader.readLine())!= null) {
+				if(i==selStrIndex){
+					selStr = line;
+				}
+				words.put(line,"");
+				i++;
+				//count = i;
+				
+			}
+			
+			System.out.println("file readed");
+			//isReaded = true;
+			return selStr;
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			System.out.println("file unreaded");
+			e.printStackTrace();
+			return "";
+		}
+	}
+	
 	public int match(String s, HashMap<String,String> words, int pscore, int locate) {
 		
 		if(alreadyExistIn(s, wordsBack)){
@@ -1322,34 +1866,36 @@ public class Game extends Activity{
 	
 	
 	
-	public static final String randomWord3() {
+	public String randomWords(int len) {
 	         
 	    random = new Random();
-	    String selStr;
-	    selStr = WordsList.words3[random.nextInt(WordsList.words3.length)];
-	    return selStr;
+	    char selChar1,selChar2,selChar3,selChar4;
+	    
+	   
+	    switch (len) {
+		case 6:
+			 selChar1 = puzzleChar[random.nextInt(26)];
+			return loadDictRandom(selChar1, words1, 6);
+			 
+		case 5:
+			 selChar2 = puzzleChar[random.nextInt(26)];
+			return loadDictRandom(selChar2, words2, 5);
+			 
+		case 4:
+			 selChar3 = puzzleChar[random.nextInt(26)];
+			return loadDictRandom(selChar3, words3, 4);
+			  
+		case 3:
+			 selChar4 = puzzleChar[random.nextInt(26)];
+			return loadDictRandom(selChar4, words4, 3);
+			 
+		default:
+			return "";
+			 
+		}
+	   
 	}
-	public static final String randomWord4() {
-        
-	    random = new Random();
-	    String selStr;
-	    selStr = WordsList.words4[random.nextInt(WordsList.words4.length)];
-	    return selStr;
-	}
-	public static final String randomWord5() {
-        
-	    random = new Random();
-	    String selStr;
-	    selStr = WordsList.words5[random.nextInt(WordsList.words5.length)];
-	    return selStr;
-	}
-	public static final String randomWord6() {
-        
-	    random = new Random();
-	    String selStr;
-	    selStr = WordsList.words6[random.nextInt(WordsList.words6.length)];
-	    return selStr;
-	}
+ 
 	
 
 }
