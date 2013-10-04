@@ -13,45 +13,45 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     >
    <TextView
-      android:id="@+id/dabble_cong1"
+      android:id="@+id/dabble_finish1"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="Congratulation!"
+      android:text="Game Over!"
       android:layout_centerHorizontal="true" />
    <TextView
-      android:id="@+id/dabble_cong2"
+      android:id="@+id/dabble_finish2"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="You have solved the puzzle." 
-      android:layout_below="@+id/dabble_cong1" 
+      android:text="Time is used up." 
+      android:layout_below="@+id/dabble_finish1" 
       android:layout_centerHorizontal="true" />
    <TextView
-      android:id="@+id/dabble_cong_score"
+      android:id="@+id/dabble_finish_score"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:text="0000"
-      android:layout_below="@+id/dabble_cong2" 
+      android:layout_below="@+id/dabble_finish2" 
       android:layout_centerHorizontal="true" />
    <Button 
-       android:id="@+id/back_to_main"
+       android:id="@+id/finish_back_to_main"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
        android:text="Go to the main menu"
        android:layout_centerInParent="true"
-       android:layout_below="@+id/dabble_cong_score"/>
-      <TextView
-      android:id="@+id/dabble_cong_or"
+       android:layout_below="@+id/dabble_finish_score"/>
+   <TextView
+      android:id="@+id/dabble_finish_or"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:text="or"
-      android:layout_below="@+id/back_to_main" 
+      android:layout_below="@+id/finish_back_to_main" 
       android:layout_centerHorizontal="true" />
-      <Button 
-       android:id="@+id/cong_try_again"
+   <Button 
+       android:id="@+id/finish_try_again"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
-       android:text="New Game!"
+       android:text="Try again!"
        android:layout_centerInParent="true"
-       android:layout_below="@+id/dabble_cong_or"/>
+       android:layout_below="@+id/dabble_finish_or"/>
   </RelativeLayout>
 </ScrollView>

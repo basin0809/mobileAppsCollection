@@ -17,14 +17,14 @@ public class Dabble extends Activity{
 	private Button quitButton;
 	private Button musicButton;
 	private boolean musicGoOn;
-	private ArrayList<Integer> musicTwicePressed = new ArrayList<Integer>();
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		musicGoOn=true;
 		setContentView(R.layout.activity_dabble);
-		musicTwicePressed.add(0);
+		TwiceActiveCheck.musicTwicePressed.add(0);
 		gameButton = (Button)findViewById(R.id.game_button);
 		quitButton = (Button)findViewById(R.id.quit_button);
 		musicButton = (Button)findViewById(R.id.music_button);
@@ -46,7 +46,7 @@ public class Dabble extends Activity{
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		if(musicTwicePressed.get(musicTwicePressed.size()-1)==1){
+		if(TwiceActiveCheck.musicTwicePressed.get(TwiceActiveCheck.musicTwicePressed.size()-1)==1){
 			
 		}
 		else{
@@ -59,7 +59,7 @@ public class Dabble extends Activity{
 		public void onClick(View arg0) {
 			// TODO Auto-generated method stub
 		 Intent intent =new Intent();
-		 intent.putExtra("music_stuate", musicTwicePressed.get(musicTwicePressed.size()-1).toString());
+		 intent.putExtra("music_stuate", TwiceActiveCheck.musicTwicePressed.get(TwiceActiveCheck.musicTwicePressed.size()-1).toString());
 		 intent.setClass(Dabble.this, Game.class);
 		 startActivity(intent);
 		}
@@ -70,18 +70,18 @@ public class Dabble extends Activity{
 		@Override
 		public void onClick(View arg0) {
 			// TODO Auto-generated method stub
-			if(musicTwicePressed.get(musicTwicePressed.size()-1)==0){
+			if(TwiceActiveCheck.musicTwicePressed.get(TwiceActiveCheck.musicTwicePressed.size()-1)==0){
 				
 				
 		        BGMManager.pause();
-		        musicTwicePressed.add(1);
+		        TwiceActiveCheck.musicTwicePressed.add(1);
 		        musicButton.setText("Turn on the music");
 				
 			}
 			else{
 				musicGoOn=false;
 		        BGMManager.start(Dabble.this,R.raw.game);
-		        musicTwicePressed.add(0);
+		        TwiceActiveCheck.musicTwicePressed.add(0);
 	            musicButton.setText("Turn off the music");
 			}
 		}

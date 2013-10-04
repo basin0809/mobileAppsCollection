@@ -12,12 +12,13 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class Cong extends Activity{
-	private TextView cong1;
-	private TextView cong2;
-	private TextView score;
-	private TextView cand;
-	private Button  back, cagain;
+public class Finish extends Activity{
+	private TextView f1;
+	private TextView f2;
+	private TextView fscore;
+	private TextView fand;
+	private Button  fback,fagain;
+
 	private static MediaPlayer mp = null;
 	
 	@Override
@@ -25,23 +26,23 @@ public class Cong extends Activity{
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 	 
-		setContentView(R.layout.dabble_cong);
-		mp = MediaPlayer.create(this, R.raw.tada);
+		setContentView(R.layout.dabble_finish);
+		mp = MediaPlayer.create(this, R.raw.notify);
         mp.start();
-		cong1 = (TextView)findViewById(R.id.dabble_cong1);
-		cong2 = (TextView)findViewById(R.id.dabble_cong2);
-		score = (TextView)findViewById(R.id.dabble_cong_score);
-		cand = (TextView)findViewById(R.id.dabble_cong_or);
-		back = (Button)findViewById(R.id.back_to_main);
-		cagain = (Button)findViewById(R.id.cong_try_again);
+		f1 = (TextView)findViewById(R.id.dabble_finish1);
+		f2 = (TextView)findViewById(R.id.dabble_finish2);
+		fscore = (TextView)findViewById(R.id.dabble_finish_score);
+		fand = (TextView)findViewById(R.id.dabble_finish_or);
+		fback = (Button)findViewById(R.id.finish_back_to_main);
+		fagain = (Button)findViewById(R.id.finish_try_again);
 		Intent intent = getIntent();
 		String res = intent.getStringExtra("lastScore");
-		score.setText(res);
-		back.setOnClickListener(new BackListener());
-		cagain.setOnClickListener(new CAListener());
+		fscore.setText(res);
+		fback.setOnClickListener(new BackListener());
+		fagain.setOnClickListener(new FAListener());
 		
 	}
-	class CAListener implements OnClickListener{
+	class FAListener implements OnClickListener{
 		
 		@Override
 	public void onClick(View v) {
@@ -51,7 +52,7 @@ public class Cong extends Activity{
 		//musicGoOn = true;
 		Intent intent =new Intent();
 		intent.putExtra("music_stuate", TwiceActiveCheck.musicTwicePressed.get(TwiceActiveCheck.musicTwicePressed.size()-1).toString());
-		intent.setClass(Cong.this, Game.class);
+		intent.setClass(Finish.this, Game.class);
 		startActivity(intent);
 	}
 	}

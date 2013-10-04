@@ -55,10 +55,10 @@ public class Game extends Activity{
 	private static String[] puzzleScore = new String[18];
 	
 	private MyCount mc;
-	private long timeLeft=30000;
+	private long timeLeft=6000;
 	private boolean musicGoOn;
 	private boolean musicGoOn2;
-	private ArrayList<Integer> musicTwicePressed2 = new ArrayList<Integer>();
+	
 	private static MediaPlayer mp = null;
 	final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
 	@Override
@@ -120,7 +120,7 @@ public class Game extends Activity{
 		scoreText = (TextView)findViewById(R.id.Score);
 		invisibleScoreText = (TextView)findViewById(R.id.inVisibleScore);
 		invisibleScoreText.addTextChangedListener(new ScoreTextListener());
-		scoreText.setText("0");
+		scoreText.setText("Score:0");
 		cdText.setText("00:00");
 		String string = (randomWords(6)+randomWords(5)+randomWords(4)+randomWords(3));
 		System.out.println("String: "+string);
@@ -216,7 +216,7 @@ public class Game extends Activity{
 		displayword4(score4);
 		buttonTwicePressed.add(18);
 		pauseTwicePressed.add(0);
-		mc = new MyCount(300000, 1000);  
+		mc = new MyCount(60000, 1000);  
         mc.start();
         pauseButton.setOnClickListener(new PauseListener());
         
@@ -248,8 +248,14 @@ public class Game extends Activity{
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
 			if(musicGoOn2==true){
-			musicGoOn = true;}
-			finish();
+			musicGoOn = true;
+			mc.cancel();
+			finish();}
+			else {
+				mc.cancel();
+				finish();
+			}
+			
 		}
 		
 	}
@@ -263,14 +269,16 @@ public class Game extends Activity{
 			mc.cancel();
 			for (int i =0; i<18; i++) {
 				//letterButtons[i].setTextColor(getResources().getColor(R.color.black));
-				letterButtons[i].getBackground().setAlpha(70);
+				letterButtons[i].setClickable(false);
 				letterButtons[i].setOnClickListener(null);
 			}
-			
-			hintButton.getBackground().setAlpha(70);
+			if(musicGoOn2==true){
+				BGMManager.pause();
+			}
+			hintButton.setClickable(false);
 			hintButton.setOnClickListener(null);
 			
-			backButton.getBackground().setAlpha(70);
+			backButton.setClickable(false);
 			backButton.setOnClickListener(null);
 			
 			pauseButton.setText("Continue");
@@ -281,14 +289,16 @@ public class Game extends Activity{
 				for (int i =0; i<18; i++) {
 					//letterButtons[i].setTextColor(getResources().getColor(R.color.black));
 			
-					letterButtons[i].getBackground().setAlpha(255);
+					letterButtons[i].setClickable(true);
 					letterButtons[i].setOnClickListener(new LetterButtonsListener());
 				}
-				
-				hintButton.getBackground().setAlpha(255);
+				if(musicGoOn2==true){
+					BGMManager.start(Game.this, R.raw.game);
+				}
+				hintButton.setClickable(true);
 				hintButton.setOnClickListener(null);
 				
-				backButton.getBackground().setAlpha(255);
+				backButton.setClickable(true);
 				backButton.setOnClickListener(new QuitListener());
 				
 				pauseButton.setText("Pause");
@@ -306,22 +316,31 @@ public class Game extends Activity{
         }     
         @Override     
         public void onFinish() {     
-        	cdText.setText("finish");        
+        	cdText.setText("finish"); 
+        	mc.cancel();
+        	finish();
+			Intent intent =new Intent();
+			intent.putExtra("lastScore", scoreText.getText().toString());
+			intent.putExtra("music_stuate", TwiceActiveCheck.musicTwicePressed.get(TwiceActiveCheck.musicTwicePressed.size()-1).toString());
+			intent.setClass(Game.this, Finish.class);
+			
+			startActivity(intent);
         }     
         @Override     
         public void onTick(long millisUntilFinished) { 
-        	Integer miliSec = new Integer(new Double(millisUntilFinished).intValue());  
+        	Integer miliSec = new Integer(new Double(millisUntilFinished).intValue()); 
+        	System.out.println("--------------->TIME "+miliSec);
         	Integer cdSecs = miliSec / 1000;  
 
         	Integer minutes = (cdSecs % 3600) / 60;  
         	Integer seconds = (cdSecs % 3600) % 60;    
 
-        	cdText.setText(String.format("%02d", minutes) + ":"  
+        	cdText.setText("Time Left: "+String.format("%02d", minutes) + ":"  
         	+ String.format("%02d", seconds));
         	//cdText.setText(millisUntilFinished / 1000 +""); 
-        	if(cdSecs<=270){
+        	if(cdSecs<=10){
         		cdText.setTextColor(getResources().getColor(R.color.red));
-        		cdText.setTextSize(20);
+        		cdText.setTextSize(25);
         	}
         	timeLeft = millisUntilFinished ;
            // Toast.makeText(NewActivity.this, millisUntilFinished / 1000 + "", Toast.LENGTH_LONG).show(); 
@@ -334,6 +353,7 @@ public class Game extends Activity{
 			// TODO Auto-generated method stub
 			System.out.println("------------->Score: "+s);
 			if(Integer.parseInt(s.toString())==96){
+				mc.cancel();
 				finish();
 				Intent intent =new Intent();
 				intent.setClass(Game.this, Cong.class);
@@ -369,6 +389,7 @@ public class Game extends Activity{
 			// TODO Auto-generated method stub
 			
 			int buttonId = v.getId();
+			
 			//mp = MediaPlayer.create(Game.this, R.raw.balloon);
 	       // mp.start();
 			tg.startTone(ToneGenerator.TONE_PROP_BEEP);
@@ -1634,7 +1655,7 @@ public class Game extends Activity{
 			
 			score= pscore*(9-locate)+score-tempScore[locate-1];
 			tempScore[locate-1]=pscore*(9-locate);
-			scoreText.setText(score+"");
+			scoreText.setText("Score: "+score);
 			
 			invisibleScore= pscore+invisibleScore-invisibleTempScore[locate-1];
 			invisibleTempScore[locate-1]=pscore;
@@ -1661,7 +1682,7 @@ public class Game extends Activity{
 			
 			score= pscore*(9-locate)+score-tempScore[locate-1];
 			tempScore[locate-1]=pscore*(9-locate);
-			scoreText.setText(score+"");
+			scoreText.setText("Score: "+score);
 			
 			
 			invisibleScore= pscore+invisibleScore-invisibleTempScore[locate-1];
@@ -1677,7 +1698,7 @@ public class Game extends Activity{
 			System.out.println("undetect match");
 			if(scoreLocates[locate-1]==true){
 				score= score-tempScore[locate-1];
-				scoreText.setText(score+"");
+				scoreText.setText("Score: "+score);
 				
 				invisibleScore= invisibleScore-invisibleTempScore[locate-1];
 				invisibleScoreText.setText(invisibleScore+"");

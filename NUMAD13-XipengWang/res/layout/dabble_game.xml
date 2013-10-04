@@ -190,19 +190,21 @@
     android:textColor="#FFFFFF" />
 
 <TextView
-    android:id="@+id/Score"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_alignBottom="@+id/Backbutton"
-    android:layout_alignRight="@+id/button16"
-    android:text="Score:" />
-
-<TextView
     android:id="@+id/CountDown"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_alignLeft="@+id/Score"
-    android:layout_alignTop="@+id/Backbutton"
+    android:layout_below="@+id/button16"
+    android:layout_marginTop="37dp"
     android:text="CountingDown:" />
+
+<TextView
+    android:id="@+id/Score"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentLeft="true"
+    android:layout_below="@+id/CountDown"
+    android:layout_marginTop="18dp"
+    android:text="Score:" />
 
 </RelativeLayout>
