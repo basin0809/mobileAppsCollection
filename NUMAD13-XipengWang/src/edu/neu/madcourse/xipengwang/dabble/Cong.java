@@ -2,6 +2,8 @@ package edu.neu.madcourse.xipengwang.dabble;
 
 import edu.neu.madcourse.xipengwang.R;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -19,6 +21,7 @@ public class Cong extends Activity{
 	private TextView cand;
 	private Button  back, cagain;
 	private static MediaPlayer mp = null;
+	private int modeSt;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +39,14 @@ public class Cong extends Activity{
 		cagain = (Button)findViewById(R.id.cong_try_again);
 		Intent intent = getIntent();
 		String res = intent.getStringExtra("lastScore");
+		modeSt = Integer.parseInt(intent.getStringExtra("gameMode"));
 		score.setText(res);
 		back.setOnClickListener(new BackListener());
 		cagain.setOnClickListener(new CAListener());
 		
 	}
+	
+		   
 	class CAListener implements OnClickListener{
 		
 		@Override
@@ -51,6 +57,7 @@ public class Cong extends Activity{
 		//musicGoOn = true;
 		Intent intent =new Intent();
 		intent.putExtra("music_stuate", TwiceActiveCheck.musicTwicePressed.get(TwiceActiveCheck.musicTwicePressed.size()-1).toString());
+		intent.putExtra("gameMode", modeSt+"");
 		intent.setClass(Cong.this, Game.class);
 		startActivity(intent);
 	}

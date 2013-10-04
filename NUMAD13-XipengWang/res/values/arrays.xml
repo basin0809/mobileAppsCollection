@@ -13,4 +13,10 @@
       <item>@string/medium_label</item>
       <item>@string/hard_label</item>
    </array>
+   
+      <array name="Mode">
+      <item>@string/normal_label</item>
+      <item>@string/challenge_label</item>
+      
+   </array>
 </resources>

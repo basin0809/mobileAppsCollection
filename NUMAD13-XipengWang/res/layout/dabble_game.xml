@@ -190,13 +190,38 @@
     android:textColor="#FFFFFF" />
 
 <TextView
+    android:id="@+id/Hint"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignBaseline="@+id/button18"
+    android:layout_alignBottom="@+id/button18"
+    android:layout_alignLeft="@+id/button11"
+    android:text="" />
+
+<TextView
+    android:id="@+id/SwapTimes"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_toRightOf="@+id/Swap"
+    android:layout_alignTop="@+id/Swap"
+    android:text="100" />
+
+<TextView
     android:id="@+id/CountDown"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_alignLeft="@+id/Score"
+    android:layout_alignParentLeft="true"
     android:layout_below="@+id/button16"
-    android:layout_marginTop="37dp"
+    android:layout_marginTop="33dp"
     android:text="CountingDown:" />
+
+<TextView
+    android:id="@+id/Swap"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentLeft="true"
+    android:layout_below="@+id/Score"
+    android:text="Swapping Times Left: " />
 
 <TextView
     android:id="@+id/Score"
@@ -204,7 +229,6 @@
     android:layout_height="wrap_content"
     android:layout_alignParentLeft="true"
     android:layout_below="@+id/CountDown"
-    android:layout_marginTop="18dp"
     android:text="Score:" />
 
 </RelativeLayout>

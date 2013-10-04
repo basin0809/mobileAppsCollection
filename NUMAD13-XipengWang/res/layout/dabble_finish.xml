@@ -22,7 +22,7 @@
       android:id="@+id/dabble_finish2"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="Time is used up." 
+      android:text="You fail to solve the puzzle." 
       android:layout_below="@+id/dabble_finish1" 
       android:layout_centerHorizontal="true" />
    <TextView

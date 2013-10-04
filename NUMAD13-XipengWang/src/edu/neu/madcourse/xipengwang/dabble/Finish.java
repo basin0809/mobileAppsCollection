@@ -1,7 +1,10 @@
 package edu.neu.madcourse.xipengwang.dabble;
 
 import edu.neu.madcourse.xipengwang.R;
+import android.R.integer;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -18,6 +21,7 @@ public class Finish extends Activity{
 	private TextView fscore;
 	private TextView fand;
 	private Button  fback,fagain;
+	private int modeSt;
 
 	private static MediaPlayer mp = null;
 	
@@ -40,8 +44,10 @@ public class Finish extends Activity{
 		fscore.setText(res);
 		fback.setOnClickListener(new BackListener());
 		fagain.setOnClickListener(new FAListener());
-		
+		modeSt = Integer.parseInt(intent.getStringExtra("gameMode"));
 	}
+	
+
 	class FAListener implements OnClickListener{
 		
 		@Override
@@ -52,6 +58,7 @@ public class Finish extends Activity{
 		//musicGoOn = true;
 		Intent intent =new Intent();
 		intent.putExtra("music_stuate", TwiceActiveCheck.musicTwicePressed.get(TwiceActiveCheck.musicTwicePressed.size()-1).toString());
+		intent.putExtra("gameMode", modeSt+"");
 		intent.setClass(Finish.this, Game.class);
 		startActivity(intent);
 	}

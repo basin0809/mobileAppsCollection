@@ -3,10 +3,15 @@ package edu.neu.madcourse.xipengwang.dabble;
 
 import java.util.ArrayList;
 
+
+
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -34,6 +39,29 @@ public class Dabble extends Activity{
 		
 		
 	}
+	   private void openNewGameDialog() {
+		      new AlertDialog.Builder(this)
+		           .setTitle(R.string.dabble_game_title)
+		           .setItems(R.array.Mode,
+		            new DialogInterface.OnClickListener() {
+		               public void onClick(DialogInterface dialoginterface,
+		                     int i) {
+		                  startGame(i);
+		                  
+		               }
+		            })
+		           .show();
+		   }
+
+		   /** Start a new game with the given difficulty level */
+		   private void startGame(int i) {
+		      //Log.d(TAG, "clicked on " + i);
+		      Intent intent = new Intent(this, Game.class);
+		      intent.putExtra("music_stuate", TwiceActiveCheck.musicTwicePressed.get(TwiceActiveCheck.musicTwicePressed.size()-1).toString());
+		      System.out.println("clicked on " + i);
+		      intent.putExtra("gameMode", i+"");
+		      startActivity(intent);
+		   }
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
@@ -58,10 +86,7 @@ public class Dabble extends Activity{
 		@Override
 		public void onClick(View arg0) {
 			// TODO Auto-generated method stub
-		 Intent intent =new Intent();
-		 intent.putExtra("music_stuate", TwiceActiveCheck.musicTwicePressed.get(TwiceActiveCheck.musicTwicePressed.size()-1).toString());
-		 intent.setClass(Dabble.this, Game.class);
-		 startActivity(intent);
+		 openNewGameDialog();
 		}
 		
 	}

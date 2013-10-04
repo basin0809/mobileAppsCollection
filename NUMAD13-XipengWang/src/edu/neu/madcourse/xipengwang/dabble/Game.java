@@ -10,7 +10,6 @@ import java.util.Random;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Point;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.ToneGenerator;
@@ -21,6 +20,7 @@ import android.text.TextWatcher;
 import android.view.Display;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.TextView;
 import edu.neu.madcourse.xipengwang.R;
@@ -38,14 +38,24 @@ public class Game extends Activity{
 	private int[] tempScore = new int[4];
 	private int[] invisibleTempScore = new int[4];
 	private String result="";
+	private String result1="";
+	private String result2="";
+	private String result3="";
+	private String result4="";
+	private String result5="";
+	private String result6="";
+	private String resultString;
 	private InputStream input = null;
 	private boolean[] buttonIsPressed = new boolean[18];
 	private ArrayList<Integer> buttonTwicePressed = new ArrayList<Integer>();
 	private ArrayList<Integer> pauseTwicePressed = new ArrayList<Integer>();
+	private ArrayList<Integer> hintTwicePressed = new ArrayList<Integer>();
 	private boolean[] scoreLocates = new boolean[4];
 	private Button[] letterButtons = new Button[18];
 	private Button pauseButton, hintButton, backButton;
-	private TextView cdText, scoreText, invisibleScoreText ;
+	private int swapLeft = 40;
+	private int modeSt;
+	private TextView cdText, scoreText, invisibleScoreText, hintText, swap, swapTimes;
 	private static Random random = null;
 	private static String[] scoreList = {"3","3","3","3","3","3","3","3","6","6","6","6","6","6","9","9","9","9"};
 	
@@ -59,6 +69,9 @@ public class Game extends Activity{
 	private boolean musicGoOn;
 	private boolean musicGoOn2;
 	
+	private AlphaAnimation alphaDes;
+    private AlphaAnimation alphaInc;
+	
 	private static MediaPlayer mp = null;
 	final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
 	@Override
@@ -70,6 +83,7 @@ public class Game extends Activity{
 		setContentView(R.layout.dabble_game);
 		Intent intent = getIntent();
 		int musicSt = Integer.parseInt(intent.getStringExtra("music_stuate"));
+		modeSt = Integer.parseInt(intent.getStringExtra("gameMode"));
 		if(musicSt==1){
 			musicGoOn2 = false;
 			
@@ -118,12 +132,15 @@ public class Game extends Activity{
 		backButton.setOnClickListener(new QuitListener());
 		cdText = (TextView)findViewById(R.id.CountDown);
 		scoreText = (TextView)findViewById(R.id.Score);
+		hintText = (TextView)findViewById(R.id.Hint);
+		swap = (TextView)findViewById(R.id.Swap);
+		swapTimes = (TextView)findViewById(R.id.SwapTimes);
 		invisibleScoreText = (TextView)findViewById(R.id.inVisibleScore);
 		invisibleScoreText.addTextChangedListener(new ScoreTextListener());
 		scoreText.setText("Score:0");
 		cdText.setText("00:00");
-		String string = (randomWords(6)+randomWords(5)+randomWords(4)+randomWords(3));
-		System.out.println("String: "+string);
+		resultString = (randomWords(6)+randomWords(5)+randomWords(4)+randomWords(3));
+		System.out.println("String: "+resultString);
 		ArrayList<String> sList = new ArrayList<String>();
 		for (int i =0; i<18; i++) {
 			sList.add(scoreList[i]);
@@ -131,7 +148,7 @@ public class Game extends Activity{
 		Collections.shuffle(sList);
 		ArrayList<String> arrayList = new ArrayList<String>();
 		for(int i =0; i<18; i++){
-			arrayList.add(String.valueOf(string.charAt(i))+"\n"+"     "+sList.get(i));
+			arrayList.add(String.valueOf(resultString.charAt(i))+"\n"+"     "+sList.get(i));
 			
 		}
 		Collections.shuffle(arrayList);
@@ -216,11 +233,32 @@ public class Game extends Activity{
 		displayword4(score4);
 		buttonTwicePressed.add(18);
 		pauseTwicePressed.add(0);
-		mc = new MyCount(60000, 1000);  
+		hintTwicePressed.add(0);
+		mc = new MyCount(20000, 1000);  
         mc.start();
         pauseButton.setOnClickListener(new PauseListener());
+        hintButton.setOnClickListener(new HintListener());
         
+        alphaDes = new AlphaAnimation(1.0f, 0.3f);
+        alphaInc = new AlphaAnimation(0.3f, 1.0f);
+        alphaDes.setDuration(1000);
+        alphaInc.setDuration(1000);
+        alphaDes.setFillAfter(true);
+        alphaInc.setFillAfter(true);
         
+        if(modeSt==0){
+        	swapTimes.setText("");
+        	swap.setText("");
+        }
+        if(modeSt==1){
+        	swap.setText("Swapping Times Left: ");
+        	swapTimes.setText("40");
+        	swap.setTextColor(getResources().getColor(
+	            R.color.red));
+        	swapTimes.setTextColor(getResources().getColor(
+    	            R.color.red));
+        	swapTimes.addTextChangedListener(new SwapTimesListener());
+        }
 		}
 	
 	@Override
@@ -241,6 +279,34 @@ public class Game extends Activity{
 		else {
 			
 		}
+	}
+	
+	class HintListener implements OnClickListener{
+
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			if(hintTwicePressed.get(hintTwicePressed.size()-1)==0){
+				//System.out.println("PAUSE");
+			// TODO Auto-generated method stub
+			
+			
+			hintButton.setText("Hide hint");
+			result1=resultString.substring(0, 6);
+			result2=resultString.substring(6, 11);
+			result3=resultString.substring(11, 15);
+			result4=resultString.substring(15, 18);
+			result=result1+"\n"+result2+"\n"+result3+"\n"+result4;
+			hintText.setText(result);
+			hintTwicePressed.add(1);
+			}
+			else{
+				hintButton.setText("Hint");
+				hintText.setText("");
+				hintTwicePressed.add(0);
+			}
+		}
+		
 	}
 	class QuitListener implements OnClickListener{
 
@@ -269,16 +335,19 @@ public class Game extends Activity{
 			mc.cancel();
 			for (int i =0; i<18; i++) {
 				//letterButtons[i].setTextColor(getResources().getColor(R.color.black));
-				letterButtons[i].setClickable(false);
+				//letterButtons[i].setClickable(false);
+				letterButtons[i].startAnimation(alphaDes);
 				letterButtons[i].setOnClickListener(null);
 			}
 			if(musicGoOn2==true){
 				BGMManager.pause();
 			}
-			hintButton.setClickable(false);
+			//hintButton.setClickable(false);
+			hintButton.startAnimation(alphaDes);
 			hintButton.setOnClickListener(null);
 			
-			backButton.setClickable(false);
+			//backButton.setClickable(false);
+			backButton.startAnimation(alphaDes);
 			backButton.setOnClickListener(null);
 			
 			pauseButton.setText("Continue");
@@ -289,16 +358,19 @@ public class Game extends Activity{
 				for (int i =0; i<18; i++) {
 					//letterButtons[i].setTextColor(getResources().getColor(R.color.black));
 			
-					letterButtons[i].setClickable(true);
+					//letterButtons[i].setClickable(true);
+					letterButtons[i].startAnimation(alphaInc);
 					letterButtons[i].setOnClickListener(new LetterButtonsListener());
 				}
 				if(musicGoOn2==true){
 					BGMManager.start(Game.this, R.raw.game);
 				}
-				hintButton.setClickable(true);
-				hintButton.setOnClickListener(null);
+				//hintButton.setClickable(true);
+				hintButton.startAnimation(alphaInc);
+				hintButton.setOnClickListener(new HintListener());
 				
-				backButton.setClickable(true);
+				//backButton.setClickable(true);
+				backButton.startAnimation(alphaInc);
 				backButton.setOnClickListener(new QuitListener());
 				
 				pauseButton.setText("Pause");
@@ -322,6 +394,12 @@ public class Game extends Activity{
 			Intent intent =new Intent();
 			intent.putExtra("lastScore", scoreText.getText().toString());
 			intent.putExtra("music_stuate", TwiceActiveCheck.musicTwicePressed.get(TwiceActiveCheck.musicTwicePressed.size()-1).toString());
+			if(modeSt==1){
+				intent.putExtra("gameMode", 1+"");
+			}
+			if(modeSt==0){
+				intent.putExtra("gameMode", 0+"");
+			}
 			intent.setClass(Game.this, Finish.class);
 			
 			startActivity(intent);
@@ -346,6 +424,39 @@ public class Game extends Activity{
            // Toast.makeText(NewActivity.this, millisUntilFinished / 1000 + "", Toast.LENGTH_LONG).show(); 
         }    
     }  
+	
+	class SwapTimesListener implements TextWatcher{
+
+		@Override
+		public void afterTextChanged(Editable s) {
+			// TODO Auto-generated method stub
+			if(Integer.parseInt(s.toString())==0){
+				mc.cancel();
+				finish();
+				Intent intent =new Intent();
+				intent.setClass(Game.this, Finish.class);
+				intent.putExtra("lastScore", scoreText.getText().toString());
+				intent.putExtra("music_stuate", TwiceActiveCheck.musicTwicePressed.get(TwiceActiveCheck.musicTwicePressed.size()-1).toString());
+				intent.putExtra("gameMode", 1+"");
+				startActivity(intent);
+			}
+		}
+
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count,
+				int after) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before,
+				int count) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
 	class ScoreTextListener implements TextWatcher{
 
 		@Override
@@ -358,6 +469,12 @@ public class Game extends Activity{
 				Intent intent =new Intent();
 				intent.setClass(Game.this, Cong.class);
 				intent.putExtra("lastScore", scoreText.getText().toString());
+				if(modeSt==1){
+					intent.putExtra("gameMode", 1+"");
+				}
+				if(modeSt==0){
+					intent.putExtra("gameMode", 0+"");
+				}
 				startActivity(intent);
 			}
 		}
@@ -1674,7 +1791,7 @@ public class Game extends Activity{
 				}
 			words.remove(s.toString());
 			System.out.println("detect match");
-			result=result+s.toString()+"\n";
+			//result=result+s.toString()+"\n";
 			//textView.setMovementMethod(new ScrollingMovementMethod()); 
 			//textView.setText(result);
 			
@@ -1734,7 +1851,9 @@ public class Game extends Activity{
 		
 		if(secButton>=0){
 			
-			
+			swapLeft--;
+			if(modeSt==1){
+			swapTimes.setText(swapLeft+"");}
 			String temp= letterButtons[firButton].getText().toString();
 			letterButtons[firButton].setText(letterButtons[secButton].getText().toString());
 			letterButtons[secButton].setText(temp);
