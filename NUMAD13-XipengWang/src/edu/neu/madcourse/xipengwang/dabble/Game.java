@@ -8,20 +8,21 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
 
-import android.R.integer;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Point;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.ToneGenerator;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Display;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
-
 import edu.neu.madcourse.xipengwang.R;
 
 
@@ -55,13 +56,28 @@ public class Game extends Activity{
 	
 	private MyCount mc;
 	private long timeLeft=30000;
+	private boolean musicGoOn;
+	private boolean musicGoOn2;
+	private ArrayList<Integer> musicTwicePressed2 = new ArrayList<Integer>();
+	private static MediaPlayer mp = null;
 	final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
 	@Override
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		musicGoOn = true;
 		setContentView(R.layout.dabble_game);
+		Intent intent = getIntent();
+		int musicSt = Integer.parseInt(intent.getStringExtra("music_stuate"));
+		if(musicSt==1){
+			musicGoOn2 = false;
+			
+		}
+		else{
+			musicGoOn2 = true;
+			
+		}
 		//pauseTwicePressed.add(0);
 		letterButtons[0]=(Button)findViewById(R.id.button1);
 		letterButtons[1]=(Button)findViewById(R.id.button2);
@@ -79,8 +95,17 @@ public class Game extends Activity{
 		letterButtons[13]=(Button)findViewById(R.id.button14);
 		letterButtons[14]=(Button)findViewById(R.id.button15);
 		letterButtons[15]=(Button)findViewById(R.id.button16);
+		
 		letterButtons[16]=(Button)findViewById(R.id.button17);
 		letterButtons[17]=(Button)findViewById(R.id.button18);
+		 System.out.println("SDK ver: "+android.os.Build.VERSION.SDK_INT);
+		Display display = this.getWindowManager().getDefaultDisplay();
+	       
+	    
+		   
+	        
+			
+	         
 		for (int i =0; i<18; i++) {
 			letterButtons[i].setTextColor(getResources().getColor(R.color.black));
 			
@@ -90,6 +115,7 @@ public class Game extends Activity{
 		
 		hintButton = (Button)findViewById(R.id.Hintbutton);
 		backButton = (Button)findViewById(R.id.Backbutton);
+		backButton.setOnClickListener(new QuitListener());
 		cdText = (TextView)findViewById(R.id.CountDown);
 		scoreText = (TextView)findViewById(R.id.Score);
 		invisibleScoreText = (TextView)findViewById(R.id.inVisibleScore);
@@ -121,6 +147,7 @@ public class Game extends Activity{
 			letterButtons[i].setText(puzzle[i]);
 			letterButtons[i].setTextSize(10);
 		}
+		
 		for (int i =0; i<18; i++) {
 			buttonIsPressed[i]= false;
 		}
@@ -195,6 +222,37 @@ public class Game extends Activity{
         
         
 		}
+	
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		 if(!musicGoOn)
+	            BGMManager.pause();
+	}
+	
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		if(musicGoOn2==true){
+		musicGoOn=false;
+        BGMManager.start(this,R.raw.game);}
+		else {
+			
+		}
+	}
+	class QuitListener implements OnClickListener{
+
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			if(musicGoOn2==true){
+			musicGoOn = true;}
+			finish();
+		}
+		
+	}
 	class PauseListener implements OnClickListener{
 
 		@Override
@@ -231,7 +289,7 @@ public class Game extends Activity{
 				hintButton.setOnClickListener(null);
 				
 				backButton.getBackground().setAlpha(255);
-				backButton.setOnClickListener(null);
+				backButton.setOnClickListener(new QuitListener());
 				
 				pauseButton.setText("Pause");
 				mc = new MyCount(timeLeft, 1000);  
@@ -311,6 +369,9 @@ public class Game extends Activity{
 			// TODO Auto-generated method stub
 			
 			int buttonId = v.getId();
+			//mp = MediaPlayer.create(Game.this, R.raw.balloon);
+	       // mp.start();
+			tg.startTone(ToneGenerator.TONE_PROP_BEEP);
 			switch (buttonId) {
 			case R.id.button1:
 				swapIfValid(0);
@@ -1011,7 +1072,6 @@ public class Game extends Activity{
 				return loadRandom(input,words,152);
 			case 4:
 				input = getResources().openRawResource(R.raw.a4);
-				load(input,words);
 				return loadRandom(input,words,458);
 			case 5:
 				input = getResources().openRawResource(R.raw.a5);
@@ -1111,7 +1171,7 @@ public class Game extends Activity{
 			case 4:
 				input = getResources().openRawResource(R.raw.f4);
 				return loadRandom(input,words,323);
-				case 5:
+			case 5:
 				input = getResources().openRawResource(R.raw.f5);
 				return loadRandom(input,words,750);
 			case 6:
@@ -1130,7 +1190,7 @@ public class Game extends Activity{
 			case 4:
 				input = getResources().openRawResource(R.raw.g4);
 				return loadRandom(input,words,381);
-				case 5:
+			case 5:
 				input = getResources().openRawResource(R.raw.g5);
 				return loadRandom(input,words,832);
 			case 6:
@@ -1149,7 +1209,7 @@ public class Game extends Activity{
 			case 4:
 				input = getResources().openRawResource(R.raw.h4);
 				return loadRandom(input,words,343);
-				case 5:
+			case 5:
 				input = getResources().openRawResource(R.raw.h5);
 				return loadRandom(input,words,664);
 			case 6:
@@ -1168,7 +1228,7 @@ public class Game extends Activity{
 			case 4:
 				input = getResources().openRawResource(R.raw.i4);
 				return loadRandom(input,words,146);
-				case 5:
+			case 5:
 				input = getResources().openRawResource(R.raw.i5);
 				return loadRandom(input,words,299);
 			case 6:
@@ -1187,7 +1247,7 @@ public class Game extends Activity{
 			case 4:
 				input = getResources().openRawResource(R.raw.j4);
 				return loadRandom(input,words,173);
-				case 5:
+			case 5:
 				input = getResources().openRawResource(R.raw.j5);
 				return loadRandom(input,words,276);
 			case 6:
@@ -1262,7 +1322,7 @@ public class Game extends Activity{
 			case 4:
 				input = getResources().openRawResource(R.raw.n4);
 				return loadRandom(input,words,232);
-				case 5:
+			case 5:
 				input = getResources().openRawResource(R.raw.n5);
 				return loadRandom(input,words,482);
 			case 6:
@@ -1300,7 +1360,7 @@ public class Game extends Activity{
 			case 4:
 				input = getResources().openRawResource(R.raw.p4);
 				return loadRandom(input,words,440);
-				case 5:
+			case 5:
 				input = getResources().openRawResource(R.raw.p5);
 				return loadRandom(input,words,1109);
 			case 6:
@@ -1319,7 +1379,7 @@ public class Game extends Activity{
 			case 4:
 				input = getResources().openRawResource(R.raw.q4);
 				return loadRandom(input,words,35);
-				case 5:
+			case 5:
 				input = getResources().openRawResource(R.raw.q5);
 				return loadRandom(input,words,100);
 			case 6:
@@ -1338,7 +1398,7 @@ public class Game extends Activity{
 			case 4:
 				input = getResources().openRawResource(R.raw.r4);
 				return loadRandom(input,words,328);
-				case 5:
+			case 5:
 				input = getResources().openRawResource(R.raw.r5);
 				return loadRandom(input,words,788);
 			case 6:
@@ -1357,7 +1417,7 @@ public class Game extends Activity{
 			case 4:
 				input = getResources().openRawResource(R.raw.s4);
 				return loadRandom(input,words,659);
-				case 5:
+			case 5:
 				input = getResources().openRawResource(R.raw.s5);
 				return loadRandom(input,words,2010);
 			case 6:
@@ -1376,7 +1436,7 @@ public class Game extends Activity{
 			case 4:
 				input = getResources().openRawResource(R.raw.t4);
 				return loadRandom(input,words,446);
-				case 5:
+			case 5:
 				input = getResources().openRawResource(R.raw.t5);
 				return loadRandom(input,words,1105);
 			case 6:
@@ -1395,7 +1455,7 @@ public class Game extends Activity{
 			case 4:
 				input = getResources().openRawResource(R.raw.u4);
 				return loadRandom(input,words,112);
-				case 5:
+			case 5:
 				input = getResources().openRawResource(R.raw.u5);
 				return loadRandom(input,words,352);
 			case 6:
@@ -1414,7 +1474,7 @@ public class Game extends Activity{
 			case 4:
 				input = getResources().openRawResource(R.raw.v4);
 				return loadRandom(input,words,135);
-				case 5:
+			case 5:
 				input = getResources().openRawResource(R.raw.v5);
 				return loadRandom(input,words,320);
 			case 6:
@@ -1433,7 +1493,7 @@ public class Game extends Activity{
 			case 4:
 				input = getResources().openRawResource(R.raw.w4);
 				return loadRandom(input,words,296);
-				case 5:
+			case 5:
 				input = getResources().openRawResource(R.raw.w5);
 				return loadRandom(input,words,530);
 			case 6:
@@ -1452,7 +1512,7 @@ public class Game extends Activity{
 			case 4:
 				input = getResources().openRawResource(R.raw.x4);
 				return loadRandom(input,words,18);
-				case 5:
+			case 5:
 				input = getResources().openRawResource(R.raw.x5);
 				return loadRandom(input,words,27);
 			case 6:
@@ -1471,7 +1531,7 @@ public class Game extends Activity{
 			case 4:
 				input = getResources().openRawResource(R.raw.y4);
 				return loadRandom(input,words,171);
-				case 5:
+			case 5:
 				input = getResources().openRawResource(R.raw.y5);
 				return loadRandom(input,words,219);
 			case 6:
@@ -1490,7 +1550,7 @@ public class Game extends Activity{
 			case 4:
 				input = getResources().openRawResource(R.raw.z4);
 				return loadRandom(input,words,59);
-				case 5:
+			case 5:
 				input = getResources().openRawResource(R.raw.z5);
 				return loadRandom(input,words,91);
 			case 6:
@@ -1572,15 +1632,17 @@ public class Game extends Activity{
 		if(alreadyExistIn(s, wordsBack)){
 			scoreLocates[locate-1]=true;
 			
-			score= pscore*locate+score-tempScore[locate-1];
-			tempScore[locate-1]=pscore*locate;
+			score= pscore*(9-locate)+score-tempScore[locate-1];
+			tempScore[locate-1]=pscore*(9-locate);
 			scoreText.setText(score+"");
 			
 			invisibleScore= pscore+invisibleScore-invisibleTempScore[locate-1];
 			invisibleTempScore[locate-1]=pscore;
 			invisibleScoreText.setText(invisibleScore+"");
 			
-			 tg.startTone(ToneGenerator.TONE_PROP_BEEP);
+			mp = MediaPlayer.create(Game.this, R.raw.match);
+	        mp.start();
+			//tg.startTone(ToneGenerator.TONE_DTMF_5, 200);
 			return 1;
 		}
 		else{
@@ -1597,8 +1659,8 @@ public class Game extends Activity{
 			
 			scoreLocates[locate-1]=true;
 			
-			score= pscore*locate+score-tempScore[locate-1];
-			tempScore[locate-1]=pscore*locate;
+			score= pscore*(9-locate)+score-tempScore[locate-1];
+			tempScore[locate-1]=pscore*(9-locate);
 			scoreText.setText(score+"");
 			
 			
@@ -1606,8 +1668,9 @@ public class Game extends Activity{
 			invisibleTempScore[locate-1]=pscore;
 			invisibleScoreText.setText(invisibleScore+"");
 			
-			
-		    tg.startTone(ToneGenerator.TONE_PROP_BEEP);
+			mp = MediaPlayer.create(Game.this, R.raw.match);
+	        mp.start();
+			//tg.startTone(ToneGenerator.TONE_DTMF_5, 200);
 		    return score;
 		}
 		else{

@@ -27,7 +27,7 @@ public class MainActivity extends Activity {
 		
 		setTitle("Xipeng Wang");
 		
-	PhoneCheckAPI.doAuthorization(this);
+	//PhoneCheckAPI.doAuthorization(this);
 
 		aboutButton = (Button)findViewById(R.id.about_button);
 		sudokuButton = (Button)findViewById(R.id.sudoku_button);

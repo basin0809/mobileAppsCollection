@@ -83,5 +83,11 @@
         </activity>
         <service android:name="edu.neu.madcourse.xipengwang.dict.WordListLoadService" />
     </application>
+    <supports-screens 
+		android:resizeable="true" 
+		android:smallScreens="true" 
+		android:normalScreens="true" 
+		android:xlargeScreens="true" 
+		android:anyDensity="true" /> 
 
 </manifest>

@@ -11,10 +11,10 @@
         android:layout_marginTop="60dp"/>
  
  <Button 
-        android:id="@+id/test_button"
+        android:id="@+id/music_button"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:text="TestView"
+        android:text="Turn Off Music"
         android:layout_below="@+id/game_button"/>
  
  <Button 
@@ -22,5 +22,5 @@
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:text="Quit"
-        android:layout_below="@+id/test_button"/>
+        android:layout_below="@+id/music_button"/>
 </RelativeLayout>
