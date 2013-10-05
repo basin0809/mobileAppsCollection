@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   android:layout_width="fill_parent"
+   android:layout_height="fill_parent"
+   android:padding="10dip">
+   <RelativeLayout 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    >
+
+   		<TextView
+      	 android:id="@+id/dabble_ack_text"
+     	 android:layout_width="match_parent"
+     	 android:layout_height="wrap_content"
+     	 android:gravity="center"
+      	 android:text="Acknowledgement" />
+   		<TextView
+      	 android:id="@+id/dabble_image_text"
+     	 android:layout_width="match_parent"
+     	 android:layout_height="wrap_content"
+     	 android:singleLine="false"
+     	 android:layout_marginTop="10dp"
+      	 android:text="(1) info and links to sources of all images/icons/graphics/music:" 
+      	 
+      	 android:layout_below="@+id/dabble_ack_text"/>
+   		<TextView
+      	 android:id="@+id/dabble_imagecontent_text"
+     	 android:layout_width="match_parent"
+     	 android:layout_height="wrap_content"
+     	 android:layout_marginTop="5dp"
+      	 android:text="BGM:Autumn in my heart" 
+      	 android:layout_below="@+id/dabble_image_text"/>
+   		<TextView 
+      	 android:id="@+id/dabble_code_text"
+      	 android:layout_width="match_parent"
+      	 android:layout_height="wrap_content"
+      	 android:singleLine="false"
+      	 android:layout_marginTop="10dp"
+      	 android:text="(2) info and links to sources of all code that I did not write myself:"
+       	 android:layout_below="@+id/dabble_imagecontent_text"/>
+   		<TextView 
+      	 android:id="@+id/dabble_codeinfo_text"
+      	 android:layout_width="match_parent"
+      	 android:layout_height="wrap_content"
+      	 android:singleLine="false"
+      	 android:layout_marginTop="5dp"
+      	 android:text="Info:Resizing buttons based on screen size:"
+       	 android:layout_below="@+id/dabble_code_text"/>
+   		<TextView 
+      	 android:id="@+id/dabble_codelink_text"
+      	 android:layout_width="match_parent"
+      	 android:layout_height="wrap_content"
+      	 android:singleLine="false"
+      	 android:layout_marginTop="5dp"
+      	 android:text="Link:http://stackoverflow.com/questions/10250020/how-do-i-get-six-buttons-to-resize-based-on-the-screen-size"
+       	 android:layout_below="@+id/dabble_codeinfo_text"/>
+   		<TextView 
+   		 android:id="@+id/dabble_helper_text"
+      	 android:layout_width="match_parent"
+      	 android:layout_height="wrap_content"
+      	 android:singleLine="false"
+      	 android:layout_marginTop="10dp"
+      	 android:text="(3) people who helped me as I developed the software and what help they provided:"
+       	 android:layout_below="@+id/dabble_codelink_text"/>
+   		<TextView 
+   		 android:id="@+id/dabble_helpercontent_text"
+      	 android:layout_width="match_parent"
+      	 android:layout_height="wrap_content"
+      	 android:singleLine="false"
+      	 android:text="Temporarily none."
+      	 android:layout_marginTop="5dp"
+       	 android:layout_below="@+id/dabble_helper_text"/>
+   		<Button 
+   		 android:id="@+id/dabble_back_button"
+   		 android:layout_width="250dp"
+      	 android:layout_height="wrap_content"
+      	 android:layout_marginTop="15dp"
+      	 android:text="Back to the menu"
+       	 android:layout_below="@+id/dabble_helpercontent_text"
+      	 android:layout_centerHorizontal="true"/>
+   		</RelativeLayout>
+</ScrollView>
+
+

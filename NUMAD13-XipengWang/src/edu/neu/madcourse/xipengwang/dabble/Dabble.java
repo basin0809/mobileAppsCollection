@@ -15,12 +15,15 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import edu.neu.madcourse.xipengwang.MainActivity;
 import edu.neu.madcourse.xipengwang.R;
 
 public class Dabble extends Activity{
 	private Button gameButton;
 	private Button quitButton;
 	private Button musicButton;
+	private Button introButton;
+	private Button ackButton;
 	private boolean musicGoOn;
 	
 	@Override
@@ -33,9 +36,13 @@ public class Dabble extends Activity{
 		gameButton = (Button)findViewById(R.id.game_button);
 		quitButton = (Button)findViewById(R.id.quit_button);
 		musicButton = (Button)findViewById(R.id.music_button);
+		introButton = (Button)findViewById(R.id.dabble_intro);
+		ackButton = (Button)findViewById(R.id.dabble_ack);
 		gameButton.setOnClickListener(new GameButtonListener());
 		musicButton.setOnClickListener(new MusicButtonListener());
 		quitButton.setOnClickListener(new QuitButtonListener());
+		ackButton.setOnClickListener(new AckButtonListener());
+		introButton.setOnClickListener(new IntroButtonListener());
 		
 		
 	}
@@ -112,6 +119,33 @@ public class Dabble extends Activity{
 		}
 		
 	}
+	
+	class AckButtonListener implements OnClickListener{
+
+		@Override
+		public void onClick(View arg0) {
+			// TODO Auto-generated method stub
+			 Intent intent =new Intent();
+			 intent.putExtra("music_stuate", TwiceActiveCheck.musicTwicePressed.get(TwiceActiveCheck.musicTwicePressed.size()-1).toString());
+			 intent.setClass(Dabble.this, DabbleACK.class);
+			 startActivity(intent);
+		}
+		
+	}
+	
+	class IntroButtonListener implements OnClickListener{
+
+		@Override
+		public void onClick(View arg0) {
+			// TODO Auto-generated method stub
+			 Intent intent =new Intent();
+			 intent.putExtra("music_stuate", TwiceActiveCheck.musicTwicePressed.get(TwiceActiveCheck.musicTwicePressed.size()-1).toString());
+			 intent.setClass(Dabble.this, Introduction.class);
+			 startActivity(intent);
+		}
+		
+	}
+	
 	class QuitButtonListener implements OnClickListener{
 
 		@Override

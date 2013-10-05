@@ -10,16 +10,20 @@ import java.util.Random;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Point;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.ToneGenerator;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.TextView;
@@ -65,7 +69,7 @@ public class Game extends Activity{
 	private static String[] puzzleScore = new String[18];
 	
 	private MyCount mc;
-	private long timeLeft=6000;
+	private long timeLeft=300000;
 	private boolean musicGoOn;
 	private boolean musicGoOn2;
 	
@@ -157,12 +161,12 @@ public class Game extends Activity{
 			//puzzleScore[i]=arrayList.get(i)[1];
 			//System.out.println(puzzle[i]);
 		}
-		
+		  
 		for (int i =0; i<18; i++) {
 			
 			//letterButtons[i].setText(puzzle[i].charAt(0)+"\n"+"   "+puzzleScore[i].charAt(1));	
 			letterButtons[i].setText(puzzle[i]);
-			letterButtons[i].setTextSize(10);
+			letterButtons[i].setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
 		}
 		
 		for (int i =0; i<18; i++) {
@@ -234,8 +238,8 @@ public class Game extends Activity{
 		buttonTwicePressed.add(18);
 		pauseTwicePressed.add(0);
 		hintTwicePressed.add(0);
-		mc = new MyCount(20000, 1000);  
-        mc.start();
+		//mc = new MyCount(300000, 1000);  
+        //mc.start();
         pauseButton.setOnClickListener(new PauseListener());
         hintButton.setOnClickListener(new HintListener());
         
@@ -258,13 +262,26 @@ public class Game extends Activity{
         	swapTimes.setTextColor(getResources().getColor(
     	            R.color.red));
         	swapTimes.addTextChangedListener(new SwapTimesListener());
+        	
+        	swap.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+        	swapTimes.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
         }
+        scoreText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+        cdText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+        hintText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+        invisibleScoreText.setTextColor(getResources().getColor(
+    	            R.color.white));
+        hintButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+        backButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+        pauseButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
 		}
 	
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
+		mc.cancel();
+	    System.out.println("--------------------------------Pause");
 		 if(!musicGoOn)
 	            BGMManager.pause();
 	}
@@ -273,6 +290,15 @@ public class Game extends Activity{
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
+		if(pauseTwicePressed.get(pauseTwicePressed.size()-1)==1){
+			
+		}
+		else {
+			mc = new MyCount(timeLeft, 1000);  
+		       mc.start();
+		}
+		
+        System.out.println("--------------------------------Reume");
 		if(musicGoOn2==true){
 		musicGoOn=false;
         BGMManager.start(this,R.raw.game);}
@@ -350,11 +376,11 @@ public class Game extends Activity{
 			backButton.startAnimation(alphaDes);
 			backButton.setOnClickListener(null);
 			
-			pauseButton.setText("Continue");
+			pauseButton.setText("Resume Game");
 			pauseTwicePressed.add(1);
 			}
 			else{
-				System.out.println("CONTINUE");
+				
 				for (int i =0; i<18; i++) {
 					//letterButtons[i].setTextColor(getResources().getColor(R.color.black));
 			
@@ -374,6 +400,7 @@ public class Game extends Activity{
 				backButton.setOnClickListener(new QuitListener());
 				
 				pauseButton.setText("Pause");
+				
 				mc = new MyCount(timeLeft, 1000);  
 		        mc.start();
 				pauseTwicePressed.add(0);
@@ -416,9 +443,9 @@ public class Game extends Activity{
         	cdText.setText("Time Left: "+String.format("%02d", minutes) + ":"  
         	+ String.format("%02d", seconds));
         	//cdText.setText(millisUntilFinished / 1000 +""); 
-        	if(cdSecs<=10){
+        	if(cdSecs<=60){
         		cdText.setTextColor(getResources().getColor(R.color.red));
-        		cdText.setTextSize(25);
+        		//cdText.setTextSize(25);
         	}
         	timeLeft = millisUntilFinished ;
            // Toast.makeText(NewActivity.this, millisUntilFinished / 1000 + "", Toast.LENGTH_LONG).show(); 

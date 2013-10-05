@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   android:layout_width="fill_parent"
+   android:layout_height="fill_parent"
+   android:padding="10dip">
+   <RelativeLayout 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    >
+
+   		<TextView
+      	 android:id="@+id/dabble_intro_text"
+     	 android:layout_width="match_parent"
+     	 android:layout_height="wrap_content"
+     	 android:gravity="center"
+      	 android:text="Rules" />
+   		<TextView
+      	 android:id="@+id/dabble_introintro_text"
+     	 android:layout_width="match_parent"
+     	 android:layout_height="wrap_content"
+     	 android:singleLine="false"
+     	 android:layout_marginTop="10dp"
+      	 android:text="(1) How to play:" 
+      	 
+      	 android:layout_below="@+id/dabble_intro_text"/>
+   		<TextView
+      	 android:id="@+id/dabble_introcontent_text"
+     	 android:layout_width="match_parent"
+     	 android:layout_height="wrap_content"
+     	 android:layout_marginTop="5dp"
+     	 android:singleLine="false"
+      	 android:text="To win the game, you need to spell 4 words from 18 letters within 5 minutes. These 4 words include a 3 letter word, a 4 letter word, a 5 letter word and a 6 letter word, You will score when a word is completed." 
+      	 android:layout_below="@+id/dabble_introintro_text"/>
+   		<TextView 
+      	 android:id="@+id/dabble_introcode_text"
+      	 android:layout_width="match_parent"
+      	 android:layout_height="wrap_content"
+      	 android:singleLine="false"
+      	 android:layout_marginTop="10dp"
+      	 android:text="(2) Scoring:"
+       	 android:layout_below="@+id/dabble_introcontent_text"/>
+   		<TextView 
+      	 android:id="@+id/dabble_introcodeinfo_text"
+      	 android:layout_width="match_parent"
+      	 android:layout_height="wrap_content"
+      	 android:singleLine="false"
+      	 android:layout_marginTop="5dp"
+      	 android:text="Score = SUM(3 letter word tiles)*3 + SUM(4 letter word tiles)*4 + SUM(5 letter word tiles)*5 + SUM(6 letter word tiles)*6"
+       	 android:layout_below="@+id/dabble_introcode_text"/>
+
+   		<TextView 
+   		 android:id="@+id/dabble_introhelper_text"
+      	 android:layout_width="match_parent"
+      	 android:layout_height="wrap_content"
+      	 android:singleLine="false"
+      	 android:layout_marginTop="10dp"
+      	 android:text="(3) Game Mode:"
+       	 android:layout_below="@+id/dabble_introcodeinfo_text"/>
+   		<TextView 
+   		 android:id="@+id/dabble_introhelpercontent_text"
+      	 android:layout_width="match_parent"
+      	 android:layout_height="wrap_content"
+      	 android:singleLine="false"
+      	 android:text="When you start a new game, you have two game modes can be choosed: Normal Mode and Challenge Mode. In Normal Mode, rules are just said in (1). In Challenge Mode, the times you swap the positions between letters are limited, to win the game, you need pay attention to both counting down time and left swap times."
+      	 android:layout_marginTop="5dp"
+       	 android:layout_below="@+id/dabble_introhelper_text"/>
+   		<Button 
+   		 android:id="@+id/dabble_introback_button"
+   		 android:layout_width="250dp"
+      	 android:layout_height="wrap_content"
+      	 android:layout_marginTop="15dp"
+      	 android:text="Back to the menu"
+       	 android:layout_below="@+id/dabble_introhelpercontent_text"
+      	 android:layout_centerHorizontal="true"/>
+   		</RelativeLayout>
+</ScrollView>
+
+

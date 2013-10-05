@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="edu.neu.madcourse.xipengwang"
-    android:versionCode="4"
-    android:versionName="1.3" >
+    android:versionCode="5"
+    android:versionName="1.4" >
 
     <uses-sdk
         android:minSdkVersion="7"
@@ -70,7 +70,7 @@
               android:screenOrientation="portrait">
         </activity>
         <activity android:name="edu.neu.madcourse.xipengwang.dabble.Game"
-              android:label="DabbleGame"
+              android:label="New Game"
               android:screenOrientation="portrait">
         </activity>
         <activity android:name="edu.neu.madcourse.xipengwang.dabble.TestGame"
@@ -83,6 +83,16 @@
         </activity>
         <activity android:name="edu.neu.madcourse.xipengwang.dabble.Finish"
               android:label="Game Over"
+              android:screenOrientation="portrait">
+        </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.dabble.DabbleACK"
+              android:label="Acknowledgement"
+              android:theme="@android:style/Theme.Dialog">
+              android:screenOrientation="portrait">
+        </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.dabble.Introduction"
+              android:label="Rules"
+              android:theme="@android:style/Theme.Dialog">
               android:screenOrientation="portrait">
         </activity>
         <service android:name="edu.neu.madcourse.xipengwang.dict.WordListLoadService" />
