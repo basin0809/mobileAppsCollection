@@ -7,10 +7,11 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import edu.neu.madcourse.xipengwang.comm.Regist;
 import edu.neu.madcourse.xipengwang.dabble.Dabble;
 import edu.neu.madcourse.xipengwang.dict.Dictionary;
 import edu.neu.madcourse.xipengwang.sudoku.Sudoku;
-import edu.neu.mobileClass.PhoneCheckAPI;
+
 
 public class MainActivity extends Activity {
 	
@@ -20,6 +21,7 @@ public class MainActivity extends Activity {
 	private Button quitButton;
 	private Button dictButton;
 	private Button dabbleButton;
+	private Button commButton;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -34,12 +36,14 @@ public class MainActivity extends Activity {
 		errorButton = (Button)findViewById(R.id.error_button);
 		dictButton = (Button)findViewById(R.id.dict_button);
 		dabbleButton = (Button)findViewById(R.id.dabble_button);
+		commButton = (Button)findViewById(R.id.comm_button);
 		quitButton = (Button)findViewById(R.id.exit_button);
 		sudokuButton.setOnClickListener(new SudokuButtonListener());
 		aboutButton.setOnClickListener(new AboutButtonListener());
 		errorButton.setOnClickListener(new ErrorButtonListener());
 		dictButton.setOnClickListener(new DictButtonListener());
 		dabbleButton.setOnClickListener(new DabbleButtonListener());
+		commButton.setOnClickListener(new CommButtonListener());
 		quitButton.setOnClickListener(new ExitButtonListener());
 		
 	}
@@ -101,6 +105,17 @@ public class MainActivity extends Activity {
 			// TODO Auto-generated method stub
 		 Intent intent =new Intent();
 		 intent.setClass(MainActivity.this, Dabble.class);
+		 startActivity(intent);
+		}
+		
+	}
+	class CommButtonListener implements OnClickListener{
+
+		@Override
+		public void onClick(View arg0) {
+			// TODO Auto-generated method stub
+		 Intent intent =new Intent();
+		 intent.setClass(MainActivity.this, Regist.class);
 		 startActivity(intent);
 		}
 		

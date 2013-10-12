@@ -88,15 +88,25 @@
         <activity android:name="edu.neu.madcourse.xipengwang.dabble.DabbleACK"
               android:label="Acknowledgement"
               android:theme="@android:style/Theme.Dialog">
-              android:screenOrientation="portrait">
+           
         </activity>
         <activity android:name="edu.neu.madcourse.xipengwang.dabble.Introduction"
               android:label="Rules"
               android:theme="@android:style/Theme.Dialog">
+            
+        </activity>
+        
+        <activity android:name="edu.neu.madcourse.xipengwang.comm.Regist"
+              android:label="Set up your name in the game"
+              
               android:screenOrientation="portrait">
         </activity>
+       
         <service android:name="edu.neu.madcourse.xipengwang.dict.WordListLoadService" />
+        
     </application>
-  
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    
 
 </manifest>

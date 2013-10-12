@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+  	<TextView 
+     	android:id="@+id/descriptText"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:text="Create your name in game:"
+        android:layout_marginTop="20dp" />  
+	<EditText 
+        android:id="@+id/nameText"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_below="@+id/descriptText"/>
+	<TextView 
+     	android:id="@+id/descriptText2"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:text="Enter your opponent's name:"
+        android:layout_below="@+id/nameText"/>  
+    <EditText 
+        android:id="@+id/oppNameText"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_below="@+id/descriptText2"/>
+	<Button
+	    android:id="@+id/searchButton"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_below="@+id/oppNameText"
+        android:text="Connect the Game"/>
+</RelativeLayout>
