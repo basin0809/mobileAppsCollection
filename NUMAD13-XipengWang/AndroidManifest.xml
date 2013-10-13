@@ -101,8 +101,24 @@
               
               android:screenOrientation="portrait">
         </activity>
+                <activity android:name="edu.neu.madcourse.xipengwang.comm.Finish"
+              android:label="Opps..."
+              
+              android:screenOrientation="portrait">
+        </activity>
+                <activity android:name="edu.neu.madcourse.xipengwang.comm.CommGame"
+              android:label="Two players game"
+              
+              android:screenOrientation="portrait">
+        </activity>
+                <activity android:name="edu.neu.madcourse.xipengwang.comm.Cong"
+              android:label="Tada!"
+              
+              android:screenOrientation="portrait">
+        </activity>
        
-        <service android:name="edu.neu.madcourse.xipengwang.dict.WordListLoadService" />
+       
+         <service android:name="edu.neu.madcourse.xipengwang.comm.AsyncPullService" />
         
     </application>
 	<uses-permission android:name="android.permission.INTERNET" />

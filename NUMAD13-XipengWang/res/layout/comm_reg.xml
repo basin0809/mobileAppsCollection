@@ -29,5 +29,19 @@
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:layout_below="@+id/oppNameText"
-        android:text="Connect the Game"/>
+        android:text="Connect to the Game"/>
+	<Button
+	    android:id="@+id/stopButton"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_below="@+id/searchButton"
+        android:text="Cancel"/>
+	<ProgressBar 
+	    android:id="@+id/progressBar"     
+	    android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:max="200"
+        android:layout_centerInParent="true"
+       
+        android:layout_below="@+id/stopButton"/>
 </RelativeLayout>

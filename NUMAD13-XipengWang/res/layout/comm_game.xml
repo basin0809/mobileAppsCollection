@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="4"
+    android:orientation="vertical" >
+            <LinearLayout
+            android:orientation="vertical"
+            android:layout_height="0dp"
+            android:layout_width="fill_parent"
+            android:layout_weight="2"
+            android:weightSum="4">
+            		<LinearLayout
+            		android:orientation="horizontal"
+            		android:layout_height="0dp"
+            		android:layout_width="fill_parent"
+            		android:layout_weight="1"
+            		android:weightSum="6">
+            		
+					    <Button
+					    android:id="@+id/cbutton1"
+					    android:layout_weight="1"
+					    android:layout_height="fill_parent"
+            			android:layout_width="0dp"
+					    android:text="1"  />
+
+						<Button
+						    android:id="@+id/cbutton2"
+						    android:layout_weight="1"
+						    android:layout_height="fill_parent"
+	            			android:layout_width="0dp"
+						    android:text="2" />
+						
+						<Button
+						    android:id="@+id/cbutton3"
+						    android:layout_weight="1"
+						    android:layout_height="fill_parent"
+	            			android:layout_width="0dp"
+						    android:text="3" />
+						
+						<Button
+						    android:id="@+id/cbutton4"
+							android:layout_weight="1"
+							android:layout_height="fill_parent"
+		            	    android:layout_width="0dp"
+						    android:text="4"/>
+						
+						<Button
+						    android:id="@+id/cbutton5"
+						    android:layout_weight="1"
+						    android:layout_height="fill_parent"
+	            			android:layout_width="0dp"
+						    android:text="5" />
+						
+						<Button
+						    android:id="@+id/cbutton6"
+						    android:layout_weight="1"
+						    android:layout_height="fill_parent"
+	            			android:layout_width="0dp"
+						    android:text="6" />
+        			</LinearLayout>
+        			
+            		<LinearLayout
+            		android:orientation="horizontal"
+            		android:layout_height="0dp"
+            		android:layout_width="fill_parent"
+            		android:layout_weight="1"
+            		android:weightSum="6">
+            		
+					    <Button
+					    android:id="@+id/cbutton7"
+					    android:layout_weight="1"
+					    android:layout_height="fill_parent"
+            			android:layout_width="0dp"
+					    android:text="7"  />
+
+						<Button
+						    android:id="@+id/cbutton8"
+						    android:layout_weight="1"
+						    android:layout_height="fill_parent"
+	            			android:layout_width="0dp"
+						    android:text="8" />
+						
+						<Button
+						    android:id="@+id/cbutton9"
+						    android:layout_weight="1"
+						    android:layout_height="fill_parent"
+	            			android:layout_width="0dp"
+						    android:text="9" />
+						
+						<Button
+						    android:id="@+id/cbutton10"
+							android:layout_weight="1"
+							android:layout_height="fill_parent"
+		            	    android:layout_width="0dp"
+						    android:text="10"/>
+						
+						<Button
+						    android:id="@+id/cbutton11"
+						    android:layout_weight="1"
+						    android:layout_height="fill_parent"
+	            			android:layout_width="0dp"
+						    android:text="11" />
+						
+						
+        			</LinearLayout>
+        			
+            		<LinearLayout
+            		android:orientation="horizontal"
+            		android:layout_height="0dp"
+            		android:layout_width="fill_parent"
+            		android:layout_weight="1"
+            		android:weightSum="6">
+            		
+					    <Button
+					    android:id="@+id/cbutton12"
+					    android:layout_weight="1"
+					    android:layout_height="fill_parent"
+            			android:layout_width="0dp"
+					    android:text="12"  />
+
+						<Button
+						    android:id="@+id/cbutton13"
+						    android:layout_weight="1"
+						    android:layout_height="fill_parent"
+	            			android:layout_width="0dp"
+						    android:text="13" />
+						
+						<Button
+						    android:id="@+id/cbutton14"
+						    android:layout_weight="1"
+						    android:layout_height="fill_parent"
+	            			android:layout_width="0dp"
+						    android:text="14" />
+						
+						<Button
+						    android:id="@+id/cbutton15"
+							android:layout_weight="1"
+							android:layout_height="fill_parent"
+		            	    android:layout_width="0dp"
+						    android:text="15"/>	
+        			</LinearLayout>
+        			
+            		<LinearLayout
+            		android:orientation="horizontal"
+            		android:layout_height="0dp"
+            		android:layout_width="fill_parent"
+            		android:layout_weight="1"
+            		android:weightSum="6">
+            		
+					    <Button
+					    android:id="@+id/cbutton16"
+					    android:layout_weight="1"
+					    android:layout_height="fill_parent"
+            			android:layout_width="0dp"
+					    android:text="16"  />
+
+						<Button
+						    android:id="@+id/cbutton17"
+						    android:layout_weight="1"
+						    android:layout_height="fill_parent"
+	            			android:layout_width="0dp"
+						    android:text="17" />
+						
+						<Button
+						    android:id="@+id/cbutton18"
+						    android:layout_weight="1"
+						    android:layout_height="fill_parent"
+	            			android:layout_width="0dp"
+						    android:text="18"
+						    android:textSize="21sp" />
+        			</LinearLayout>
+        	</LinearLayout>
+        	
+            <LinearLayout
+            android:orientation="horizontal"
+            android:layout_height="0dp"
+            android:layout_width="fill_parent"
+            android:layout_weight="1"
+            android:weightSum="2">
+            		
+                <LinearLayout
+	            android:orientation="vertical"
+	            android:layout_height="fill_parent"
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:weightSum="3">
+	            		
+					<TextView
+					    android:id="@+id/cScore"
+	            		android:layout_height="0dp"
+	            		android:layout_width="fill_parent"
+	            		android:layout_weight="1"
+					    android:text="Score:" />
+					
+					<TextView
+					    android:id="@+id/cCountDown"
+	            		android:layout_height="0dp"
+	            		android:layout_width="fill_parent"
+	            		android:layout_weight="1"
+					    android:text="CountingDown:" />
+	
+					<LinearLayout
+	            		android:orientation="horizontal"
+	            		android:layout_height="0dp"
+	            		android:layout_width="fill_parent"
+	            		android:layout_weight="1"
+	            		>
+							
+							<TextView
+							    android:id="@+id/cSwap"
+							    android:layout_height="fill_parent"
+	            				android:layout_width="wrap_content"
+							    android:text="Swapp Times Left:" />
+							
+							<TextView
+							    android:id="@+id/cSwapTimes"
+							    android:layout_height="fill_parent"
+	            				android:layout_width="wrap_content"
+							    android:text="40" />
+						
+					</LinearLayout>
+				</LinearLayout>
+				
+                <LinearLayout
+	            android:orientation="vertical"
+	            android:layout_height="fill_parent"
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:weightSum="10">
+					<TextView
+						android:id="@+id/cMessage"
+			            android:layout_height="0dp"
+			            android:layout_width="fill_parent"
+			            android:layout_weight="8"
+						android:text="Opponent's move:" />
+					
+					<TextView
+						android:id="@+id/cinVisibleScore"
+			            android:layout_height="0dp"
+			            android:layout_width="fill_parent"
+			            android:layout_weight="2"
+						android:text="" />
+					
+				</LinearLayout>
+            </LinearLayout>
+            
+            <LinearLayout
+            android:orientation="vertical"
+            android:layout_height="0dp"
+            android:layout_width="fill_parent"
+            android:layout_weight="1"
+            android:weightSum="3">
+				<Button
+				    android:id="@+id/cPause_button"
+            		android:layout_height="0dp"
+            		android:layout_width="fill_parent"
+            		android:layout_weight="1"
+				    android:text="Pause" />
+
+				<Button
+				    android:id="@+id/cHintbutton"
+            		android:layout_height="0dp"
+            		android:layout_width="fill_parent"
+            		android:layout_weight="1"
+				    android:text="Hint" />
+				
+				<Button
+				    android:id="@+id/cBackbutton"
+            		android:layout_height="0dp"
+            		android:layout_width="fill_parent"
+            		android:layout_weight="1"
+				    android:text="Back " />
+			</LinearLayout>
+
+</LinearLayout>

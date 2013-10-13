@@ -1,19 +1,25 @@
 package edu.neu.madcourse.xipengwang.comm;
 
+import java.security.PublicKey;
+import java.util.Stack;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Editable;
 import android.view.View;
-import android.view.View.OnClickListener;
+import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import edu.neu.madcourse.xipengwang.R;
+import edu.neu.madcourse.xipengwang.dabble.Game;
+import edu.neu.madcourse.xipengwang.dabble.TwiceActiveCheck;
 import edu.neu.mhealth.api.KeyValueAPI;
 
 
@@ -22,23 +28,53 @@ public class Regist extends Activity{
 	private boolean oppIsValid;
 	private EditText name,oppName;
 	private TextView desp,desp2;
+	private ProgressBar progressBar;
+	private Button connectGame, stopConn;
 	
-	private Button connectGame;
+	private AlphaAnimation alphaDes;
+    private AlphaAnimation alphaInc;
+    
+    CheckNameTask checkNameTask;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
+		
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.comm_reg);  
+		setContentView(R.layout.comm_reg); 
+        alphaDes = new AlphaAnimation(1.0f, 0.0f);
+        alphaInc = new AlphaAnimation(0.0f, 1.0f);
+        alphaDes.setDuration(100);
+        alphaInc.setDuration(100);
+        alphaDes.setFillAfter(true);
+        alphaInc.setFillAfter(true);
 		name = (EditText)findViewById(R.id.nameText);
 		oppName = (EditText)findViewById(R.id.oppNameText);
 		desp = (TextView)findViewById(R.id.descriptText);
 		desp2 = (TextView)findViewById(R.id.descriptText2);
+		progressBar = (ProgressBar)findViewById(R.id.progressBar);
+		 progressBar.startAnimation(alphaDes);
+		
+		//progressBar.setBackgroundColor(getResources().getColor(R.color.white));
+		
 		connectGame = (Button)findViewById(R.id.searchButton);
+		stopConn = (Button)findViewById(R.id.stopButton);
+		stopConn.startAnimation(alphaDes);
 		connectGame.setOnClickListener(new Button.OnClickListener(){  
 	            public void onClick(View v) {  
 	                search();  
+	                stopConn.startAnimation(alphaInc);
+	                stopConn.setOnClickListener(new Button.OnClickListener(){  
+	                    public void onClick(View v) {  
+	                    	
+	                    	checkNameTask.cancel(true);
+	                    	stopConn.startAnimation(alphaDes);
+	                    	progressBar.startAnimation(alphaDes);
+	                    	 stopConn.setOnClickListener(null);
+	                    }  
+	                });
 	            }  
 	        }); 
+		 
 	}
 	
 		public void search() {
@@ -46,62 +82,62 @@ public class Regist extends Activity{
 		strings[0] = name.getText().toString();
 		strings[1] = oppName.getText().toString();
 			// TODO Auto-generated method stub
-		CheckNameTask checkNameTask = new CheckNameTask(this);
+		checkNameTask= new CheckNameTask(this);
 		checkNameTask.execute(strings);
 	}
 		
 		
 	
-    class CheckNameTask extends AsyncTask<String[], Integer, Boolean> {  
-    	ProgressDialog pdialog;  
+    class CheckNameTask extends AsyncTask<String[], Integer, String[]> {  
+    	
     	private Context context;  
     	CheckNameTask(Context context) {  
               this.context = context;  
-              pdialog = new ProgressDialog(context, 0);     
-              pdialog.setButton("cancel", new DialogInterface.OnClickListener() {  
-               public void onClick(DialogInterface dialog, int i) {  
-                dialog.cancel();  
-               }  
-              });  
-              pdialog.setOnCancelListener(new DialogInterface.OnCancelListener() {  
-               public void onCancel(DialogInterface dialog) {  
-                finish();  
-               }  
-              });  
-              pdialog.setCancelable(true);  
-              pdialog.setMax(100);  
-              pdialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);  
-              pdialog.show();
+              //progressBar.setBackgroundColor(getResources().getColor(R.color.black));  
+              progressBar.startAnimation(alphaInc);
+              
           }  
     
 
         @Override  
-        protected Boolean doInBackground(String[]... params) {  
-
+        protected String[] doInBackground(String[]... params) {  
+        	String[] reStrings = new String[2];
         	String checkString =KeyValueAPI.get("basin", "basin576095", params[0][0]);
         	System.out.println("Enter: "+params[0][0]);
         	System.out.println("checkString: "+checkString);
         	if(checkString.equals("Error: No Such Key")){
         		KeyValueAPI.put("basin", "basin576095", params[0][0], params[0][1]);
-        		int i=0;  
-                while(i<10){  
+        		int i=0; 
+        		
+                while(i<100){  
                     i++;  
                     String oppStatus = KeyValueAPI.get("basin", "basin576095", params[0][1]);
                     if(oppStatus.equals(params[0][0])){
-                    	return true;
+                    	System.out.println("Opponent: "+params[0][1]);
+                    	
+                    	reStrings[0] = params[0][0];
+                    	reStrings[1] = params[0][1];
+                    	return reStrings;
                     }
-                    
                     try {  
-                        Thread.sleep(1000);  
+                        Thread.sleep(100);  
                     } catch (InterruptedException e) { 
-                    	return false;
+                    	KeyValueAPI.clearKey("basin", "basin576095", params[0][0]);
+                    	reStrings[0] = params[0][0];
+                    	reStrings[1] = "Error: No Such Key";
+                    	return reStrings;
                     }  
-                }  
-                return false;
+                } 
+                KeyValueAPI.clearKey("basin", "basin576095", params[0][0]);
+                reStrings[0] = params[0][0];
+            	reStrings[1] = "Error: No Such Key";
+            	return reStrings;
         		
         	}
         	else {
-        		return false; 
+        		reStrings[0] = params[0][0];
+            	reStrings[1] = "Error: No Such Key";
+            	return reStrings;
 			}
         }  
  
@@ -111,32 +147,44 @@ public class Regist extends Activity{
         }  
  
         @Override  
-        protected void onPostExecute(Boolean result) {  
-            // 返回HTML页面的内容  
-           if(result == true){
+        protected void onPostExecute(String[] results) {  
+           
+        	System.out.println(results[0]+" vs: "+results[1]);
+           if(results[1].equals("Error: No Such Key")){
+        	   //progressBar.setBackgroundColor(getResources().getColor(R.color.white)); 
+        	   progressBar.startAnimation(alphaDes);
+        	   System.out.println("Opponent is not found or name is used");
+        	   
+        	   Toast.makeText(context,"Opponent is not found or name is used",Toast.LENGTH_LONG).show();  
+        	   nameIsValid = false;
+        	
+           }
+           else {
+        	   //progressBar.setBackgroundColor(getResources().getColor(R.color.white));  
+        	   progressBar.startAnimation(alphaDes);
         	   System.out.println("Opponent Connected! Loading Game");
         	   Toast.makeText(context,"Opponent Connected! Loading Game",Toast.LENGTH_SHORT).show();  
         	   nameIsValid = true;
-           }
-           else {
-        	   System.out.println("Opponent is not found or name is used");
-        	   Toast.makeText(context,"Opponent is not found or name is used",Toast.LENGTH_SHORT).show();  
-        	   nameIsValid = false;
+ 		      	Intent intent = new Intent(Regist.this, CommGame.class);
+ 		      	intent.putExtra("me", results[0]);
+ 		      	intent.putExtra("opponent", results[1]);
+ 		      	startActivity(intent);
 		}	
             
         }  
  
         @Override  
         protected void onPreExecute() {  
-            // 任务启动，可以在这里显示一个对话框，这里简单处理  
-            //message.setText(R.string.task_started);  
+           
+            
         }  
  
         @Override  
         protected void onProgressUpdate(Integer... values) {  
-            // 更新进度  
-              //System.out.println(""+values[0]);  
-              //message.setText(""+values[0]);  
+            
+        	 //System.out.println("onProgressUpdate"+values[0]);  
+            
+        	// progressDialog.setProgress(values[0]);
               
         }  
  

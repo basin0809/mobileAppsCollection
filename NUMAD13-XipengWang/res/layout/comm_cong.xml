@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   android:layout_width="fill_parent"
+   android:layout_height="fill_parent"
+   android:padding="10dip">
+   <RelativeLayout 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    >
+   <TextView
+      android:id="@+id/cdabble_cong1"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="Congratulation!"
+      android:layout_centerHorizontal="true" />
+   <TextView
+      android:id="@+id/cdabble_cong2"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="You have solved the puzzle." 
+      android:layout_below="@+id/cdabble_cong1" 
+      android:layout_centerHorizontal="true" />
+   <TextView
+      android:id="@+id/cdabble_cong_score"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="0000"
+      android:layout_below="@+id/cdabble_cong2" 
+      android:layout_centerHorizontal="true" />
+   <Button 
+       android:id="@+id/cback_to_main"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="Go to the main menu"
+       android:layout_centerInParent="true"
+       android:layout_below="@+id/cdabble_cong_score"/>
+
+  </RelativeLayout>
+</ScrollView>
