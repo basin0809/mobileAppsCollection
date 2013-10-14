@@ -12,8 +12,6 @@ import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
 import edu.neu.madcourse.xipengwang.R;
-
-
 import edu.neu.mhealth.api.KeyValueAPI;
 
 public class AsyncPullService extends Service{
@@ -39,8 +37,7 @@ public class AsyncPullService extends Service{
 	//@Override
 	public void onCreate() {
 		// TODO Auto-generated method stub
-			
-
+		
 	}
 	
 	class MyThread extends Thread{
@@ -49,18 +46,21 @@ public class AsyncPullService extends Service{
 		public void run() {
 			// TODO Auto-generated method stub
 			super.run();
-			KeyValueAPI.put("basin", "basin576095", CommGame.myName, "AFK");
-			while(KeyValueAPI.get("basin", "basin576095", CommGame.myName).equals("AFK")==true){
+			
+			
+			KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "AFK");
+			while(KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName).equals("AFK")==true&& 
+	    			KeyValueAPI.get("basin", "basin576095", OppNameMyName.oppName).equals("QUIT2")==false){
 				SubAsyncPullTask subAsyncPullTask = new SubAsyncPullTask(AsyncPullService.this);
 	    		subAsyncPullTask.execute();
 	    		try {
-					Thread.sleep(5000);
+					Thread.sleep(100);
 				} catch (Exception e) {
 					// TODO: handle exception
 				}
 	    	}
 		 
-			//stopSelf();
+			stopSelf();
 		}
 		
 		class SubAsyncPullTask extends AsyncTask<Void, Integer, String> {  
@@ -72,7 +72,7 @@ public class AsyncPullService extends Service{
 	    
 	        @Override  
 	        protected String doInBackground(Void... params) {  
-	        	String resString=KeyValueAPI.get("basin", "basin576095", CommGame.oppName);
+	        	String resString=KeyValueAPI.get("basin", "basin576095", OppNameMyName.oppName);
 	        	return resString;
 	        }  
 	 
@@ -89,23 +89,30 @@ public class AsyncPullService extends Service{
 				
 				System.out.println("[Service]opponent's movement: "+result);
 				String result2 ="";
-				if(result.equals(CommGame.myName)){
-					result2=CommGame.oppName+"'s move:"+"\n"+CommGame.oppName+" join the game";
+				if(result.equals(OppNameMyName.myName)){
+					result2=OppNameMyName.oppName+" joins the game";
 				}
-				if(!result.equals(CommGame.myName)){
+				if(!result.equals(OppNameMyName.myName)){
 					if(result.equals("AFK")){
-						result2=CommGame.oppName+"'s move:"+"\n"+CommGame.oppName+" leave the game";
+						result2=OppNameMyName.oppName+" is not actively playing";
+					}else{
+					if(result.equals("QUIT")||result.equals("QUIT2")){
+						result2=OppNameMyName.oppName+" quits";
 					}
 					else{
-						result2=CommGame.oppName+"'s move:"+"\n"+"spells: "+result;
-				}}
+						
+						result2=OppNameMyName.oppName+" spells: "+result;
+				}}}
 				
 				if(!result.equals(pullTwiceCheck.get(pullTwiceCheck.size()-1))){
 					
 					NotificationManager mNotificationManager=
 							(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE); 
-					Intent notificationIntent=new Intent(AsyncPullService.this,CommGame.class);
-			        PendingIntent contentIntent=PendingIntent.getActivity(AsyncPullService.this, 0, notificationIntent, 0);  
+					Intent notificationIntent=new Intent(this.context,CommGame.class);
+					notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|
+							 					Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+			        PendingIntent contentIntent=PendingIntent.getActivity(this.context, 0, notificationIntent, 0);  
 					Notification notification;
 					if(android.os.Build.VERSION.SDK_INT>=11){
 						notification = new Notification.Builder(AsyncPullService.this)
@@ -120,7 +127,7 @@ public class AsyncPullService extends Service{
 								Notification(R.drawable.ic_launcher, "NUMAD13", System.currentTimeMillis());
 					
 						Context context=getApplicationContext();      
-				        CharSequence contextTitle="It is your turn!";  
+				        CharSequence contextTitle="NUMAD13";  
 				        CharSequence contextText=result2;  
 				        
 				        notification.setLatestEventInfo(context, contextTitle, contextText, contentIntent);
@@ -156,6 +163,7 @@ public class AsyncPullService extends Service{
 		// TODO Auto-generated method stub
 		//return super.onStartCommand(intent, flags, startId);
 		pullTwiceCheck.add("-");
+
 		MyThread thread = new MyThread();
 		thread.start();
 		 return Service.START_STICKY;

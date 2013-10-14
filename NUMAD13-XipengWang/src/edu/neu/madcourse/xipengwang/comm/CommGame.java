@@ -55,8 +55,7 @@ public class CommGame extends Activity{
 	private String result5="";
 	private String result6="";
 	private String resultString;
-	public static  String myName;
-	public static  String oppName;
+
 	private InputStream input = null;
 	private boolean[] buttonIsPressed = new boolean[18];
 	private ArrayList<Integer> buttonTwicePressed = new ArrayList<Integer>();
@@ -87,6 +86,7 @@ public class CommGame extends Activity{
 	private static MediaPlayer mp = null;
 	
 	RealTimePullTask realTimePullTask = null;
+	static AFKTask aTask;
 	AsyncPullService boundService;
 	boolean isBound;
 	final  ServiceConnection conn = new ServiceConnection(){
@@ -118,8 +118,7 @@ public class CommGame extends Activity{
 		setContentView(R.layout.comm_game);
 		Intent intent = getIntent();
 		
-		oppName = intent.getStringExtra("opponent");
-		myName = intent.getStringExtra("me");
+		
 		
 		
 		//pauseTwicePressed.add(0);
@@ -169,7 +168,7 @@ public class CommGame extends Activity{
 		invisibleScoreText.addTextChangedListener(new ScoreTextListener());
 		scoreText.setText("Score:0");
 		cdText.setText("00:00");
-		oppMsg.setText(oppName+"'s move:");
+		oppMsg.setText(OppNameMyName.oppName+"'s movement:");
 		resultString = (randomWords(6)+randomWords(5)+randomWords(4)+randomWords(3));
 		System.out.println("String: "+resultString);
 		ArrayList<String> sList = new ArrayList<String>();
@@ -292,13 +291,13 @@ public class CommGame extends Activity{
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		AFKTask aTask = new AFKTask(this);
+		aTask= new AFKTask(this);
 		aTask.execute();
-		Intent intent =new Intent();
-		intent.setClass(CommGame.this, AsyncPullService.class);
-		startService(intent);
+		Intent intent2 =new Intent();
+		intent2.setClass(CommGame.this, AsyncPullService.class);
+		startService(intent2);
 		
-		bindService(intent, conn, BIND_AUTO_CREATE);
+		bindService(intent2, conn, BIND_AUTO_CREATE);
 		//realTimePullTask.cancel(true);
 		
 		mc.cancel();
@@ -312,6 +311,7 @@ public class CommGame extends Activity{
 		super.onResume();
 		//GoOnTask gTask = new GoOnTask(this);
 		//gTask.execute();
+		oppMsg.setText(OppNameMyName.oppName+"'s movement:");
 		stopService(new Intent(this, AsyncPullService.class));
 		realTimePullTask = new RealTimePullTask(this);
 		realTimePullTask.execute();
@@ -1876,7 +1876,7 @@ class PushTask extends AsyncTask<String, Integer, String> {
         protected String doInBackground(String... params) {  
 
         	
-        	KeyValueAPI.put("basin", "basin576095", myName, params[0]);
+        	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, params[0]);
         	return params[0];
         }  
  
@@ -1926,12 +1926,15 @@ class RealTimePullTask extends AsyncTask<Void, Integer, Void> {
     @Override  
     protected Void doInBackground(Void... params) {  
     	SubRealTimePullTask subRealTimePullTask = null;
-    	KeyValueAPI.put("basin", "basin576095", myName, oppName);
-    	while(KeyValueAPI.get("basin", "basin576095", myName).equals("AFK")==false){
+    	//String oppQuitStatuString =KeyValueAPI.get("basin", "basin576095", oppName);
+    	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, OppNameMyName.oppName);
+    	while(KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName).equals("AFK")==false && 
+    			KeyValueAPI.get("basin", "basin576095", OppNameMyName.oppName).equals("QUIT2")==false&& 
+    				KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName).equals("QUIT2")==false){
     		subRealTimePullTask = new SubRealTimePullTask(CommGame.this);
     		subRealTimePullTask.execute();
     		try {
-				Thread.sleep(1000);
+				Thread.sleep(100);
 			} catch (Exception e) {
 				// TODO: handle exception
 			}
@@ -1979,7 +1982,7 @@ class RealTimePullTask extends AsyncTask<Void, Integer, Void> {
     
         @Override  
         protected String doInBackground(Void... params) {  
-        	String resString=KeyValueAPI.get("basin", "basin576095", oppName);
+        	String resString=KeyValueAPI.get("basin", "basin576095", OppNameMyName.oppName);
         	return resString;
         }  
  
@@ -1992,16 +1995,21 @@ class RealTimePullTask extends AsyncTask<Void, Integer, Void> {
 		protected void onPostExecute(String result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
-			if(result.equals(myName)){
-			oppMsg.setText(oppName+"'s move:"+"\n"+oppName+" join the game");
+			if(result.equals(OppNameMyName.myName)){
+			oppMsg.setText(OppNameMyName.oppName+"'s movement:"+"\n"+OppNameMyName.oppName+" joins the game");
 			}
-			if(!result.equals(myName)){
+			if(!result.equals(OppNameMyName.myName)){
 				if(result.equals("AFK")){
-					oppMsg.setText(oppName+"'s move:"+"\n"+oppName+" leave the game");
+					oppMsg.setText(OppNameMyName.oppName+"'s movement:"+"\n"+OppNameMyName.oppName+" is not actively playing");
+					System.out.println("opponent's movement: "+result);
+				}else{
+				if(result.equals("QUIT")||result.equals("QUIT2")){
+					oppMsg.setText(OppNameMyName.oppName+"'s movement:"+"\n"+OppNameMyName.oppName+" quits");
+					System.out.println("opponent's movement: "+result);
 				}
 				else{
-			oppMsg.setText(oppName+"'s move:"+"\n"+"spells: "+result);
-			System.out.println("opponent's movement: "+result);}}
+			oppMsg.setText(OppNameMyName.oppName+"'s movement:"+"\n"+OppNameMyName.oppName+" spells: "+result);
+			System.out.println("opponent's movement: "+result);}}}
 		}
 
 		@Override  
@@ -2032,7 +2040,7 @@ class AFKTask extends AsyncTask<Void, Integer, Void> {
     protected Void doInBackground(Void... params) {  
 
     	
-    	KeyValueAPI.put("basin", "basin576095", myName, "AFK");
+    	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "AFK");
     	return null;
     }  
 
@@ -2083,7 +2091,7 @@ class GoOnTask extends AsyncTask<Void, Integer, Void> {
     protected Void doInBackground(Void... params) {  
 
     	
-    	KeyValueAPI.put("basin", "basin576095", myName, "BACK");
+    	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "BACK");
     	return null;
     }  
 
