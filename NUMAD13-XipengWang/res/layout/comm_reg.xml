@@ -2,39 +2,19 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-  	<TextView 
-     	android:id="@+id/descriptText"
+
+    <Button
+	    android:id="@+id/chooseNameButton"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:text="Create your name in game:"
-        android:layout_marginTop="20dp" />  
-	<EditText 
-        android:id="@+id/nameText"
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:layout_below="@+id/descriptText"/>
-	<TextView 
-     	android:id="@+id/descriptText2"
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:text="Enter your opponent's name:"
-        android:layout_below="@+id/nameText"/>  
-    <EditText 
-        android:id="@+id/oppNameText"
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:layout_below="@+id/descriptText2"/>
-	<Button
-	    android:id="@+id/searchButton"
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:layout_below="@+id/oppNameText"
-        android:text="Connect to the Game"/>
+		android:layout_marginTop="10dp"
+        android:text="Start!"/>
+
 	<Button
 	    android:id="@+id/highScoreButton"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:layout_below="@+id/searchButton"
+        android:layout_below="@+id/chooseNameButton"
         android:text="High Score"/>
 	<Button
 	    android:id="@+id/howToUseButton"

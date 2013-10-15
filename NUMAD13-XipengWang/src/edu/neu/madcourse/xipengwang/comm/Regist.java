@@ -24,56 +24,54 @@ import edu.neu.mhealth.api.KeyValueAPI;
 
 
 public class Regist extends Activity{
-	private boolean nameIsValid;
-	private boolean oppIsValid;
-	private EditText name,oppName;
-	private TextView desp,desp2;
+
+	
+
 	private ProgressBar progressBar;
-	private Button connectGame, stopConn, menuButton, scoreButton, htuButton ;
+	private Button stopConn, menuButton, scoreButton, htuButton,chooseNamebutton  ;
 	
 	private AlphaAnimation alphaDes;
     private AlphaAnimation alphaInc;
     
-    CheckNameTask checkNameTask;
+    
     QuitTask quitTask;
+    QuitTask2 quitTask2;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.comm_reg); 
+		quitTask2 = new QuitTask2(this);
+		quitTask2.execute();
         alphaDes = new AlphaAnimation(1.0f, 0.0f);
         alphaInc = new AlphaAnimation(0.0f, 1.0f);
         alphaDes.setDuration(100);
         alphaInc.setDuration(100);
         alphaDes.setFillAfter(true);
         alphaInc.setFillAfter(true);
-		name = (EditText)findViewById(R.id.nameText);
-		oppName = (EditText)findViewById(R.id.oppNameText);
-		desp = (TextView)findViewById(R.id.descriptText);
-		desp2 = (TextView)findViewById(R.id.descriptText2);
+
 		progressBar = (ProgressBar)findViewById(R.id.progressBar);
 		 progressBar.startAnimation(alphaDes);
 		
 		//progressBar.setBackgroundColor(getResources().getColor(R.color.white));
 		
-		connectGame = (Button)findViewById(R.id.searchButton);
+		
 		stopConn = (Button)findViewById(R.id.stopButton);
 		menuButton = (Button)findViewById(R.id.mainMenuButton);
 		scoreButton = (Button)findViewById(R.id.highScoreButton);
 		htuButton = (Button)findViewById(R.id.howToUseButton);
+		chooseNamebutton = (Button)findViewById(R.id.chooseNameButton);
 		scoreButton.setOnClickListener(new Button.OnClickListener(){
 
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				if(name.getText().toString().isEmpty()){
-					Toast.makeText(Regist.this,"User name can not be empty!",Toast.LENGTH_LONG).show();  
-				}else{
+			
 				CheckScoreTask checkScoreTask = new CheckScoreTask(Regist.this);
-				checkScoreTask.execute(name.getText().toString());}
+				checkScoreTask.execute();}
 				
-			}
+			
 			
 		});
 		htuButton.setOnClickListener(new Button.OnClickListener(){
@@ -82,6 +80,18 @@ public class Regist extends Activity{
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 		      	Intent intent = new Intent(Regist.this, HowToUse.class);
+ 		      	
+ 		      	startActivity(intent);
+				
+			}
+			
+		});
+		chooseNamebutton.setOnClickListener(new Button.OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+		      	Intent intent = new Intent(Regist.this, ChooseName.class);
  		      	
  		      	startActivity(intent);
 				
@@ -97,32 +107,11 @@ public class Regist extends Activity{
 			}
 			
 		});
-		connectGame.setOnClickListener(new Button.OnClickListener(){  
-	            public void onClick(View v) {  
-	                search();  
-	                stopConn.startAnimation(alphaInc);
-	                stopConn.setOnClickListener(new Button.OnClickListener(){  
-	                    public void onClick(View v) {  
-	                    	
-	                    	checkNameTask.cancel(true);
-	                    	stopConn.startAnimation(alphaDes);
-	                    	progressBar.startAnimation(alphaDes);
-	                    	 stopConn.setOnClickListener(null);
-	                    }  
-	                });
-	            }  
-	        }); 
+
 		 
 	}
 	
-		public void search() {
-		String[] strings =new String[2];
-		strings[0] = name.getText().toString();
-		strings[1] = oppName.getText().toString();
-			// TODO Auto-generated method stub
-		checkNameTask= new CheckNameTask(this);
-		checkNameTask.execute(strings);
-	}
+
 		
 		
 	
@@ -130,7 +119,7 @@ public class Regist extends Activity{
 		protected void onResume() {
 			// TODO Auto-generated method stub
 			super.onResume();
-			oppName.setText("");
+			
 			stopConn.startAnimation(alphaDes);
 			progressBar.startAnimation(alphaDes);
 			stopConn.setOnClickListener(null);
@@ -143,7 +132,7 @@ public class Regist extends Activity{
 
 		}
 
-class CheckScoreTask extends AsyncTask<String, Integer, String> {  
+class CheckScoreTask extends AsyncTask<String, Integer, String[]> {  
     	
     	private Context context;  
     	CheckScoreTask(Context context) {  
@@ -155,16 +144,31 @@ class CheckScoreTask extends AsyncTask<String, Integer, String> {
     
 
         @Override  
-        protected String doInBackground(String... params) {  
-        	String checkString =KeyValueAPI.get("basin", "basin576095", params[0]+"@HS");
+        protected String[] doInBackground(String... params) {  
+        	String checkString1 =KeyValueAPI.get("basin", "basin576095", "Jim"+"@HS");
+        	String checkString2 =KeyValueAPI.get("basin", "basin576095", "Tom"+"@HS");
+        	String checkString3 =KeyValueAPI.get("basin", "basin576095", "Mary"+"@HS");
+        	String checkString4 =KeyValueAPI.get("basin", "basin576095", "Fred"+"@HS");
         	
-        	if(checkString.equals("Error: No Such Key")){
-        		return "Error: No Such Key";
+        	if(checkString1.equals("Error: No Such Key")){
+        		checkString1="0";
         	}
-        	else {
-				return checkString;
-			}
-
+        	if(checkString2.equals("Error: No Such Key")){
+        		checkString2="0";
+        	}
+        	if(checkString3.equals("Error: No Such Key")){
+        		checkString3="0";
+        	}
+        	if(checkString4.equals("Error: No Such Key")){
+        		checkString4="0";
+        	}
+        	
+        	String[] strings = new String[4];
+        	strings[0]=checkString1;
+        	strings[1]=checkString2;
+        	strings[2]=checkString3;
+        	strings[3]=checkString4;
+        	return strings;
         }  
  
         @Override  
@@ -173,12 +177,13 @@ class CheckScoreTask extends AsyncTask<String, Integer, String> {
         }  
  
         @Override  
-        protected void onPostExecute(String results) {  
-        	if(results.equals("Error: No Such Key")){
-        		HighScoreRecord.highscore="0";
-        	}else {
-				HighScoreRecord.highscore=results;
-			}
+        protected void onPostExecute(String[] results) {  
+        	
+        	HighScoreRecord.highscore[0]=results[0];
+        	HighScoreRecord.highscore[1]=results[1];
+        	HighScoreRecord.highscore[2]=results[2];
+        	HighScoreRecord.highscore[3]=results[3];
+        	
         	Intent intent = new Intent(Regist.this, HighScore.class);
         	startActivity(intent);
             
@@ -212,143 +217,50 @@ class CheckScoreTask extends AsyncTask<String, Integer, String> {
 		protected Void doInBackground(Void... params) {
 			// TODO Auto-generated method stub
 			//CommGame.aTask.cancel(true);
-			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "#QUIT");
-			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "#QUIT");
-			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "#QUIT");
-			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "#QUIT");
-			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "#QUIT");
-			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "#QUIT");
-			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "#QUIT");
-			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "#QUIT");
-			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "#QUIT");
-			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "#QUIT2");
-			System.out.println(name.getText().toString()+" quits");
+			KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "#QUIT");
+			KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "#QUIT");
+			KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "#QUIT");
+			KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "#QUIT");
+
+			KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "#QUIT2");
+			System.out.println(OppNameMyName.myName+" quits");
 			return null;
 		}
     	
     }
-	class CheckNameTask extends AsyncTask<String[], Integer, String[]> {  
-    	
+    class QuitTask2 extends AsyncTask<Void, Integer, Void>{
     	private Context context;  
-    	CheckNameTask(Context context) {  
+    	QuitTask2(Context context) {  
               this.context = context;  
               //progressBar.setBackgroundColor(getResources().getColor(R.color.black));  
-              progressBar.startAnimation(alphaInc);
+             // progressBar.startAnimation(alphaInc);
               
           }  
-    
-
-        @Override  
-        protected String[] doInBackground(String[]... params) {  
-        	String[] reStrings = new String[2];
-        	String checkString =KeyValueAPI.get("basin", "basin576095", params[0][0]);
-        	System.out.println("Enter: "+params[0][0]);
-        	System.out.println("checkString: "+checkString);
-        	if(checkString.equals("Error: No Such Key")||checkString.equals("#QUIT")||checkString.equals("#QUIT2")||checkString.equals("#AFK")){
-        		quitTask.cancel(true);
-        		KeyValueAPI.put("basin", "basin576095", params[0][0], params[0][1]);
-        		
-
-        		int i=0; 
-        		
-                while(i<100){  
-                    i++;  
-                    String oppStatus = KeyValueAPI.get("basin", "basin576095", params[0][1]);
-                    if(oppStatus.equals(params[0][0])){
-                    	System.out.println("Opponent: "+params[0][1]);
-                    	
-                    	reStrings[0] = params[0][0];
-                    	reStrings[1] = params[0][1];
-                    	return reStrings;
-                    }
-                    try {  
-                        Thread.sleep(100);  
-                    } catch (InterruptedException e) { 
-                    	KeyValueAPI.clearKey("basin", "basin576095", params[0][0]);
-                    	reStrings[0] = params[0][0];
-                    	reStrings[1] = "Conncetion process is interrupted";
-                    	return reStrings;
-                    }  
-                } 
-                KeyValueAPI.clearKey("basin", "basin576095", params[0][0]);
-                reStrings[0] = params[0][0];
-            	reStrings[1] = "Your opponent does not exist or reject to play";
-            	return reStrings;
-        		
-        	}
-        	else {
-        		reStrings[0] = params[0][0];
-            	reStrings[1] = "Your name is used";
-            	return reStrings;
-			}
-        }  
- 
-        @Override  
-        protected void onCancelled() {  
-            super.onCancelled();  
-        }  
- 
-        @Override  
-        protected void onPostExecute(String[] results) {  
-        	stopConn.startAnimation(alphaDes);
-        	System.out.println(results[0]+" vs: "+results[1]);
-           if(results[1].equals("Your opponent does not exist or reject to play")){
-        	   //progressBar.setBackgroundColor(getResources().getColor(R.color.white)); 
-        	   progressBar.startAnimation(alphaDes);
-        	   System.out.println("Your opponent does not exist or reject to play");
-        	   
-        	   Toast.makeText(context,"Your opponent does not exist or reject to play",Toast.LENGTH_LONG).show();  
-        	   nameIsValid = false;
-        	
-           }else{
-           if(results[1].equals("Your name is used")){
-        	   //progressBar.setBackgroundColor(getResources().getColor(R.color.white)); 
-        	   progressBar.startAnimation(alphaDes);
-        	   System.out.println("Your name is used");
-        	   
-        	   Toast.makeText(context,"Your name is used",Toast.LENGTH_LONG).show();  
-        	   nameIsValid = false;
-        	
-           }else{
-           if(results[1].equals("Conncetion process is interrupted")){
-        	   //progressBar.setBackgroundColor(getResources().getColor(R.color.white)); 
-        	   progressBar.startAnimation(alphaDes);
-        	   System.out.println("Conncetion process is interrupted");
-        	   
-        	   Toast.makeText(context,"Conncetion process is interrupted",Toast.LENGTH_LONG).show();  
-        	   nameIsValid = false;
-        	
-           }
-           else {
-        	   //progressBar.setBackgroundColor(getResources().getColor(R.color.white));  
-        	   progressBar.startAnimation(alphaDes);
-        	   System.out.println("Opponent Connected! Loading Game");
-        	   Toast.makeText(context,"Opponent Connected! Loading Game",Toast.LENGTH_LONG).show();  
-        	   nameIsValid = true;
- 		      	Intent intent = new Intent(Regist.this, CommGame.class);
- 		      	OppNameMyName.myName=results[0];
- 		      	OppNameMyName.oppName=results[1];
- 		      	
- 		      	startActivity(intent);
-		}}}
-            
-        }  
- 
-        @Override  
-        protected void onPreExecute() {  
-           
-            
-        }  
- 
-        @Override  
-        protected void onProgressUpdate(Integer... values) {  
-            
-        	 //System.out.println("onProgressUpdate"+values[0]);  
-            
-        	// progressDialog.setProgress(values[0]);
-              
-        }  
- 
-     }
+		@Override
+		protected Void doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			//CommGame.aTask.cancel(true);
+			if(!KeyValueAPI.get("basin", "basin576095","Jim").equals("#OWN")){
+			KeyValueAPI.put("basin", "basin576095","Jim", "#QUIT");}
+			if(!KeyValueAPI.get("basin", "basin576095","Tom").equals("#OWN")){
+			KeyValueAPI.put("basin", "basin576095","Tom", "#QUIT");}
+			if(!KeyValueAPI.get("basin", "basin576095","Mary").equals("#OWN")){
+			KeyValueAPI.put("basin", "basin576095","Mary", "#QUIT");}
+			if(!KeyValueAPI.get("basin", "basin576095","Fred").equals("#OWN")){
+			KeyValueAPI.put("basin", "basin576095","Fred", "#QUIT");}
+			if(!KeyValueAPI.get("basin", "basin576095","Jim").equals("#OWN")){
+			KeyValueAPI.put("basin", "basin576095","Jim", "#QUIT2");}
+			if(!KeyValueAPI.get("basin", "basin576095","Tom").equals("#OWN")){
+			KeyValueAPI.put("basin", "basin576095","Tom", "#QUIT2");}
+			if(!KeyValueAPI.get("basin", "basin576095","Mary").equals("#OWN")){
+			KeyValueAPI.put("basin", "basin576095","Mary", "#QUIT2");}
+			if(!KeyValueAPI.get("basin", "basin576095","Fred").equals("#OWN")){
+			KeyValueAPI.put("basin", "basin576095","Fred", "#QUIT2");}
+			System.out.println(" quits");
+			return null;
+		}
+    	
+    }
+	
 
 }

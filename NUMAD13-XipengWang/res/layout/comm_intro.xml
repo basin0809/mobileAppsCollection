@@ -26,7 +26,7 @@
      	 android:layout_height="wrap_content"
      	 android:singleLine="false"
      	 android:layout_marginTop="10dp"
-      	 android:text="(1) Connect to another palyer :" 
+      	 android:text="(1) Connect to another player :" 
       	 
       	 android:layout_below="@+id/comm_intro_text"/>
    		<TextView
@@ -35,7 +35,7 @@
      	 android:layout_height="wrap_content"
      	 android:layout_marginTop="5dp"
      	 android:singleLine="false"
-      	 android:text="First, make sure you know your opponent's name and your opponent knows yours as well. Enter your user name and your opponent's user name on your phone, and your opponent enters his/her user name and your name on his/her phone." 
+      	 android:text="There are four characters in the game: Jim, Tom, Mary and Fred. When you start the game, you need to choose one character, then you will see a list of other characters. This list is updated periodically, the off-line characters' names are transparent and the online characters' names are easy to see." 
       	 android:layout_below="@+id/comm_introintro_text"/>
    		
    		<TextView
@@ -44,7 +44,7 @@
      	 android:layout_height="wrap_content"
      	 android:layout_marginTop="5dp"
      	 android:singleLine="false"
-      	 android:text="Second, press the connect button. Your opponent does not need to press the connect button at the same time, but please make sure your opponent will press the connect button in 15 secs. You can cancel the connecting process while you are waiting for your opponent." 
+      	 android:text="When you press the offline names, nothing will happen. When you press one of the online characters' names, it means you invite that name's user to play with you and that user will be notified on his/her phone. If he/she accepts your invitation, then both of you will start a new Dabble game. A user can reject your invitation, in this case, the Dabble game will not be loaded." 
       	 android:layout_below="@+id/comm_introcontent_text"/>
    		
    		<TextView 
@@ -61,7 +61,7 @@
       	 android:layout_height="wrap_content"
       	 android:singleLine="false"
       	 android:layout_marginTop="5dp"
-      	 android:text="Both players need to solve the same Dabble board within the same time limitation. Both players can see information about the moves another player is making (i.e. spell a word)when they are actively playing."
+      	 android:text="Both players need to solve their own Dabble board within the same time limitation. Both players can see information about the moves another player is making (i.e. spell a word)when they are actively playing."
        	 android:layout_below="@+id/comm_introcode_text"/>
 
    		<TextView 
@@ -95,7 +95,7 @@
       	 android:layout_width="match_parent"
       	 android:layout_height="wrap_content"
       	 android:singleLine="false"
-      	 android:text="Every time when you finish the game and get a new high score, your score will be saved on the server, to check your high score, press the HighScore button in the menu. Remember: if you disconnect and quit during the game playing, your score will not be recorded."
+      	 android:text="Every time after you use one character finish the game and get a new high score, your character's score will be saved on the server, to check each character's high score, press the HighScore button in the menu. Remember: if you disconnect and quit during the game playing, your character's score will not be recorded."
       	 android:layout_marginTop="5dp"
        	 android:layout_below="@+id/comm_introhelpercontent_text2"/>
    		<Button 

@@ -98,7 +98,7 @@
         </activity>
         
         <activity android:name="edu.neu.madcourse.xipengwang.comm.Regist"
-              android:label="Set up your name in the game"
+              android:label="Menu"
               
               android:screenOrientation="portrait">
         </activity>
@@ -127,7 +127,14 @@
                android:theme="@android:style/Theme.Dialog"
               android:screenOrientation="portrait">
         </activity>
-        
+        <activity android:name="edu.neu.madcourse.xipengwang.comm.ChooseName"
+              android:label="Choose a name"
+              android:screenOrientation="portrait">
+        </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.comm.OnlineUsers"
+              android:label="Online Users list"
+              android:screenOrientation="portrait">
+        </activity>
        
        
          <service android:name="edu.neu.madcourse.xipengwang.comm.AsyncPullService" />

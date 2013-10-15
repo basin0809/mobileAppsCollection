@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >  
+    <Button
+	    android:id="@+id/JimButton"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_below="@+id/NameText"
+        android:text="Jim"/>
+	<Button
+	    android:id="@+id/TomButton"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_below="@+id/JimButton"
+        android:text="Tom"/>
+	<Button
+	    android:id="@+id/MaryButton"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_below="@+id/TomButton"
+        android:text="Mary"/>
+	<Button
+	    android:id="@+id/FredButton"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_below="@+id/MaryButton"
+        android:text="Fred"/>
+
+	<TextView
+	    android:id="@+id/NameText"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentLeft="true"
+	    android:layout_alignParentTop="true"
+	    android:layout_marginTop="47dp"
+	    android:text="Choose your  name in the game:" />
+
+</RelativeLayout>

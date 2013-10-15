@@ -16,7 +16,7 @@
       android:id="@+id/comm_highScore_title"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="Your High Score:"
+      android:text="High Score:"
       android:layout_centerHorizontal="true" />
    <TextView
       android:id="@+id/comm_highScore_content"

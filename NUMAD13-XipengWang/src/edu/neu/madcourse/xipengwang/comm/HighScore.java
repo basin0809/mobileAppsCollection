@@ -22,7 +22,7 @@ public class HighScore extends Activity {
       setTitle("Rules ");
       highScorebackButton = (Button)findViewById(R.id.comm_highScore_button);
       highScoreContext = (TextView)findViewById(R.id.comm_highScore_content);
-      highScoreContext.setText(HighScoreRecord.highscore);
+      highScoreContext.setText("Jim: "+HighScoreRecord.highscore[0]+"\n"+"Tom: "+HighScoreRecord.highscore[1]+"\n"+"Mary: "+HighScoreRecord.highscore[2]+"\n"+"Fred: "+HighScoreRecord.highscore[3]);
       highScorebackButton.setOnClickListener(new HighScoreBackListener());
    }
    class HighScoreBackListener implements OnClickListener{
