@@ -184,7 +184,7 @@
 	            android:layout_height="fill_parent"
 	            android:layout_width="0dp"
 	            android:layout_weight="1"
-	            android:weightSum="3">
+	            android:weightSum="2">
 	            		
 					<TextView
 					    android:id="@+id/cScore"
@@ -199,27 +199,7 @@
 	            		android:layout_width="fill_parent"
 	            		android:layout_weight="1"
 					    android:text="CountingDown:" />
-	
-					<LinearLayout
-	            		android:orientation="horizontal"
-	            		android:layout_height="0dp"
-	            		android:layout_width="fill_parent"
-	            		android:layout_weight="1"
-	            		>
-							
-							<TextView
-							    android:id="@+id/cSwap"
-							    android:layout_height="fill_parent"
-	            				android:layout_width="wrap_content"
-							    android:text="Swapp Times Left:" />
-							
-							<TextView
-							    android:id="@+id/cSwapTimes"
-							    android:layout_height="fill_parent"
-	            				android:layout_width="wrap_content"
-							    android:text="40" />
-						
-					</LinearLayout>
+
 				</LinearLayout>
 				
                 <LinearLayout
@@ -270,7 +250,7 @@
             		android:layout_height="0dp"
             		android:layout_width="fill_parent"
             		android:layout_weight="1"
-				    android:text="Back " />
+				    android:text="Disconnect and Quit" />
 			</LinearLayout>
 
 </LinearLayout>

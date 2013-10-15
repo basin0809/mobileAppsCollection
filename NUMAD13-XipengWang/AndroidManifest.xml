@@ -13,6 +13,7 @@
 		<uses-permission android:name="android.permission.READ_PHONE_DATA" />
 		<uses-permission android:name="android.permission.READ_PHONE_STATE" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.VIBRATE"/>
 	
     <application
         android:allowBackup="true"
@@ -111,11 +112,22 @@
               
               android:screenOrientation="portrait">
         </activity>
-                <activity android:name="edu.neu.madcourse.xipengwang.comm.Cong"
+        <activity android:name="edu.neu.madcourse.xipengwang.comm.Cong"
               android:label="Tada!"
               
               android:screenOrientation="portrait">
         </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.comm.HighScore"
+              android:label="High Score"
+               android:theme="@android:style/Theme.Dialog"
+              android:screenOrientation="portrait">
+        </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.comm.HowToUse"
+              android:label="How to play?"
+               android:theme="@android:style/Theme.Dialog"
+              android:screenOrientation="portrait">
+        </activity>
+        
        
        
          <service android:name="edu.neu.madcourse.xipengwang.comm.AsyncPullService" />

@@ -31,11 +31,23 @@
         android:layout_below="@+id/oppNameText"
         android:text="Connect to the Game"/>
 	<Button
-	    android:id="@+id/mainMenuButton"
+	    android:id="@+id/highScoreButton"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:layout_below="@+id/searchButton"
-        android:text="Back to the menu"/>
+        android:text="High Score"/>
+	<Button
+	    android:id="@+id/howToUseButton"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_below="@+id/highScoreButton"
+        android:text="How to use this test code"/>
+	<Button
+	    android:id="@+id/mainMenuButton"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_below="@+id/howToUseButton"
+        android:text="Back to the Menu"/>
 	<Button
 	    android:id="@+id/stopButton"
         android:layout_height="wrap_content"

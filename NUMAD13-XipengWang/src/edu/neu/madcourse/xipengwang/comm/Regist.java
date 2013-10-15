@@ -29,7 +29,7 @@ public class Regist extends Activity{
 	private EditText name,oppName;
 	private TextView desp,desp2;
 	private ProgressBar progressBar;
-	private Button connectGame, stopConn, menuButton;
+	private Button connectGame, stopConn, menuButton, scoreButton, htuButton ;
 	
 	private AlphaAnimation alphaDes;
     private AlphaAnimation alphaInc;
@@ -60,6 +60,34 @@ public class Regist extends Activity{
 		connectGame = (Button)findViewById(R.id.searchButton);
 		stopConn = (Button)findViewById(R.id.stopButton);
 		menuButton = (Button)findViewById(R.id.mainMenuButton);
+		scoreButton = (Button)findViewById(R.id.highScoreButton);
+		htuButton = (Button)findViewById(R.id.howToUseButton);
+		scoreButton.setOnClickListener(new Button.OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if(name.getText().toString().isEmpty()){
+					Toast.makeText(Regist.this,"User name can not be empty!",Toast.LENGTH_LONG).show();  
+				}else{
+				CheckScoreTask checkScoreTask = new CheckScoreTask(Regist.this);
+				checkScoreTask.execute(name.getText().toString());}
+				
+			}
+			
+		});
+		htuButton.setOnClickListener(new Button.OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+		      	Intent intent = new Intent(Regist.this, HowToUse.class);
+ 		      	
+ 		      	startActivity(intent);
+				
+			}
+			
+		});
 		menuButton.setOnClickListener(new Button.OnClickListener(){
 
 			@Override
@@ -104,17 +132,74 @@ public class Regist extends Activity{
 			super.onResume();
 			oppName.setText("");
 			stopConn.startAnimation(alphaDes);
+			progressBar.startAnimation(alphaDes);
 			stopConn.setOnClickListener(null);
 			quitTask = new QuitTask(this);
 			quitTask.execute();
 			stopService(new Intent(this, AsyncPullService.class));
 			/*if(KeyValueAPI.isServerAvailable()){
-				KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "QUIT");
+				KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "#QUIT");
 			}*/
 
 		}
 
+class CheckScoreTask extends AsyncTask<String, Integer, String> {  
+    	
+    	private Context context;  
+    	CheckScoreTask(Context context) {  
+              this.context = context;  
+              //progressBar.setBackgroundColor(getResources().getColor(R.color.black));  
+              progressBar.startAnimation(alphaInc);
+              
+          }  
+    
 
+        @Override  
+        protected String doInBackground(String... params) {  
+        	String checkString =KeyValueAPI.get("basin", "basin576095", params[0]+"@HS");
+        	
+        	if(checkString.equals("Error: No Such Key")){
+        		return "Error: No Such Key";
+        	}
+        	else {
+				return checkString;
+			}
+
+        }  
+ 
+        @Override  
+        protected void onCancelled() {  
+            super.onCancelled();  
+        }  
+ 
+        @Override  
+        protected void onPostExecute(String results) {  
+        	if(results.equals("Error: No Such Key")){
+        		HighScoreRecord.highscore="0";
+        	}else {
+				HighScoreRecord.highscore=results;
+			}
+        	Intent intent = new Intent(Regist.this, HighScore.class);
+        	startActivity(intent);
+            
+        }  
+ 
+        @Override  
+        protected void onPreExecute() {  
+           
+            
+        }  
+ 
+        @Override  
+        protected void onProgressUpdate(Integer... values) {  
+            
+        	 //System.out.println("onProgressUpdate"+values[0]);  
+            
+        	// progressDialog.setProgress(values[0]);
+              
+        }  
+ 
+     }
     class QuitTask extends AsyncTask<Void, Integer, Void>{
     	private Context context;  
     	QuitTask(Context context) {  
@@ -127,16 +212,16 @@ public class Regist extends Activity{
 		protected Void doInBackground(Void... params) {
 			// TODO Auto-generated method stub
 			//CommGame.aTask.cancel(true);
-			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "QUIT");
-			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "QUIT");
-			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "QUIT");
-			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "QUIT");
-			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "QUIT");
-			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "QUIT");
-			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "QUIT");
-			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "QUIT");
-			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "QUIT");
-			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "QUIT2");
+			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "#QUIT");
+			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "#QUIT");
+			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "#QUIT");
+			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "#QUIT");
+			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "#QUIT");
+			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "#QUIT");
+			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "#QUIT");
+			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "#QUIT");
+			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "#QUIT");
+			KeyValueAPI.put("basin", "basin576095", name.getText().toString(), "#QUIT2");
 			System.out.println(name.getText().toString()+" quits");
 			return null;
 		}
@@ -159,9 +244,11 @@ public class Regist extends Activity{
         	String checkString =KeyValueAPI.get("basin", "basin576095", params[0][0]);
         	System.out.println("Enter: "+params[0][0]);
         	System.out.println("checkString: "+checkString);
-        	if(checkString.equals("Error: No Such Key")||checkString.equals("QUIT")||checkString.equals("AFK")){
+        	if(checkString.equals("Error: No Such Key")||checkString.equals("#QUIT")||checkString.equals("#QUIT2")||checkString.equals("#AFK")){
         		quitTask.cancel(true);
         		KeyValueAPI.put("basin", "basin576095", params[0][0], params[0][1]);
+        		
+
         		int i=0; 
         		
                 while(i<100){  
@@ -213,7 +300,7 @@ public class Regist extends Activity{
         	   Toast.makeText(context,"Your opponent does not exist or reject to play",Toast.LENGTH_LONG).show();  
         	   nameIsValid = false;
         	
-           }
+           }else{
            if(results[1].equals("Your name is used")){
         	   //progressBar.setBackgroundColor(getResources().getColor(R.color.white)); 
         	   progressBar.startAnimation(alphaDes);
@@ -222,7 +309,7 @@ public class Regist extends Activity{
         	   Toast.makeText(context,"Your name is used",Toast.LENGTH_LONG).show();  
         	   nameIsValid = false;
         	
-           }
+           }else{
            if(results[1].equals("Conncetion process is interrupted")){
         	   //progressBar.setBackgroundColor(getResources().getColor(R.color.white)); 
         	   progressBar.startAnimation(alphaDes);
@@ -243,7 +330,7 @@ public class Regist extends Activity{
  		      	OppNameMyName.oppName=results[1];
  		      	
  		      	startActivity(intent);
-		}	
+		}}}
             
         }  
  

@@ -10,6 +10,8 @@ import java.util.Random;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -311,10 +313,15 @@ public class CommGame extends Activity{
 		super.onResume();
 		//GoOnTask gTask = new GoOnTask(this);
 		//gTask.execute();
+		
 		oppMsg.setText(OppNameMyName.oppName+"'s movement:");
+		
 		stopService(new Intent(this, AsyncPullService.class));
 		realTimePullTask = new RealTimePullTask(this);
 		realTimePullTask.execute();
+		NotificationManager mNotificationManager=
+				(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationManager.cancel(1);
 		if(pauseTwicePressed.get(pauseTwicePressed.size()-1)==1){
 			
 		}
@@ -343,33 +350,53 @@ public class CommGame extends Activity{
 				result=result1+"\n"+result2+"\n"+result3+"\n"+result4;
 				new AlertDialog.Builder(CommGame.this)  
 				
-				                .setTitle("Hint")
-				
-				                .setMessage(result)
-				
-				                .setPositiveButton("OK",   new DialogInterface.OnClickListener(){
-	                                 public void onClick(DialogInterface dialoginterface, int i){
-	                                	 setResult(RESULT_OK);
-	                                     //finish();
-	                                 }
-	                         })
-				
-				                .show();
+                .setTitle("Hint")
+
+                .setMessage(result)
+
+                .setPositiveButton("OK",   new DialogInterface.OnClickListener(){
+                     public void onClick(DialogInterface dialoginterface, int i){
+                    	 setResult(RESULT_OK);
+                         //finish();
+                     }
+             })
+
+                .show();
 
 			
 		}
 		
 	}
+	
 	class QuitListener implements OnClickListener{
 
 		@Override
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
-			mc.cancel();
-			realTimePullTask.cancel(true);
-			finish();
+			
+			
+			new AlertDialog.Builder(CommGame.this)  
+			
+            .setTitle("Are you sure to leave the game?")
+
+            .setMessage("Your score will not be saved if disconnect now")
+
+            .setPositiveButton("OK",   new DialogInterface.OnClickListener(){
+                 public void onClick(DialogInterface dialoginterface, int i){
+                	 setResult(RESULT_OK);
+                	 mc.cancel();
+         			 realTimePullTask.cancel(true);
+                     finish();
+                 }
+         })
+         .setNegativeButton("Cancel",   new DialogInterface.OnClickListener(){
+                 public void onClick(DialogInterface dialoginterface, int i){
+                	 setResult(RESULT_CANCELED);
+                 }
+         })
+
+            .show();
 		}
-		
 	}
 	class PauseListener implements OnClickListener{
 
@@ -432,6 +459,8 @@ public class CommGame extends Activity{
         public void onFinish() {     
         	cdText.setText("finish"); 
         	mc.cancel();
+        	PushScoreTask pushScoreTask2 = new PushScoreTask(CommGame.this);
+			pushScoreTask2.execute(OppNameMyName.myName);
         	finish();
 			Intent intent =new Intent();
 			intent.putExtra("lastScore", scoreText.getText().toString());
@@ -467,6 +496,8 @@ public class CommGame extends Activity{
 			// TODO Auto-generated method stub
 			if(Integer.parseInt(s.toString())==0){
 				mc.cancel();
+				PushScoreTask pushScoreTask = new PushScoreTask(CommGame.this);
+				pushScoreTask.execute(OppNameMyName.myName);
 				finish();
 				Intent intent =new Intent();
 				intent.setClass(CommGame.this, Finish.class);
@@ -498,6 +529,8 @@ public class CommGame extends Activity{
 			System.out.println("------------->Score: "+s);
 			if(Integer.parseInt(s.toString())==96){
 				mc.cancel();
+				PushScoreTask pushScoreTask = new PushScoreTask(CommGame.this);
+				pushScoreTask.execute(OppNameMyName.myName);
 				finish();
 				Intent intent =new Intent();
 				intent.setClass(CommGame.this, Cong.class);
@@ -1860,7 +1893,70 @@ public class CommGame extends Activity{
 		
 	}
 	
-	
+class PushScoreTask extends AsyncTask<String, Integer, String> {  
+    	
+    	private Context context;  
+    	PushScoreTask(Context context) {  
+              this.context = context;  
+              //progressBar.setBackgroundColor(getResources().getColor(R.color.black));  
+             // progressBar.startAnimation(alphaInc);
+              
+          }  
+    
+
+        @Override  
+        protected String doInBackground(String... params) {  
+
+        	String preScore = KeyValueAPI.get("basin", "basin576095", params[0]+"@HS");
+        	if(preScore.equals("Error: No Such Key")){
+        	KeyValueAPI.put("basin", "basin576095", params[0]+"@HS", score+"");
+        	return score+"";}
+        	
+        	else {
+				int preIntScore = Integer.parseInt(preScore);
+				if(score>preIntScore){
+					KeyValueAPI.put("basin", "basin576095", params[0]+"@HS", score+"");
+					return score+"";
+				}
+				else {
+					//keep the previous score.
+					return preScore;
+				}
+			}
+        	
+        }  
+ 
+        @Override  
+        protected void onCancelled() {  
+            super.onCancelled();  
+        }  
+ 
+    
+ 
+        @Override
+		protected void onPostExecute(String result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			System.out.println("push score"+result);
+		}
+
+
+		@Override  
+        protected void onPreExecute() {  
+           
+            
+        }  
+ 
+        @Override  
+        protected void onProgressUpdate(Integer... values) {  
+            
+        	 //System.out.println("onProgressUpdate"+values[0]);  
+            
+        	// progressDialog.setProgress(values[0]);
+              
+        }  
+ 
+     }
 class PushTask extends AsyncTask<String, Integer, String> {  
     	
     	private Context context;  
@@ -1928,9 +2024,9 @@ class RealTimePullTask extends AsyncTask<Void, Integer, Void> {
     	SubRealTimePullTask subRealTimePullTask = null;
     	//String oppQuitStatuString =KeyValueAPI.get("basin", "basin576095", oppName);
     	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, OppNameMyName.oppName);
-    	while(KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName).equals("AFK")==false && 
-    			KeyValueAPI.get("basin", "basin576095", OppNameMyName.oppName).equals("QUIT2")==false&& 
-    				KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName).equals("QUIT2")==false){
+    	while(KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName).equals("#AFK")==false && 
+    			KeyValueAPI.get("basin", "basin576095", OppNameMyName.oppName).equals("#QUIT2")==false&& 
+    				KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName).equals("#QUIT2")==false){
     		subRealTimePullTask = new SubRealTimePullTask(CommGame.this);
     		subRealTimePullTask.execute();
     		try {
@@ -1999,17 +2095,24 @@ class RealTimePullTask extends AsyncTask<Void, Integer, Void> {
 			oppMsg.setText(OppNameMyName.oppName+"'s movement:"+"\n"+OppNameMyName.oppName+" joins the game");
 			}
 			if(!result.equals(OppNameMyName.myName)){
-				if(result.equals("AFK")){
+				if(result.equals("#AFK")){
 					oppMsg.setText(OppNameMyName.oppName+"'s movement:"+"\n"+OppNameMyName.oppName+" is not actively playing");
 					System.out.println("opponent's movement: "+result);
 				}else{
-				if(result.equals("QUIT")||result.equals("QUIT2")){
+					if(result.equals("#QUIT")||result.equals("#QUIT2")){
 					oppMsg.setText(OppNameMyName.oppName+"'s movement:"+"\n"+OppNameMyName.oppName+" quits");
 					System.out.println("opponent's movement: "+result);
-				}
-				else{
-			oppMsg.setText(OppNameMyName.oppName+"'s movement:"+"\n"+OppNameMyName.oppName+" spells: "+result);
-			System.out.println("opponent's movement: "+result);}}}
+					}else{
+						if(result.equals("#WIN")){
+							oppMsg.setText(OppNameMyName.oppName+"'s movement:"+"\n"+OppNameMyName.oppName+" wins the game!");
+							System.out.println("opponent's movement: "+result);
+						}else{
+							if(result.equals("#LOS")){
+								oppMsg.setText(OppNameMyName.oppName+"'s movement:"+"\n"+OppNameMyName.oppName+" loses the game!");
+								System.out.println("opponent's movement: "+result);
+							}else{
+								oppMsg.setText(OppNameMyName.oppName+"'s movement:"+"\n"+OppNameMyName.oppName+" spells: "+result);
+								System.out.println("opponent's movement: "+result);}}}}}
 		}
 
 		@Override  
@@ -2040,7 +2143,7 @@ class AFKTask extends AsyncTask<Void, Integer, Void> {
     protected Void doInBackground(Void... params) {  
 
     	
-    	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "AFK");
+    	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "#AFK");
     	return null;
     }  
 

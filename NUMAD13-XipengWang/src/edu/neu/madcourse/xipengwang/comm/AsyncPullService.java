@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
@@ -48,9 +49,9 @@ public class AsyncPullService extends Service{
 			super.run();
 			
 			
-			KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "AFK");
-			while(KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName).equals("AFK")==true&& 
-	    			KeyValueAPI.get("basin", "basin576095", OppNameMyName.oppName).equals("QUIT2")==false){
+			KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "#AFK");
+			while(KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName).equals("#AFK")==true&& 
+	    			KeyValueAPI.get("basin", "basin576095", OppNameMyName.oppName).equals("#QUIT2")==false){
 				SubAsyncPullTask subAsyncPullTask = new SubAsyncPullTask(AsyncPullService.this);
 	    		subAsyncPullTask.execute();
 	    		try {
@@ -93,16 +94,23 @@ public class AsyncPullService extends Service{
 					result2=OppNameMyName.oppName+" joins the game";
 				}
 				if(!result.equals(OppNameMyName.myName)){
-					if(result.equals("AFK")){
+					if(result.equals("#AFK")){
 						result2=OppNameMyName.oppName+" is not actively playing";
 					}else{
-					if(result.equals("QUIT")||result.equals("QUIT2")){
+					if(result.equals("#QUIT")||result.equals("#QUIT2")){
 						result2=OppNameMyName.oppName+" quits";
 					}
 					else{
-						
-						result2=OppNameMyName.oppName+" spells: "+result;
-				}}}
+						if(result.equals("#WIN")){
+							result2=OppNameMyName.oppName+" wins the game!";
+						}
+						else{
+							if(result.equals("#LOS")){
+								result2=OppNameMyName.oppName+" loses the game!";
+							}
+							else{
+								result2=OppNameMyName.oppName+" spells: "+result;
+				}}}}}
 				
 				if(!result.equals(pullTwiceCheck.get(pullTwiceCheck.size()-1))){
 					
@@ -120,7 +128,10 @@ public class AsyncPullService extends Service{
 				         .setContentText(result2)
 				         .setSmallIcon(R.drawable.ic_launcher)
 				         .setContentIntent(contentIntent)
+				         .setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.notifybar))
+				         
 				         .build();
+						notification.defaults = Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE;
 						}
 					else {
 						notification=new
@@ -129,7 +140,8 @@ public class AsyncPullService extends Service{
 						Context context=getApplicationContext();      
 				        CharSequence contextTitle="NUMAD13";  
 				        CharSequence contextText=result2;  
-				        
+				        notification.sound = Uri.parse("android.resource://" + getPackageName() + "/" +R.raw.notifybar);
+				        notification.defaults = Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE;
 				        notification.setLatestEventInfo(context, contextTitle, contextText, contentIntent);
 				        }
 				        mNotificationManager.notify(1, notification); 

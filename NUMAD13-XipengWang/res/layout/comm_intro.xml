@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   android:layout_width="fill_parent"
+   android:layout_height="fill_parent"
+   android:padding="10dip">
+   <RelativeLayout 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    >
+
+   		<TextView
+      	 android:id="@+id/comm_intro_text"
+     	 android:layout_width="match_parent"
+     	 android:layout_height="wrap_content"
+     	 android:gravity="center"
+      	 android:text="How to use this test code" />
+   		<TextView
+      	 android:id="@+id/comm_introintro_text"
+     	 android:layout_width="match_parent"
+     	 android:layout_height="wrap_content"
+     	 android:singleLine="false"
+     	 android:layout_marginTop="10dp"
+      	 android:text="(1) Connect to another palyer :" 
+      	 
+      	 android:layout_below="@+id/comm_intro_text"/>
+   		<TextView
+      	 android:id="@+id/comm_introcontent_text"
+     	 android:layout_width="match_parent"
+     	 android:layout_height="wrap_content"
+     	 android:layout_marginTop="5dp"
+     	 android:singleLine="false"
+      	 android:text="First, make sure you know your opponent's name and your opponent knows yours as well. Enter your user name and your opponent's user name on your phone, and your opponent enters his/her user name and your name on his/her phone." 
+      	 android:layout_below="@+id/comm_introintro_text"/>
+   		
+   		<TextView
+      	 android:id="@+id/comm_introcontent_text2"
+     	 android:layout_width="match_parent"
+     	 android:layout_height="wrap_content"
+     	 android:layout_marginTop="5dp"
+     	 android:singleLine="false"
+      	 android:text="Second, press the connect button. Your opponent does not need to press the connect button at the same time, but please make sure your opponent will press the connect button in 15 secs. You can cancel the connecting process while you are waiting for your opponent." 
+      	 android:layout_below="@+id/comm_introcontent_text"/>
+   		
+   		<TextView 
+      	 android:id="@+id/comm_introcode_text"
+      	 android:layout_width="match_parent"
+      	 android:layout_height="wrap_content"
+      	 android:singleLine="false"
+      	 android:layout_marginTop="10dp"
+      	 android:text="(2) Real-time play:"
+       	 android:layout_below="@+id/comm_introcontent_text2"/>
+   		<TextView 
+      	 android:id="@+id/comm_introcodeinfo_text"
+      	 android:layout_width="match_parent"
+      	 android:layout_height="wrap_content"
+      	 android:singleLine="false"
+      	 android:layout_marginTop="5dp"
+      	 android:text="Both players need to solve the same Dabble board within the same time limitation. Both players can see information about the moves another player is making (i.e. spell a word)when they are actively playing."
+       	 android:layout_below="@+id/comm_introcode_text"/>
+
+   		<TextView 
+   		 android:id="@+id/comm_introhelper_text"
+      	 android:layout_width="match_parent"
+      	 android:layout_height="wrap_content"
+      	 android:singleLine="false"
+      	 android:layout_marginTop="10dp"
+      	 android:text="(3) Asynchronous play:"
+       	 android:layout_below="@+id/comm_introcodeinfo_text"/>
+   		<TextView 
+   		 android:id="@+id/comm_introhelpercontent_text"
+      	 android:layout_width="match_parent"
+      	 android:layout_height="wrap_content"
+      	 android:singleLine="false"
+      	 android:text="When you are not actively playing the game(i.e. press the home button or the phone is sleeping) and your opponent makes a move, you will receive a notification about that in the notification bar(with a notifying sound)."
+      	 android:layout_marginTop="5dp"
+       	 android:layout_below="@+id/comm_introhelper_text"/>
+   		
+   		<TextView 
+   		 android:id="@+id/comm_introhelpercontent_text2"
+      	 android:layout_width="match_parent"
+      	 android:layout_height="wrap_content"
+      	 android:singleLine="false"
+      	 android:text="(4)Store data remotely"
+      	 android:layout_marginTop="10dp"
+       	 android:layout_below="@+id/comm_introhelpercontent_text"/>
+   		
+   		<TextView 
+   		 android:id="@+id/comm_introhelpercontent_text3"
+      	 android:layout_width="match_parent"
+      	 android:layout_height="wrap_content"
+      	 android:singleLine="false"
+      	 android:text="Every time when you finish the game and get a new high score, your score will be saved on the server, to check your high score, press the HighScore button in the menu. Remember: if you disconnect and quit during the game playing, your score will not be recorded."
+      	 android:layout_marginTop="5dp"
+       	 android:layout_below="@+id/comm_introhelpercontent_text2"/>
+   		<Button 
+   		 android:id="@+id/comm_introback_button"
+   		 android:layout_width="250dp"
+      	 android:layout_height="wrap_content"
+      	 android:layout_marginTop="15dp"
+      	 android:text="Back to the menu"
+       	 android:layout_below="@+id/comm_introhelpercontent_text3"
+      	 android:layout_centerHorizontal="true"/>
+   		</RelativeLayout>
+</ScrollView>
+
+
