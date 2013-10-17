@@ -7,10 +7,13 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import edu.neu.madcourse.xipengwang.comm.OppNameMyName;
 import edu.neu.madcourse.xipengwang.comm.Regist;
 import edu.neu.madcourse.xipengwang.dabble.Dabble;
 import edu.neu.madcourse.xipengwang.dict.Dictionary;
 import edu.neu.madcourse.xipengwang.sudoku.Sudoku;
+import edu.neu.mhealth.api.KeyValueAPI;
+import edu.neu.mobileClass.PhoneCheckAPI;
 
 
 public class MainActivity extends Activity {
@@ -29,7 +32,7 @@ public class MainActivity extends Activity {
 		
 		setTitle("Xipeng Wang");
 		
-	//PhoneCheckAPI.doAuthorization(this);
+	PhoneCheckAPI.doAuthorization(this);
 
 		aboutButton = (Button)findViewById(R.id.about_button);
 		sudokuButton = (Button)findViewById(R.id.sudoku_button);
@@ -45,7 +48,11 @@ public class MainActivity extends Activity {
 		dabbleButton.setOnClickListener(new DabbleButtonListener());
 		commButton.setOnClickListener(new CommButtonListener());
 		quitButton.setOnClickListener(new ExitButtonListener());
-		
+		//System.out.println("!!! "+KeyValueAPI.get("basin", "basin576095", "Jim"));
+		//KeyValueAPI.clearKey("basin", "basin576095", "Jim"+"@HS");
+		//KeyValueAPI.clearKey("basin", "basin576095", "Tom"+"@HS");
+		//KeyValueAPI.clearKey("basin", "basin576095", "Mary"+"@HS");
+		//KeyValueAPI.clearKey("basin", "basin576095", "Fred"+"@HS");
 	}
 
 

@@ -14,15 +14,17 @@ public class HighScore extends Activity {
    
    private Button highScorebackButton;
    private TextView highScoreContext;
+   
    @Override
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
 
       setContentView(R.layout.comm_score);
-      setTitle("Rules ");
+      setTitle("High Score");
+      
       highScorebackButton = (Button)findViewById(R.id.comm_highScore_button);
       highScoreContext = (TextView)findViewById(R.id.comm_highScore_content);
-      highScoreContext.setText("Jim: "+HighScoreRecord.highscore[0]+"\n"+"Tom: "+HighScoreRecord.highscore[1]+"\n"+"Mary: "+HighScoreRecord.highscore[2]+"\n"+"Fred: "+HighScoreRecord.highscore[3]);
+      highScoreContext.setText(HighScoreRecord.highscore[0]+"\n"+HighScoreRecord.highscore[1]+"\n"+HighScoreRecord.highscore[2]+"\n"+HighScoreRecord.highscore[3]);
       highScorebackButton.setOnClickListener(new HighScoreBackListener());
    }
    class HighScoreBackListener implements OnClickListener{

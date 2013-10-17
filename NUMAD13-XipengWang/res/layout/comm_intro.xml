@@ -35,7 +35,7 @@
      	 android:layout_height="wrap_content"
      	 android:layout_marginTop="5dp"
      	 android:singleLine="false"
-      	 android:text="There are four characters in the game: Jim, Tom, Mary and Fred. When you start the game, you need to choose one character, then you will see a list of other characters. This list is updated periodically, the off-line characters' names are transparent and the online characters' names are easy to see." 
+      	 android:text="After you press the 'Start!' button, you will be required to create your user name. Enter your user name, then press 'Search online opponents' button and this qpp will show you a list of online users. This list will be updated periodically in order to make sure you can always see the current avaiable." 
       	 android:layout_below="@+id/comm_introintro_text"/>
    		
    		<TextView
@@ -44,7 +44,7 @@
      	 android:layout_height="wrap_content"
      	 android:layout_marginTop="5dp"
      	 android:singleLine="false"
-      	 android:text="When you press the offline names, nothing will happen. When you press one of the online characters' names, it means you invite that name's user to play with you and that user will be notified on his/her phone. If he/she accepts your invitation, then both of you will start a new Dabble game. A user can reject your invitation, in this case, the Dabble game will not be loaded." 
+      	 android:text="When you press one of the online players' names, it means you invite that player to play with you and that player will be notified on his/her phone. If he/she accepts your invitation, then both of you will start a new Dabble game." 
       	 android:layout_below="@+id/comm_introcontent_text"/>
    		
    		<TextView 

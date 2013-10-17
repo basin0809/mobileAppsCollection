@@ -28,10 +28,10 @@ import edu.neu.mhealth.api.KeyValueAPI;
 public class ChooseName extends Activity{
 	private boolean nameIsValid;
 	private boolean oppIsValid;
-	private EditText name,oppName;
+	private EditText myFakeNameET;
 	private TextView chooseNameText;
-	private ProgressBar progressBar;
-	private Button jimButton, tomButton, maryButton, fredButton ;
+
+	private Button userListButton  ;
 	
 
     
@@ -46,46 +46,61 @@ public class ChooseName extends Activity{
 		setContentView(R.layout.comm_choosename); 
         
 		//progressBar.setBackgroundColor(getResources().getColor(R.color.white));
-		 jimButton = (Button)findViewById(R.id.JimButton);
-		 tomButton = (Button)findViewById(R.id.TomButton);
-		 maryButton = (Button)findViewById(R.id.MaryButton);
-		 fredButton = (Button)findViewById(R.id.FredButton);
+
 		 chooseNameText =(TextView)findViewById(R.id.NameText);
-		 jimButton.setOnClickListener(new NameButtonListener());
-		 tomButton.setOnClickListener(new NameButtonListener());
-		 maryButton.setOnClickListener(new NameButtonListener());
-		 fredButton.setOnClickListener(new NameButtonListener());
+		 myFakeNameET = (EditText)findViewById(R.id.myFakeNameET);
+		 userListButton = (Button)findViewById(R.id.userListButton);
+		 userListButton.setOnClickListener(new UserListButton());
+
 
 	}
 
-		
-		class NameButtonListener implements android.view.View.OnClickListener{
+		class UserListButton implements android.view.View.OnClickListener{
 
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				int id = v.getId();
-				if(id==jimButton.getId()){
-					nameValidTask = new NameValidTask(ChooseName.this);
-					nameValidTask.execute("Jim");
+				String fakeNameString = myFakeNameET.getText().toString();
+				if(fakeNameString.isEmpty()){
+					Toast.makeText(ChooseName.this,"User name can not be empty!",Toast.LENGTH_LONG).show();  
+				}else {
+					if(fakeNameString.substring(0, 0).equals("!")||
+							fakeNameString.substring(0, 0).equals("?")||
+							fakeNameString.substring(0, 0).equals("~")||
+							fakeNameString.substring(0, 0).equals("`")||
+							fakeNameString.substring(0, 0).equals("@")||
+							fakeNameString.substring(0, 0).equals("#")||
+							fakeNameString.substring(0, 0).equals("$")||
+							fakeNameString.substring(0, 0).equals("^")||
+							fakeNameString.substring(0, 0).equals("&")||
+							fakeNameString.substring(0, 0).equals("*")||
+							fakeNameString.substring(0, 0).equals("(")||
+							fakeNameString.substring(0, 0).equals(")")||
+							fakeNameString.substring(0, 0).equals("-")||
+							fakeNameString.substring(0, 0).equals("=")||
+							fakeNameString.substring(0, 0).equals("+")||
+							fakeNameString.substring(0, 0).equals("<")||
+							fakeNameString.substring(0, 0).equals(">")||
+							fakeNameString.substring(0, 0).equals(";")||
+							fakeNameString.substring(0, 0).equals(":")||
+							fakeNameString.substring(0, 0).equals("'")||
+							fakeNameString.substring(0, 0).equals("[")||
+							fakeNameString.substring(0, 0).equals("]")||
+							fakeNameString.substring(0, 0).equals("{")||
+							fakeNameString.substring(0, 0).equals("}")){
+						Toast.makeText(ChooseName.this,"Invalid user name: use a-z and 0-9 to create your user name.",Toast.LENGTH_LONG).show();  
+					}
+					else {
+						nameValidTask = new NameValidTask(ChooseName.this);
+						nameValidTask.execute(fakeNameString);
+						Toast.makeText(ChooseName.this,"Searching for other availabe players",Toast.LENGTH_LONG).show();
+					}
 					
 				}
-				if(id==tomButton.getId()){
-					nameValidTask = new NameValidTask(ChooseName.this);
-					nameValidTask.execute("Tom");
-				}
-				if(id==maryButton.getId()){
-					nameValidTask = new NameValidTask(ChooseName.this);
-					nameValidTask.execute("Mary");
-				}
-				if(id==fredButton.getId()){
-					nameValidTask = new NameValidTask(ChooseName.this);
-					nameValidTask.execute("Fred");
-				}
 			}
-
-		
+			
 		}
+
 		class NameValidTask extends AsyncTask<String, Integer, Boolean> {  
 	    	
 	    	private Context context;  
@@ -99,15 +114,50 @@ public class ChooseName extends Activity{
 
 	        @Override  
 	        protected Boolean doInBackground(String... params) {  
-	        	String checkString =KeyValueAPI.get("basin", "basin576095", params[0]);
+	        	String checkString1 =KeyValueAPI.get("basin", "basin576095", "Jim");
+	        	String checkString2 =KeyValueAPI.get("basin", "basin576095", "Tom");
+	        	String checkString3 =KeyValueAPI.get("basin", "basin576095", "Mary");
+	        	String checkString4 =KeyValueAPI.get("basin", "basin576095", "Fred");
 	        	
-	        	if(checkString.equals("Error: No Such Key")||checkString.equals("#QUIT")||checkString.equals("#QUIT2")){
-	        		KeyValueAPI.put("basin", "basin576095", params[0],"#OWN");
-	        		OppNameMyName.myName=params[0];
+	        	if(checkString1.equals("Error: No Such Key")||checkString1.equals("#QUIT")||checkString1.equals("#QUIT2")){
+	        		KeyValueAPI.put("basin", "basin576095", "Jim",params[0]);
+	        		OppNameMyName.myFakeName=params[0];
+	        		OppNameMyName.myName="Jim";
+	        		
 	        		return true;
 	        	}
 	        	else {
-					return false;
+	        		if(checkString2.equals("Error: No Such Key")||checkString2.equals("#QUIT")||checkString2.equals("#QUIT2")){
+		        		KeyValueAPI.put("basin", "basin576095", "Tom",params[0]);
+		        		OppNameMyName.myFakeName=params[0];
+		        		OppNameMyName.myName="Tom";
+		        		
+		        		return true;
+		        	}
+	        		else {
+	        			if(checkString3.equals("Error: No Such Key")||checkString3.equals("#QUIT")||checkString3.equals("#QUIT2")){
+			        		KeyValueAPI.put("basin", "basin576095", "Mary",params[0]);
+			        		OppNameMyName.myFakeName=params[0];
+			        		OppNameMyName.myName="Mary";
+			        		
+			        		return true;
+			        	}
+	        			else {
+	        				if(checkString4.equals("Error: No Such Key")||checkString4.equals("#QUIT")||checkString4.equals("#QUIT2")){
+				        		KeyValueAPI.put("basin", "basin576095", "Fred",params[0]);
+				        		OppNameMyName.myFakeName=params[0];
+				        		OppNameMyName.myName="Fred";
+				        		
+				        		return true;
+				        	}
+	        				else {
+								return false;
+							}
+						}
+	        			
+	        			
+					}
+					
 				}
 
 	        }  
@@ -124,7 +174,7 @@ public class ChooseName extends Activity{
 	        	Intent intent = new Intent(ChooseName.this, OnlineUsers.class);
 	        	startActivity(intent);}
 	        	else {
-	        	Toast.makeText(context,"This name is used by another player",Toast.LENGTH_LONG).show();  
+	        	Toast.makeText(context,"Server is full, please wait for a while.",Toast.LENGTH_LONG).show();  
 				}
 	            
 	        }  

@@ -42,8 +42,8 @@ public class Regist extends Activity{
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.comm_reg); 
-		quitTask2 = new QuitTask2(this);
-		quitTask2.execute();
+		//quitTask2 = new QuitTask2(this);
+		//quitTask2.execute();
         alphaDes = new AlphaAnimation(1.0f, 0.0f);
         alphaInc = new AlphaAnimation(0.0f, 1.0f);
         alphaDes.setDuration(100);
@@ -53,7 +53,10 @@ public class Regist extends Activity{
 
 		progressBar = (ProgressBar)findViewById(R.id.progressBar);
 		 progressBar.startAnimation(alphaDes);
-		
+		//System.out.println("ini jim------------>"+KeyValueAPI.get("basin", "basin576095","Jim"));
+		//System.out.println("ini tom------------>"+KeyValueAPI.get("basin", "basin576095","Tom"));
+		//System.out.println("ini mary------------>"+KeyValueAPI.get("basin", "basin576095","Mary"));
+		//System.out.println("ini fred------------>"+KeyValueAPI.get("basin", "basin576095","Fred"));
 		//progressBar.setBackgroundColor(getResources().getColor(R.color.white));
 		
 		
@@ -146,28 +149,36 @@ class CheckScoreTask extends AsyncTask<String, Integer, String[]> {
         @Override  
         protected String[] doInBackground(String... params) {  
         	String checkString1 =KeyValueAPI.get("basin", "basin576095", "Jim"+"@HS");
+        	String checkString1f =KeyValueAPI.get("basin", "basin576095", "Jim"+"@HFS");
         	String checkString2 =KeyValueAPI.get("basin", "basin576095", "Tom"+"@HS");
+        	String checkString2f =KeyValueAPI.get("basin", "basin576095", "Tom"+"@HFS");
         	String checkString3 =KeyValueAPI.get("basin", "basin576095", "Mary"+"@HS");
+        	String checkString3f =KeyValueAPI.get("basin", "basin576095", "Mary"+"@HFS");
         	String checkString4 =KeyValueAPI.get("basin", "basin576095", "Fred"+"@HS");
+        	String checkString4f =KeyValueAPI.get("basin", "basin576095", "Fred"+"@HFS");
         	
         	if(checkString1.equals("Error: No Such Key")){
         		checkString1="0";
+        		checkString1f=" ";
         	}
         	if(checkString2.equals("Error: No Such Key")){
         		checkString2="0";
+        		checkString2f=" ";
         	}
         	if(checkString3.equals("Error: No Such Key")){
         		checkString3="0";
+        		checkString3f=" ";
         	}
         	if(checkString4.equals("Error: No Such Key")){
         		checkString4="0";
+        		checkString4f=" ";
         	}
         	
         	String[] strings = new String[4];
-        	strings[0]=checkString1;
-        	strings[1]=checkString2;
-        	strings[2]=checkString3;
-        	strings[3]=checkString4;
+        	strings[0]=checkString1f;
+        	strings[1]=checkString2f;
+        	strings[2]=checkString3f;
+        	strings[3]=checkString4f;
         	return strings;
         }  
  
@@ -240,7 +251,22 @@ class CheckScoreTask extends AsyncTask<String, Integer, String[]> {
 		protected Void doInBackground(Void... params) {
 			// TODO Auto-generated method stub
 			//CommGame.aTask.cancel(true);
-			if(!KeyValueAPI.get("basin", "basin576095","Jim").equals("#OWN")){
+			/*KeyValueAPI.put("basin", "basin576095","Jim", "#QUIT");
+			KeyValueAPI.put("basin", "basin576095","Tom", "#QUIT");
+			KeyValueAPI.put("basin", "basin576095","Mary", "#QUIT");
+			KeyValueAPI.put("basin", "basin576095","Fred", "#QUIT");
+			
+			KeyValueAPI.put("basin", "basin576095","Jim", "#QUIT2");
+			KeyValueAPI.put("basin", "basin576095","Tom", "#QUIT2");
+			KeyValueAPI.put("basin", "basin576095","Mary", "#QUIT2");
+			KeyValueAPI.put("basin", "basin576095","Fred", "#QUIT2");*/
+			String checkString1 = KeyValueAPI.get("basin", "basin576095","Jim");
+			String checkString2 = KeyValueAPI.get("basin", "basin576095","Tom");
+			String checkString3 = KeyValueAPI.get("basin", "basin576095","Mary");
+			String checkString4 = KeyValueAPI.get("basin", "basin576095","Fred");
+			
+			
+			if(!checkString1.substring(0, 1).equals("#")){
 			KeyValueAPI.put("basin", "basin576095","Jim", "#QUIT");}
 			if(!KeyValueAPI.get("basin", "basin576095","Tom").equals("#OWN")){
 			KeyValueAPI.put("basin", "basin576095","Tom", "#QUIT");}

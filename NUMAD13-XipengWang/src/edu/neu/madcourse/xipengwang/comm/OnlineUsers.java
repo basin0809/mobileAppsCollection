@@ -4,6 +4,7 @@ import java.security.PublicKey;
 import java.util.Stack;
 
 import android.R.integer;
+import android.R.string;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -11,6 +12,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.graphics.Picture;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -32,6 +34,7 @@ public class OnlineUsers extends Activity{
 	private TextView oppNameText;
 	private ProgressBar progressBar;
 	private Button buttonN1, buttonN2, buttonN3;
+	private String buttonN1RealString, buttonN2RealString, buttonN3RealString;
 	
 	private AlphaAnimation alphaDes;
     private AlphaAnimation alphaInc;
@@ -44,7 +47,14 @@ public class OnlineUsers extends Activity{
     CheckNameTask checkNameTask;
     AcceptTask acceptTask;
     RejectTask rejectTask;
-    PullMeTask pullMeTask;
+    //PullMeTask pullMeTask;
+    PullMeAfterCancelTask pullMeAfterCancelTask;
+    ProgessDialogCancelTask progessDialogCancelTask;
+    NotiyDialogCancelTask notiyDialogCancelTask;
+    
+    ProgressDialog pdialog;  
+    AlertDialog alertDialog;
+    AlertDialog.Builder alertDialogBuilder;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -65,27 +75,29 @@ public class OnlineUsers extends Activity{
 		 buttonN2 = (Button)findViewById(R.id.ButtonN2);
 		 buttonN3 = (Button)findViewById(R.id.ButtonN3);
 		 if(OppNameMyName.myName.equals("Jim")){
-			 buttonN1.setText("Tom");
-			 buttonN2.setText("Mary");
-			 buttonN3.setText("Fred");
-			 
-			 
+
+			 buttonN1RealString = "Tom";
+			 buttonN2RealString = "Mary";
+			 buttonN3RealString = "Fred";
+ 
 		 }else {
 			 if(OppNameMyName.myName.equals("Tom")){
-				 buttonN1.setText("Jim");
-				 buttonN2.setText("Mary");
-				 buttonN3.setText("Fred");
+
+				 buttonN1RealString = "Jim";
+				 buttonN2RealString = "Mary";
+				 buttonN3RealString = "Fred";
 				 
 			 }else {
 				 if(OppNameMyName.myName.equals("Mary")){
-					 buttonN1.setText("Jim");
-					 buttonN2.setText("Tom");
-					 buttonN3.setText("Fred");
+
+					 buttonN1RealString = "Jim";
+					 buttonN2RealString = "Tom";
+					 buttonN3RealString = "Fred";
 					 
 				 }else {
-					 buttonN1.setText("Jim");
-					 buttonN2.setText("Tom");
-					 buttonN3.setText("Mary");
+					 buttonN1RealString = "Jim";
+					 buttonN2RealString = "Tom";
+					 buttonN3RealString = "Mary";
 				}
 			}
 		}
@@ -97,16 +109,24 @@ public class OnlineUsers extends Activity{
 		 
 
 	}
-
+	
 		
+		@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		System.out.println("-----------------------Pause--------------------------");
+	}
+
+
 		@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
 		pullOthersTask = new PullOthersTask(this);
 		pullOthersTask.execute();
-		pullMeTask = new PullMeTask(this);
-		pullMeTask.execute();
+		pullMeAfterCancelTask = new PullMeAfterCancelTask(this);
+		pullMeAfterCancelTask.execute();
 	}
 
 
@@ -117,26 +137,89 @@ public class OnlineUsers extends Activity{
 				// TODO Auto-generated method stub
 				int id = v.getId();
 				if(id==buttonN1.getId()){
-					checkNameTask = new CheckNameTask(OnlineUsers.this);
-					checkNameTask.execute(buttonN1.getText().toString());
 					
+					pdialog = new ProgressDialog(OnlineUsers.this);
+					pdialog.setTitle("Inviting "+buttonN1.getText().toString());
+					pdialog.setMessage("Please wait for "+buttonN1.getText().toString()+"'s response.");
+					pdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+					pdialog.setButton(ProgressDialog.BUTTON_NEGATIVE, "Cancel", 
+							new DialogInterface.OnClickListener() {
+								
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									// TODO Auto-generated method stub
+									
+									progessDialogCancelTask = new ProgessDialogCancelTask(OnlineUsers.this);
+									progessDialogCancelTask.execute();
+									//pullMeAfterCancelTask = new PullMeAfterCancelTask(OnlineUsers.this);
+									//System.out.println("Second Task Starts!");
+									//pullMeAfterCancelTask.execute();
+								}
+							});
+					pdialog.show();
+					checkNameTask = new CheckNameTask(OnlineUsers.this);
+					String passString[] = new String[2];
+					passString[0]= buttonN1RealString;
+					passString[1]= buttonN1.getText().toString();
+					checkNameTask.execute(passString);
+
 				}
 				if(id==buttonN2.getId()){
+					pdialog = new ProgressDialog(OnlineUsers.this);
+					pdialog.setTitle("Inviting "+buttonN2.getText().toString());
+					pdialog.setMessage("Please wait for "+buttonN2.getText().toString()+"'s response.");
+					pdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+					pdialog.setButton(ProgressDialog.BUTTON_NEGATIVE, "Cancel", 
+							new DialogInterface.OnClickListener() {
+								
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									// TODO Auto-generated method stub
+									
+									progessDialogCancelTask = new ProgessDialogCancelTask(OnlineUsers.this);
+									progessDialogCancelTask.execute();
+									
+								}
+							});
+					pdialog.show();
 					checkNameTask = new CheckNameTask(OnlineUsers.this);
-					checkNameTask.execute(buttonN2.getText().toString());
+					String passString2[] = new String[2];
+					passString2[0]= buttonN2RealString;
+					passString2[1]= buttonN2.getText().toString();
+					checkNameTask.execute(passString2);
 				}
 				if(id==buttonN3.getId()){
+					pdialog = new ProgressDialog(OnlineUsers.this);
+					pdialog.setTitle("Inviting "+buttonN3.getText().toString());
+					pdialog.setMessage("Please wait for "+buttonN3.getText().toString()+"'s response.");
+					pdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+					pdialog.setButton(ProgressDialog.BUTTON_NEGATIVE, "Cancel", 
+							new DialogInterface.OnClickListener() {
+								
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									// TODO Auto-generated method stub
+									
+									progessDialogCancelTask = new ProgessDialogCancelTask(OnlineUsers.this);
+									progessDialogCancelTask.execute();
+									
+								}
+							});
+					pdialog.show();
 					checkNameTask = new CheckNameTask(OnlineUsers.this);
-					checkNameTask.execute(buttonN3.getText().toString());
+					String passString3[] = new String[2];
+					passString3[0]= buttonN3RealString;
+					passString3[1]= buttonN3.getText().toString();
+					checkNameTask.execute(passString3);
 				}
 			}
 
 		
 		}
-		
-		class PullMeTask extends AsyncTask<Void, Integer, String>{
+
+		class PullMeAfterCancelTask extends AsyncTask<Void, Integer, String>{
 			private Context context;  
-			PullMeTask(Context context) {  
+			PullMeAfterCancelTask(Context context) {  
 		          this.context = context;  
 		          //progressBar.setBackgroundColor(getResources().getColor(R.color.black));  
 		         // progressBar.startAnimation(alphaInc);
@@ -145,28 +228,32 @@ public class OnlineUsers extends Activity{
 			@Override
 			protected String doInBackground(Void... params) {
 				// TODO Auto-generated method stub
-        		
+        		//KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "#OWN");
 	        	if(OppNameMyName.myName.equals("Jim")){
 	        	int i=0; 
-	        		
-	                while(KeyValueAPI.get("basin", "basin576095", "Jim").equals("#OWN")==true||
-	                		KeyValueAPI.get("basin", "basin576095", "Jim").equals("#REJ")==true){  
-	                	System.out.println("PullMMMMMMEEEEEEETASK");
+	        	String pullMeTaskString = KeyValueAPI.get("basin", "basin576095", "Jim");
+                while(!pullMeTaskString.equals("#QUIT")&&!pullMeTaskString.equals("#QUIT2")){  
+	                	//System.out.println("PullMMMMMMEEEEEEETASK");
+	                	System.out.println("SubTask----------------------------");
+			    		System.out.println("My Status: "+KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName));
+			    		System.out.println("Tom's Status: "+KeyValueAPI.get("basin", "basin576095", "Tom"));
+			    		System.out.println("Mary's Status: "+KeyValueAPI.get("basin", "basin576095", "Mary"));
+			    		System.out.println("Fred's Status: "+KeyValueAPI.get("basin", "basin576095", "Fred"));
 	                    i++;  
 	    	        	String resString1=KeyValueAPI.get("basin", "basin576095", "Tom");
 	    	        	String resString2=KeyValueAPI.get("basin", "basin576095", "Mary");
 	    	        	String resString3=KeyValueAPI.get("basin", "basin576095", "Fred");
 	    	        	
 	    					if(resString1.equals("@Jim")){
-	    						System.out.println("PullMMMMMMEEEEEEETASK");
-	    						return "Tom";
+	    						//System.out.println("PullMMMMMMEEEEEEETASK");
+	    						return buttonN1RealString;
 	    					}else {
 	    						if(resString2.equals("@Jim")){
 	        						
-	        						return "Mary";
+	        						return buttonN2RealString;
 	        					}else {
 	        						if(resString3.equals("@Jim")){
-	        							return "Fred";
+	        							return buttonN3RealString;
 	        						}
 	        						else{
 	        							try {  
@@ -178,15 +265,15 @@ public class OnlineUsers extends Activity{
 	        						}
 	        					}
 	    					}
-	    					
+	    					pullMeTaskString = KeyValueAPI.get("basin", "basin576095", "Jim");	
 	                	}
 	                return "NE";
 	                }
 	        	else {
 	        		if(OppNameMyName.myName.equals("Tom")){
 	    	        	int i=0; 	        		
-	    	                while(KeyValueAPI.get("basin", "basin576095", "Tom").equals("#OWN")==true||
-	    	                		KeyValueAPI.get("basin", "basin576095", "Tom").equals("#REJ")==true){  
+	    	        	String pullMeTaskString = KeyValueAPI.get("basin", "basin576095", "Tom");
+	                    while(!pullMeTaskString.equals("#QUIT")&&!pullMeTaskString.equals("#QUIT2")){  
 	    	                    i++;  
 	    	    	        	String resString1=KeyValueAPI.get("basin", "basin576095", "Jim");
 	    	    	        	String resString2=KeyValueAPI.get("basin", "basin576095", "Mary");
@@ -194,14 +281,14 @@ public class OnlineUsers extends Activity{
 	    	    	        	
 	    	    					if(resString1.equals("@Tom")){
 	    	    						
-	    	    						return "Jim";
+	    	    						return buttonN1RealString;
 	    	    					}else {
 	    	    						if(resString2.equals("@Tom")){
 	    	        						
-	    	        						return "Mary";
+	    	        						return buttonN2RealString;
 	    	        					}else {
 	    	        						if(resString3.equals("@Tom")){
-	    	        							return "Fred";
+	    	        							return buttonN3RealString;
 	    	        						}
 	    	        						else{
 	    	        							try {  
@@ -213,15 +300,15 @@ public class OnlineUsers extends Activity{
 	    	        						}
 	    	        					}
 	    	    					}
-	    	    					
+	    	    					pullMeTaskString = KeyValueAPI.get("basin", "basin576095", "Tom");	
 	    	                	}
 	    	                return "NE";
 	    	                }
 	        			else {
 	        				if(OppNameMyName.myName.equals("Mary")){
 	    	    	        	int i=0; 	        		
-	    	    	                while(KeyValueAPI.get("basin", "basin576095", "Mary").equals("#OWN")==true||
-	    	    	                		KeyValueAPI.get("basin", "basin576095", "Mary").equals("#REJ")==true){  
+	    	    	        	String pullMeTaskString = KeyValueAPI.get("basin", "basin576095", "Mary");
+	    	                    while(!pullMeTaskString.equals("#QUIT")&&!pullMeTaskString.equals("#QUIT2")){  
 	    	    	                    i++;  
 	    	    	    	        	String resString1=KeyValueAPI.get("basin", "basin576095", "Jim");
 	    	    	    	        	String resString2=KeyValueAPI.get("basin", "basin576095", "Tom");
@@ -229,14 +316,14 @@ public class OnlineUsers extends Activity{
 	    	    	    	        	
 	    	    	    					if(resString1.equals("@Mary")){
 	    	    	    						
-	    	    	    						return "Jim";
+	    	    	    						return buttonN1RealString;
 	    	    	    					}else {
 	    	    	    						if(resString2.equals("@Mary")){
 	    	    	        						
-	    	    	        						return "Tom";
+	    	    	        						return buttonN2RealString;
 	    	    	        					}else {
 	    	    	        						if(resString3.equals("@Mary")){
-	    	    	        							return "Fred";
+	    	    	        							return buttonN3RealString;
 	    	    	        						}
 	    	    	        						else{
 	    	    	        							try {  
@@ -248,15 +335,15 @@ public class OnlineUsers extends Activity{
 	    	    	        						}
 	    	    	        					}
 	    	    	    					}
-	    	    	    					
+	    	    	    					pullMeTaskString = KeyValueAPI.get("basin", "basin576095", "Mary");
 	    	    	                	}
 	    	    	                return "NE";
 	    	    	                }
 	        				else {
 	        					if(OppNameMyName.myName.equals("Fred")){
 		    	    	        	int i=0; 	        		
-		    	    	                while(KeyValueAPI.get("basin", "basin576095", "Fred").equals("#OWN")==true||
-		    	    	                		KeyValueAPI.get("basin", "basin576095", "Fred").equals("#REJ")==true){  
+		    	    	        	String pullMeTaskString = KeyValueAPI.get("basin", "basin576095", "Fred");
+		    	                    while(!pullMeTaskString.equals("#QUIT")&&!pullMeTaskString.equals("#QUIT2")){  
 		    	    	                    i++;  
 		    	    	    	        	String resString1=KeyValueAPI.get("basin", "basin576095", "Jim");
 		    	    	    	        	String resString2=KeyValueAPI.get("basin", "basin576095", "Tom");
@@ -264,14 +351,14 @@ public class OnlineUsers extends Activity{
 		    	    	    	        	
 		    	    	    					if(resString1.equals("@Fred")){
 		    	    	    						
-		    	    	    						return "Jim";
+		    	    	    						return buttonN1RealString;
 		    	    	    					}else {
 		    	    	    						if(resString2.equals("@Fred")){
 		    	    	        						
-		    	    	        						return "Tom";
+		    	    	        						return buttonN2RealString;
 		    	    	        					}else {
 		    	    	        						if(resString3.equals("@Fred")){
-		    	    	        							return "Mary";
+		    	    	        							return buttonN3RealString;
 		    	    	        						}
 		    	    	        						else{
 		    	    	        							try {  
@@ -283,6 +370,7 @@ public class OnlineUsers extends Activity{
 		    	    	        						}
 		    	    	        					}
 		    	    	    					}
+		    	    	    					pullMeTaskString = KeyValueAPI.get("basin", "basin576095", "Fred");
 		    	    	                	}
 		    	    	                return "NE";
 		    	    	                }
@@ -299,24 +387,26 @@ public class OnlineUsers extends Activity{
 				// TODO Auto-generated method stub
 				super.onPostExecute(result);
 				if(!result.equals("NE")){
-					if(result.equals("Jim")){
-						System.out.println("SubPullOthersTask-------------creat dialog");
+					if(result.equals(buttonN1RealString)){
+						//System.out.println("SubPullOthersTask-------------creat dialog");
 						
 						
 	                	//pullOthersTask.cancel(true);
-						new AlertDialog.Builder(OnlineUsers.this)  
 						
-			            .setTitle("Jim's invitation")
+						alertDialogBuilder=new AlertDialog.Builder(OnlineUsers.this);  
+						
+						alertDialogBuilder.setTitle(buttonN1.getText().toString()+"'s invitation")
 
-			            .setMessage("Jim invites you to play Dabble!")
+			            .setMessage(buttonN1.getText().toString()+" invites you to play Dabble!")
 
 			            .setPositiveButton("OK",   new DialogInterface.OnClickListener(){
 			                 public void onClick(DialogInterface dialoginterface, int i){
 			                	 setResult(RESULT_OK);
-			                	 OppNameMyName.oppName="Jim";
+			                	 OppNameMyName.oppName=buttonN1RealString;
+			                	 OppNameMyName.oppFakeName = buttonN1.getText().toString();
 			                	 
 			                	 acceptTask = new AcceptTask(OnlineUsers.this);
-			                	 acceptTask.execute("Jim");
+			                	 acceptTask.execute(buttonN1RealString);
 			                	 
 			                	 //Toast.makeText(context,"Opponent Connected! Loading Game",Toast.LENGTH_LONG).show();  
 			        
@@ -326,37 +416,29 @@ public class OnlineUsers extends Activity{
 			                	 
 			                	finish();
 			                 }
-			         })
-			         .setNegativeButton("Reject",   new DialogInterface.OnClickListener(){
-			                 public void onClick(DialogInterface dialoginterface, int i){
-			                	 setResult(RESULT_CANCELED);
-			                	 rejectTask = new RejectTask(OnlineUsers.this);
-			                	 rejectTask.execute();
-			                	 finish();
-			                	 
-			                 }
-			         })
-
-			            .show();
+			         });
+						alertDialog = alertDialogBuilder.show();
+						notiyDialogCancelTask = new NotiyDialogCancelTask(OnlineUsers.this);
+						notiyDialogCancelTask.execute(buttonN1RealString);
 					}else {
-						if (result.equals("Tom")) {
-							System.out.println("SubPullOthersTask-------------creat dialog");
+						if (result.equals(buttonN2RealString)) {
+							//System.out.println("SubPullOthersTask-------------creat dialog");
 							
 							
 		                	//pullOthersTask.cancel(true);
-							new AlertDialog.Builder(OnlineUsers.this)  
+							alertDialogBuilder = new AlertDialog.Builder(OnlineUsers.this);  
 							
-				            .setTitle("Tom's invitation")
+							alertDialogBuilder.setTitle(buttonN2.getText().toString()+"'s invitation")
 
-				            .setMessage("Tom invites you to play Dabble!")
+				            .setMessage(buttonN2.getText().toString()+" invites you to play Dabble!")
 
 				            .setPositiveButton("OK",   new DialogInterface.OnClickListener(){
 				                 public void onClick(DialogInterface dialoginterface, int i){
 				                	 setResult(RESULT_OK);
-				                	 OppNameMyName.oppName="Tom";
-				                	 
+				                	 OppNameMyName.oppName=buttonN2RealString;
+				                	 OppNameMyName.oppFakeName=buttonN2.getText().toString();
 				                	 acceptTask = new AcceptTask(OnlineUsers.this);
-				                	 acceptTask.execute("Tom");
+				                	 acceptTask.execute(buttonN2RealString);
 				                	 
 				                	 //Toast.makeText(context,"Opponent Connected! Loading Game",Toast.LENGTH_LONG).show();  
 				        
@@ -366,37 +448,29 @@ public class OnlineUsers extends Activity{
 				                	 
 				                	finish();
 				                 }
-				         })
-				         .setNegativeButton("Reject",   new DialogInterface.OnClickListener(){
-				                 public void onClick(DialogInterface dialoginterface, int i){
-				                	 setResult(RESULT_CANCELED);
-				                	 rejectTask = new RejectTask(OnlineUsers.this);
-				                	 rejectTask.execute();
-				                	 finish();
-				                	 
-				                 }
-				         })
-
-				            .show();
+				         });
+							alertDialog = alertDialogBuilder.show();
+							notiyDialogCancelTask = new NotiyDialogCancelTask(OnlineUsers.this);
+							notiyDialogCancelTask.execute(buttonN2RealString);
 						}else {
-							if (result.equals("Mary")) {
-								System.out.println("SubPullOthersTask-------------creat dialog");
+							if (result.equals(buttonN3RealString)) {
+								//System.out.println("SubPullOthersTask-------------creat dialog");
 								
 								
 			                	//pullOthersTask.cancel(true);
-								new AlertDialog.Builder(OnlineUsers.this)  
+								alertDialogBuilder = new AlertDialog.Builder(OnlineUsers.this);  
 								
-					            .setTitle("Mary's invitation")
+								alertDialogBuilder.setTitle(buttonN3.getText().toString()+"'s invitation")
 
-					            .setMessage("Mary invites you to play Dabble!")
+					            .setMessage(buttonN3.getText().toString()+" invites you to play Dabble!")
 
 					            .setPositiveButton("OK",   new DialogInterface.OnClickListener(){
 					                 public void onClick(DialogInterface dialoginterface, int i){
 					                	 setResult(RESULT_OK);
-					                	 OppNameMyName.oppName="Mary";
-					                	 
+					                	 OppNameMyName.oppName=buttonN3RealString;
+					                	 OppNameMyName.oppFakeName=buttonN3.getText().toString();
 					                	 acceptTask = new AcceptTask(OnlineUsers.this);
-					                	 acceptTask.execute("Mary");
+					                	 acceptTask.execute(buttonN3RealString);
 					                	 
 					                	 //Toast.makeText(context,"Opponent Connected! Loading Game",Toast.LENGTH_LONG).show();  
 					        
@@ -406,59 +480,12 @@ public class OnlineUsers extends Activity{
 					                	 
 					                	finish();
 					                 }
-					         })
-					         .setNegativeButton("Reject",   new DialogInterface.OnClickListener(){
-					                 public void onClick(DialogInterface dialoginterface, int i){
-					                	 setResult(RESULT_CANCELED);
-					                	 rejectTask = new RejectTask(OnlineUsers.this);
-					                	 rejectTask.execute();
-					                	 finish();
-					                	 
-					                 }
-					         })
-
-					            .show();
+					         });
+								alertDialog = alertDialogBuilder.show();
+								notiyDialogCancelTask = new NotiyDialogCancelTask(OnlineUsers.this);
+								notiyDialogCancelTask.execute(buttonN3RealString);
 							}else {
-								if (result.equals("Fred")) {
-									System.out.println("SubPullOthersTask-------------creat dialog");
-									
-									
-				                	//pullOthersTask.cancel(true);
-									new AlertDialog.Builder(OnlineUsers.this)  
-									
-						            .setTitle("Fred's invitation")
-
-						            .setMessage("Fred invites you to play Dabble!")
-
-						            .setPositiveButton("OK",   new DialogInterface.OnClickListener(){
-						                 public void onClick(DialogInterface dialoginterface, int i){
-						                	 setResult(RESULT_OK);
-						                	 OppNameMyName.oppName="Fred";
-						                	 
-						                	 acceptTask = new AcceptTask(OnlineUsers.this);
-						                	 acceptTask.execute("Fred");
-						                	 
-						                	 //Toast.makeText(context,"Opponent Connected! Loading Game",Toast.LENGTH_LONG).show();  
-						        
-						       		      	Intent intent = new Intent(OnlineUsers.this, CommGame.class);
-						       		      	
-						       		      	startActivity(intent);
-						                	 
-						                	finish();
-						                 }
-						         })
-						         .setNegativeButton("Reject",   new DialogInterface.OnClickListener(){
-						                 public void onClick(DialogInterface dialoginterface, int i){
-						                	 setResult(RESULT_CANCELED);
-						                	 rejectTask = new RejectTask(OnlineUsers.this);
-						                	 rejectTask.execute();
-						                	 finish();
-						                	 
-						                 }
-						         })
-
-						            .show();
-								}
+							
 							}
 						}
 					}
@@ -479,19 +506,13 @@ public class OnlineUsers extends Activity{
 
 		    @Override  
 		    protected Void doInBackground(Void... params) {  
-		    	
+		    	System.out.println("Excute PullOthersTask");
 		    	//String oppQuitStatuString =KeyValueAPI.get("basin", "basin576095", oppName);
 		    	//KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, OppNameMyName.oppName);
-		    	while(KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName).equals("#OWN")==true||
-		    			KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName).equals("#REJ")==true||
-		    			KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName).equals("@Jim")==true
-		    			||
-		    			KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName).equals("@Tom")==true
-		    			||
-		    			KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName).equals("@Mary")==true
-		    			||
-		    			KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName).equals("@Fred")==true){
-		    		System.out.println("PullOthersTask---while loop");
+		    	String pullOthersString = KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName);
+		    	while(!pullOthersString.equals("#QUIT")&&
+		    			!pullOthersString.equals("#QUIT2")){
+		    		
 		    		subPullOthersTask = new SubPullOthersTask(OnlineUsers.this);
 		    		subPullOthersTask.execute();
 		    		
@@ -500,6 +521,7 @@ public class OnlineUsers extends Activity{
 					} catch (Exception e) {
 						// TODO: handle exception
 					}
+		    		pullOthersString = KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName);
 		    	}
 
 		    	//KeyValueAPI.put("basin", "basin576095", myName, params[0]);
@@ -537,7 +559,7 @@ public class OnlineUsers extends Activity{
 		    	// progressDialog.setProgress(values[0]);
 		          
 		    }  
-		    class SubPullOthersTask extends AsyncTask<Void, Integer, Boolean[]> {  
+		    class SubPullOthersTask extends AsyncTask<Void, Integer, String[]> {  
 		    	
 		    	private Context context;  
 		    	SubPullOthersTask(Context context) {  
@@ -545,119 +567,240 @@ public class OnlineUsers extends Activity{
 		          }  
 		    
 		        @Override  
-		        protected Boolean[] doInBackground(Void... params) { 
-		        	Boolean[] booleans = new Boolean[3];
+		        protected String[] doInBackground(Void... params) { 
+		        	String[] resStrings = new String[3];
 		        	if(OppNameMyName.myName.equals("Jim")){
 		        	String resString1=KeyValueAPI.get("basin", "basin576095", "Tom");
-		        	if(resString1.equals("#OWN")){
-		        		booleans[0]=true;
+		        	if(!resString1.equals("#QUIT")&&!resString1.equals("#QUIT2")){
+		        		
+		        		if(!resString1.substring(0, 1).equals("#")){
+		        			if (resString1.substring(0, 1).equals("@")) {
+		        				resStrings[0]="@";
+							}
+		        			else{
+		        			resStrings[0]=resString1;
+		        			}
+		        		}else {
+		        			resStrings[0]="#REJ";
+						}
+		        		
 		        		
 		        	}else {
-						booleans[0]=false;
+		        		resStrings[0]="#QUIT";
 
 					}
 		        	
 		        	String resString2=KeyValueAPI.get("basin", "basin576095", "Mary");
-		        	if(resString2.equals("#OWN")){
-		        		booleans[1]=true;
-		        
+		        	if(!resString2.equals("#QUIT")&&!resString2.equals("#QUIT2")&&!resString2.substring(0, 1).equals("@")){
+		        		if(!resString2.substring(0, 1).equals("#")){
+		        			if (resString2.substring(0, 1).equals("@")) {
+		        				resStrings[1]="@";
+							}
+		        			else{
+		        			resStrings[1]=resString2;
+		        			}
+		        		}else {
+		        			resStrings[1]="#REJ";
+						}
+		        		
+		        		
 		        	}else {
-						booleans[1]=false;
+		        		resStrings[1]="#QUIT";
 
-						
 					}
 		        	String resString3=KeyValueAPI.get("basin", "basin576095", "Fred");
-		        	if(resString3.equals("#OWN")){
-		        		booleans[2]=true;
-		  
+		        	if(!resString3.equals("#QUIT")&&!resString3.equals("#QUIT2")&&!resString3.substring(0, 1).equals("@")){
+		        		if(!resString3.substring(0, 1).equals("#")){
+		        			if (resString3.substring(0, 1).equals("@")) {
+		        				resStrings[2]="@";
+							}
+		        			else{
+		        			resStrings[2]=resString3;
+		        			}
+		        		}else {
+		        			resStrings[2]="#REJ";
+						}
+		        		
+		        		
 		        	}else {
-		        		booleans[2]=false;
+		        		resStrings[2]="#QUIT";
+
 					}
 		        	
-		        	return booleans;}
+		        	return resStrings;}
 		        	
 		        	if(OppNameMyName.myName.equals("Tom")){
 		        	String resString1=KeyValueAPI.get("basin", "basin576095", "Jim");
-		        	if(resString1.equals("#OWN")){
-		        		booleans[0]=true;
+		        	if(!resString1.equals("#QUIT")&&!resString1.equals("#QUIT2")&&!resString1.substring(0, 1).equals("@")){
+		        		if(!resString1.substring(0, 1).equals("#")){
+		        			if (resString1.substring(0, 1).equals("@")) {
+		        				resStrings[0]="@";
+							}
+		        			else{
+		        			resStrings[0]=resString1;
+		        			}
+		        		}else {
+		        			resStrings[0]="#REJ";
+						}
+		        		
 		        		
 		        	}else {
-						booleans[0]=false;
-					
+		        		resStrings[0]="#QUIT";
+
 					}
 		        	String resString2=KeyValueAPI.get("basin", "basin576095", "Mary");
-		        	if(resString2.equals("#OWN")){
-		        		booleans[1]=true;
-		        	
-		        	}else {
-						booleans[1]=false;
-						
-					}
-		        	String resString3=KeyValueAPI.get("basin", "basin576095", "Fred");
-		        	if(resString3.equals("#OWN")){
-		        		booleans[2]=true;
+		        	if(!resString2.equals("#QUIT")&&!resString2.equals("#QUIT2")&&!resString2.substring(0, 1).equals("@")){
+		        		if(!resString2.substring(0, 1).equals("#")){
+		        			if (resString2.substring(0, 1).equals("@")) {
+		        				resStrings[1]="@";
+							}
+		        			else{
+		        			resStrings[1]=resString2;
+		        			}
+		        		}else {
+		        			resStrings[1]="#REJ";
+						}
+		        		
 		        		
 		        	}else {
-						booleans[2]=false;
-						
+		        		resStrings[1]="#QUIT";
+
+					}
+		        	String resString3=KeyValueAPI.get("basin", "basin576095", "Fred");
+		        	if(!resString3.equals("#QUIT")&&!resString3.equals("#QUIT2")&&!resString3.substring(0, 1).equals("@")){
+		        		if(!resString3.substring(0, 1).equals("#")){
+		        			if (resString3.substring(0, 1).equals("@")) {
+		        				resStrings[2]="@";
+							}
+		        			else{
+		        			resStrings[2]=resString3;
+		        			}
+		        		}else {
+		        			resStrings[2]="#REJ";
+						}
+		        		
+		        		
+		        	}else {
+		        		resStrings[2]="#QUIT";
+
 					}
 		        	
-		        	return booleans;}
+		        	return resStrings;}
 		        	
 		        	if(OppNameMyName.myName.equals("Mary")){
 			        	String resString1=KeyValueAPI.get("basin", "basin576095", "Jim");
-			        	if(resString1.equals("#OWN")){
-			        		booleans[0]=true;
+			        	if(!resString1.equals("#QUIT")&&!resString1.equals("#QUIT2")&&!resString1.substring(0, 1).equals("@")){
+			        		if(!resString1.substring(0, 1).equals("#")){
+			        			if (resString1.substring(0, 1).equals("@")) {
+			        				resStrings[0]="@";
+								}
+			        			else{
+			        			resStrings[0]=resString1;
+			        			}
+			        		}else {
+			        			resStrings[0]="#REJ";
+							}
+			        		
 			        		
 			        	}else {
-							booleans[0]=false;
-						
+			        		resStrings[0]="#QUIT";
+
 						}
 			        	String resString2=KeyValueAPI.get("basin", "basin576095", "Tom");
-			        	if(resString2.equals("#OWN")){
-			        		booleans[1]=true;
+			        	if(!resString2.equals("#QUIT")&&!resString2.equals("#QUIT2")&&!resString2.substring(0, 1).equals("@")){
+			        		if(!resString2.substring(0, 1).equals("#")){
+			        			if (resString2.substring(0, 1).equals("@")) {
+			        				resStrings[1]="@";
+								}
+			        			else{
+			        			resStrings[1]=resString2;
+			        			}
+			        		}else {
+			        			resStrings[1]="#REJ";
+							}
+			        		
 			        		
 			        	}else {
-							booleans[1]=false;
-							
+			        		resStrings[1]="#QUIT";
+
 						}
 			        	String resString3=KeyValueAPI.get("basin", "basin576095", "Fred");
-			        	if(resString3.equals("#OWN")){
-			        		booleans[2]=true;
+			        	if(!resString3.equals("#QUIT")&&!resString3.equals("#QUIT2")&&!resString3.substring(0, 1).equals("@")){
+			        		if(!resString3.substring(0, 1).equals("#")){
+			        			if (resString3.substring(0, 1).equals("@")) {
+			        				resStrings[2]="@";
+								}
+			        			else{
+			        			resStrings[2]=resString3;
+			        			}
+			        		}else {
+			        			resStrings[2]="#REJ";
+							}
+			        		
 			        		
 			        	}else {
-							booleans[2]=false;
-							
+			        		resStrings[2]="#QUIT";
+
 						}
 			        	
-			        	return booleans;}
+			        	return resStrings;}
 		        	if(OppNameMyName.myName.equals("Fred")){
 			        	String resString1=KeyValueAPI.get("basin", "basin576095", "Jim");
-			        	if(resString1.equals("#OWN")){
-			        		booleans[0]=true;
+			        	if(!resString1.equals("#QUIT")&&!resString1.equals("#QUIT2")&&!resString1.substring(0, 1).equals("@")){
+			        		if(!resString1.substring(0, 1).equals("#")){
+			        			if (resString1.substring(0, 1).equals("@")) {
+			        				resStrings[0]="@";
+								}
+			        			else{
+			        			resStrings[0]=resString1;
+			        			}
+			        		}else {
+			        			resStrings[0]="#REJ";
+							}
+			        		
 			        		
 			        	}else {
-							booleans[0]=false;
-							
+			        		resStrings[0]="#QUIT";
+
 						}
 			        	String resString2=KeyValueAPI.get("basin", "basin576095", "Tom");
-			        	if(resString2.equals("#OWN")){
-			        		booleans[1]=true;
+			        	if(!resString2.equals("#QUIT")&&!resString2.equals("#QUIT2")&&!resString2.substring(0, 1).equals("@")){
+			        		if(!resString2.substring(0, 1).equals("#")){
+			        			if (resString2.substring(0, 1).equals("@")) {
+			        				resStrings[1]="@";
+								}
+			        			else{
+			        			resStrings[1]=resString2;
+			        			}
+			        		}else {
+			        			resStrings[1]="#REJ";
+							}
+			        		
 			        		
 			        	}else {
-							booleans[1]=false;
-							
+			        		resStrings[1]="#QUIT";
+
 						}
 			        	String resString3=KeyValueAPI.get("basin", "basin576095", "Mary");
-			        	if(resString3.equals("#OWN")){
-			        		booleans[2]=true;
+			        	if(!resString3.equals("#QUIT")&&!resString3.equals("#QUIT2")&&!resString3.substring(0, 1).equals("@")){
+			        		if(!resString3.substring(0, 1).equals("#")){
+			        			if (resString3.substring(0, 1).equals("@")) {
+			        				resStrings[2]="@";
+								}
+			        			else{
+			        			resStrings[2]=resString3;
+			        			}
+			        		}else {
+			        			resStrings[2]="#REJ";
+							}
+			        		
 			        		
 			        	}else {
-							booleans[2]=false;
-						
+			        		resStrings[2]="#QUIT";
+
 						}
 			        	
-			        	return booleans;}
+			        	return resStrings;}
 		        	return null;
 		        }  
 		 
@@ -667,30 +810,77 @@ public class OnlineUsers extends Activity{
 		        }  
 		 
 		        @Override
-				protected void onPostExecute(Boolean[] results) {
+				protected void onPostExecute(String[] results) {
 					// TODO Auto-generated method stub
 					super.onPostExecute(results);
-
-					if(results[0]==true){
+					//System.out.println("results[0].substring(0, 0) "+results[0].substring(0, 1));
+					if(!results[0].substring(0, 1).equals("#")){
+						if(results[0].substring(0, 1).equals("@")){
+							
+							buttonN1.startAnimation(alphaDes);
+							buttonN1.setOnClickListener(null);
+						}
+						else{
 						buttonN1.startAnimation(alphaInc);
+						buttonN1.setText(results[0]);
 						buttonN1.setOnClickListener(new OpponentButtonListener());
+						}
 					}else {
+						if(results[0].equals("#REJ")){
+							buttonN1.startAnimation(alphaInc);
+							buttonN1.setOnClickListener(new OpponentButtonListener());
+						}
+						else{
+						//buttonN1.setText("");
 						buttonN1.startAnimation(alphaDes);
 						buttonN1.setOnClickListener(null);
+						}
 					}
-					if(results[1]==true){
+					
+					if(!results[1].substring(0, 1).equals("#")){
+						if(results[1].substring(0, 1).equals("@")){
+							
+							buttonN2.startAnimation(alphaDes);
+							buttonN2.setOnClickListener(null);
+						}
+						else{
 						buttonN2.startAnimation(alphaInc);
+						buttonN2.setText(results[1]);
 						buttonN2.setOnClickListener(new OpponentButtonListener());
+						}
 					}else {
+						if(results[1].equals("#REJ")){
+							buttonN2.startAnimation(alphaInc);
+							buttonN2.setOnClickListener(new OpponentButtonListener());
+						}
+						else{
+							//buttonN2.setText("");
 						buttonN2.startAnimation(alphaDes);
 						buttonN2.setOnClickListener(null);
+						}
 					}
-					if(results[2]==true){
+					
+					if(!results[2].substring(0, 1).equals("#")){
+						if(results[2].substring(0, 1).equals("@")){
+							
+							buttonN3.startAnimation(alphaDes);
+							buttonN3.setOnClickListener(null);
+						}
+						else{
 						buttonN3.startAnimation(alphaInc);
+						buttonN3.setText(results[2]);
 						buttonN3.setOnClickListener(new OpponentButtonListener());
+						}
 					}else {
+						if(results[2].equals("#REJ")){
+							buttonN3.startAnimation(alphaInc);
+							buttonN3.setOnClickListener(new OpponentButtonListener());
+						}
+						else{
+							//buttonN3.setText("");
 						buttonN3.startAnimation(alphaDes);
 						buttonN3.setOnClickListener(null);
+						}
 					}
 										
 					
@@ -719,6 +909,8 @@ public class OnlineUsers extends Activity{
 			protected Void doInBackground(String... params) {
 				// TODO Auto-generated method stub
 				KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, params[0]);
+				KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, params[0]);
+				KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, params[0]);
 				return null;
 			}
 			
@@ -735,11 +927,23 @@ public class OnlineUsers extends Activity{
 			protected Void doInBackground(Void... params) {
 				// TODO Auto-generated method stub
 				KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "#REJ");
+				KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "#REJ");
+				KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "#REJ");
+				KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "#REJ");
 				return null;
 			}
+			@Override
+			protected void onPostExecute(Void result) {
+				// TODO Auto-generated method stub
+				super.onPostExecute(result);
+				finish();
+				//pullMeTask = new PullMeTask(OnlineUsers.this);
+           	 	//pullMeTask.execute();
+			}
+			
 			
 		}
-		class CheckNameTask extends AsyncTask<String, Integer, Boolean> {  
+		class CheckNameTask extends AsyncTask<String[], Integer, String> {  
 	    	
 	    	private Context context;  
 	    	CheckNameTask(Context context) {  
@@ -751,42 +955,47 @@ public class OnlineUsers extends Activity{
 	    
 
 	        @Override  
-	        protected Boolean doInBackground(String... params) {  
+	        protected String doInBackground(String[]... params) {  
 	        	
 	        		
-	        		KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "@"+params[0]);
+	        		KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "@"+params[0][0]);
 	        		
 	        		int i=0; 	        		
 	                while(i<100){  
 	                    i++;  
-	                    String oppStatus = KeyValueAPI.get("basin", "basin576095", params[0]);
-	                    System.out.println("Searching opponent:"+params[0]);	
-	                    System.out.println("Opponent's status:"+oppStatus);
+	                    String oppStatus = KeyValueAPI.get("basin", "basin576095", params[0][0]);
+	                    //System.out.println("Searching opponent:"+params[0]);	
+	                    //System.out.println("Opponent's status:"+oppStatus);
 	                    if(oppStatus.equals(OppNameMyName.myName)){
-	                    	OppNameMyName.oppName = params[0];
-	                    	System.out.println("Opponent: "+params[0]);	                   
-	                    	return true;
-	                    }
+	                    	OppNameMyName.oppName = params[0][0];
+	                    	OppNameMyName.oppFakeName = params[0][1];
+	                    	//System.out.println("Opponent: "+params[0]);	                   
+	                    	return "#GO";
+	                    }else {
+							if (KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName).equals(OppNameMyName.myFakeName)) {
+								return "#CAN";
+							}
+						
 	                    else {
 	                    	if(oppStatus.equals("#REJ")){
-	                    		KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "#OWN");
+	                    		KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, OppNameMyName.myFakeName);
 	                    		//Toast.makeText(context,params[0]+" rejects to play",Toast.LENGTH_LONG).show();
-		                    	System.out.println("Opponent Reject: "+params[0]);	                   
-		                    	return false;
+		                    	//System.out.println("Opponent Reject: "+params[0]);	                   
+		                    	return "#REJ";
 	                    	}
 	                    	else {
 	                    		 try {  
 	     	                        Thread.sleep(100);  
 	     	                    } catch (InterruptedException e) { 
-	     	                    	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "#OWN");
-	     	                    	return false;
+	     	                    	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, OppNameMyName.myFakeName);
+	     	                    	return "#EXC";
 	     	                    } 
 							}
-	                    }                  
+	                    }  }                  
 	                }  
-	                KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "#OWN");
+	                KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, OppNameMyName.myFakeName);
 	                //Toast.makeText(context,params[0]+" does not repond",Toast.LENGTH_LONG).show();
-	                return false;
+	                return "#NRES";
 	        }
 	 
 	        @Override  
@@ -795,19 +1004,34 @@ public class OnlineUsers extends Activity{
 	        }  
 	 
 	        @Override  
-	        protected void onPostExecute(Boolean results) {  
+	        protected void onPostExecute(String results) {  
 
 	        	   //progressBar.setBackgroundColor(getResources().getColor(R.color.white));  
-	        	if(results==true){
+	        	if(results=="#GO"){
 	        	   //progressBar.startAnimation(alphaDes);
-	        	   System.out.println("Opponent Connected! Loading Game");
-
+	        	   //System.out.println("Opponent Connected! Loading Game");
+	        	   Toast.makeText(context,"Opponent Connected! Loading Game",Toast.LENGTH_LONG).show();  
 	 		      	Intent intent = new Intent(OnlineUsers.this, CommGame.class);
 	 		 
 	 		      	startActivity(intent);
 	 		      	finish();}
+	        	
 	        	else {
-					
+	        		if(results=="#REJ"){
+			        	   //progressBar.startAnimation(alphaDes);
+			        	  // System.out.println("Opp rejects to play");
+			        	   Toast.makeText(context,"Invitation rejected.",Toast.LENGTH_LONG).show();  
+			 		      	pdialog.dismiss();}
+	        		else {
+	        			if(results=="#NRES"){
+				        	   //progressBar.startAnimation(alphaDes);
+				        	  // System.out.println("Opp no respond");
+				        	   Toast.makeText(context,"Opponent does not response.",Toast.LENGTH_LONG).show();  
+				 		      	pdialog.dismiss();}
+	        			else {
+							
+						}
+					}
 				}
 			}
 	            
@@ -829,8 +1053,74 @@ public class OnlineUsers extends Activity{
 	        }  
 	 
 	     }
+		class ProgessDialogCancelTask extends AsyncTask<String, Integer, Void> {  
+	    	
+	    	private Context context;  
+	    	ProgessDialogCancelTask(Context context) {  
+	              this.context = context;  
+	              //progressBar.setBackgroundColor(getResources().getColor(R.color.black));  
+	             // progressBar.startAnimation(alphaInc);
+	              
+	          }  
+	    
+
+	        @Override  
+	        protected Void doInBackground(String... params) {  
+	        	
+	        		
+	        	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, OppNameMyName.myFakeName);
+	        	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, OppNameMyName.myFakeName);
+
+					return null;
+
+	        }
+		}
+		
+		class NotiyDialogCancelTask extends AsyncTask<String, Integer, Boolean> {  
+	    	
+	    	private Context context;  
+	    	NotiyDialogCancelTask(Context context) {  
+	              this.context = context;  
+	              //progressBar.setBackgroundColor(getResources().getColor(R.color.black));  
+	             // progressBar.startAnimation(alphaInc);
+	              
+	          }  
+	    
+
+	        @Override  
+	        protected Boolean doInBackground(String... params) {  
+	        	
+	        	int i=0;
+	        	while(i<1000){
+	        		i++;
+	        		if(!KeyValueAPI.get("basin", "basin576095", params[0]).equals("@"+OppNameMyName.myName)){
+	        			return true;
+	        		}else {
+	        			try {
+							Thread.sleep(100);
+						} catch (Exception e) {
+							// TODO: handle exception
+							return false;
+						}
+					}
+	        		
+	        	}
+				return false;
+			
+
+	        }
 
 
-
-
+			@Override
+			protected void onPostExecute(Boolean result) {
+				// TODO Auto-generated method stub
+				super.onPostExecute(result);
+				if(result==true){
+					alertDialog.dismiss();
+					PullMeAfterCancelTask pullMeTask2 = new PullMeAfterCancelTask(OnlineUsers.this);
+					System.out.println("New PullMeTask Starts!");
+					pullMeTask2.execute();
+				}
+			}
+		}
 }

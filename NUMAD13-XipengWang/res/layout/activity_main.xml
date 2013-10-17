@@ -49,7 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:layout_below="@+id/dabble_button"
-        android:text="Communicate"/>"
+        android:text="Communication"/>"
         
     <Button
         android:id="@+id/exit_button"

@@ -170,7 +170,7 @@ public class CommGame extends Activity{
 		invisibleScoreText.addTextChangedListener(new ScoreTextListener());
 		scoreText.setText("Score:0");
 		cdText.setText("00:00");
-		oppMsg.setText(OppNameMyName.oppName+"'s movement:");
+		oppMsg.setText(OppNameMyName.oppFakeName+"'s movement:");
 		resultString = (randomWords(6)+randomWords(5)+randomWords(4)+randomWords(3));
 		System.out.println("String: "+resultString);
 		ArrayList<String> sList = new ArrayList<String>();
@@ -314,7 +314,7 @@ public class CommGame extends Activity{
 		//GoOnTask gTask = new GoOnTask(this);
 		//gTask.execute();
 		
-		oppMsg.setText(OppNameMyName.oppName+"'s movement:");
+		oppMsg.setText(OppNameMyName.oppFakeName+"'s movement:");
 		
 		stopService(new Intent(this, AsyncPullService.class));
 		realTimePullTask = new RealTimePullTask(this);
@@ -1909,12 +1909,14 @@ class PushScoreTask extends AsyncTask<String, Integer, String> {
 
         	String preScore = KeyValueAPI.get("basin", "basin576095", params[0]+"@HS");
         	if(preScore.equals("Error: No Such Key")){
+        	KeyValueAPI.put("basin", "basin576095", params[0]+"@HFS", OppNameMyName.myFakeName+": "+score+"");
         	KeyValueAPI.put("basin", "basin576095", params[0]+"@HS", score+"");
         	return score+"";}
         	
         	else {
 				int preIntScore = Integer.parseInt(preScore);
 				if(score>preIntScore){
+					KeyValueAPI.put("basin", "basin576095", params[0]+"@HFS", OppNameMyName.myFakeName+": "+score+"");
 					KeyValueAPI.put("basin", "basin576095", params[0]+"@HS", score+"");
 					return score+"";
 				}
@@ -2092,27 +2094,31 @@ class RealTimePullTask extends AsyncTask<Void, Integer, Void> {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
 			if(result.equals(OppNameMyName.myName)){
-			oppMsg.setText(OppNameMyName.oppName+"'s movement:"+"\n"+OppNameMyName.oppName+" joins the game");
+			oppMsg.setText(OppNameMyName.oppFakeName+"'s movement:"+"\n"+OppNameMyName.oppFakeName+" joins the game");
 			}
 			if(!result.equals(OppNameMyName.myName)){
 				if(result.equals("#AFK")){
-					oppMsg.setText(OppNameMyName.oppName+"'s movement:"+"\n"+OppNameMyName.oppName+" is not actively playing");
+					oppMsg.setText(OppNameMyName.oppFakeName+"'s movement:"+"\n"+OppNameMyName.oppFakeName+" is not actively playing");
 					System.out.println("opponent's movement: "+result);
 				}else{
 					if(result.equals("#QUIT")||result.equals("#QUIT2")){
-					oppMsg.setText(OppNameMyName.oppName+"'s movement:"+"\n"+OppNameMyName.oppName+" quits");
+					oppMsg.setText(OppNameMyName.oppFakeName+"'s movement:"+"\n"+OppNameMyName.oppFakeName+" quits");
 					System.out.println("opponent's movement: "+result);
 					}else{
 						if(result.equals("#WIN")){
-							oppMsg.setText(OppNameMyName.oppName+"'s movement:"+"\n"+OppNameMyName.oppName+" wins the game!");
+							oppMsg.setText(OppNameMyName.oppFakeName+"'s movement:"+"\n"+OppNameMyName.oppFakeName+" wins the game!");
 							System.out.println("opponent's movement: "+result);
 						}else{
 							if(result.equals("#LOS")){
-								oppMsg.setText(OppNameMyName.oppName+"'s movement:"+"\n"+OppNameMyName.oppName+" loses the game!");
+								oppMsg.setText(OppNameMyName.oppFakeName+"'s movement:"+"\n"+OppNameMyName.oppFakeName+" loses the game!");
 								System.out.println("opponent's movement: "+result);
 							}else{
-								oppMsg.setText(OppNameMyName.oppName+"'s movement:"+"\n"+OppNameMyName.oppName+" spells: "+result);
-								System.out.println("opponent's movement: "+result);}}}}}
+								if(result.equals("Error: IOException")){
+									oppMsg.setText("Cannot access to server. Please check your NetWork.");
+								}
+								else{
+								oppMsg.setText(OppNameMyName.oppFakeName+"'s movement:"+"\n"+OppNameMyName.oppFakeName+" spells: "+result);
+								System.out.println("opponent's movement: "+result);}}}}}}
 		}
 
 		@Override  
