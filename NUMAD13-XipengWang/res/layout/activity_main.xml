@@ -51,11 +51,18 @@
         android:layout_below="@+id/dabble_button"
         android:text="Communication"/>"
         
+     <Button
+        android:id="@+id/twoPDabble_button"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_below="@+id/comm_button"
+        android:text="Two Player Dabble"/>"
+        
     <Button
         android:id="@+id/exit_button"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:layout_below="@+id/comm_button"
+        android:layout_below="@+id/twoPDabble_button"
         android:text="Quit"/>"
 
 </RelativeLayout>

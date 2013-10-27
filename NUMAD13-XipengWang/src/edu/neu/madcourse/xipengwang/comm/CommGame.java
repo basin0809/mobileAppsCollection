@@ -6,17 +6,19 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.ToneGenerator;
@@ -24,6 +26,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.IBinder;
+import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.TypedValue;
@@ -33,6 +36,7 @@ import android.view.View.OnClickListener;
 import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import edu.neu.madcourse.xipengwang.R;
 import edu.neu.madcourse.xipengwang.comm.AsyncPullService.FirBinder;
 import edu.neu.mhealth.api.KeyValueAPI;
@@ -57,7 +61,7 @@ public class CommGame extends Activity{
 	private String result5="";
 	private String result6="";
 	private String resultString;
-
+	private String ssrString = "1";
 	private InputStream input = null;
 	private boolean[] buttonIsPressed = new boolean[18];
 	private ArrayList<Integer> buttonTwicePressed = new ArrayList<Integer>();
@@ -66,7 +70,7 @@ public class CommGame extends Activity{
 	
 	private boolean[] scoreLocates = new boolean[4];
 	private Button[] letterButtons = new Button[18];
-	private Button pauseButton, backButton, hintButton ;
+	private Button csrButton, pauseButton, backButton, hintButton ;
 	//private int swapLeft = 40;
 	//private int modeSt;
 	private TextView cdText, scoreText, invisibleScoreText, oppMsg;
@@ -91,6 +95,7 @@ public class CommGame extends Activity{
 	static AFKTask aTask;
 	AsyncPullService boundService;
 	boolean isBound;
+	private boolean ssrDetected = false;
 	final  ServiceConnection conn = new ServiceConnection(){
 
 		@Override
@@ -157,7 +162,7 @@ public class CommGame extends Activity{
 			letterButtons[i].setOnClickListener(new LetterButtonsListener());
 		}
 		pauseButton = (Button)findViewById(R.id.cPause_button);
-		
+		csrButton = (Button)findViewById(R.id.csr_button);
 		hintButton = (Button)findViewById(R.id.cHintbutton);
 		backButton = (Button)findViewById(R.id.cBackbutton);
 		backButton.setOnClickListener(new QuitListener());
@@ -269,6 +274,18 @@ public class CommGame extends Activity{
 		
 		//mc = new MyCount(300000, 1000);  
         //mc.start();
+		
+		   PackageManager packManager= getPackageManager();
+	        List<ResolveInfo> intActivities = packManager.queryIntentActivities
+	                        (new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
+	        if (intActivities.size() !=0){
+	        	csrButton.setOnClickListener(new CSRListener());
+	        } else {
+	        	csrButton.setEnabled(false);
+	            Toast.makeText(this,"Oops - Speech Recognition Not Supported!", 
+	                                                 Toast.LENGTH_LONG).show();
+	            } 
+		//csrButton.setOnClickListener(new CSRListener());
         pauseButton.setOnClickListener(new PauseListener());
         hintButton.setOnClickListener(new HintListener());
         
@@ -332,6 +349,1568 @@ public class CommGame extends Activity{
 		
         System.out.println("--------------------------------Reume");
 
+	}
+	
+	class CSRListener implements OnClickListener
+	{
+
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+			System.out.println("CLICK CSR");
+			intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+			intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak it up when you find a word!");
+			startActivityForResult(intent, 123);
+			
+		}
+		
+	}
+	
+	
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		if(requestCode == 123 && resultCode == RESULT_OK){
+			ssrDetected = false;
+			ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+			System.out.print(results);
+			
+			if(results.size()>0){
+			ssrString = results.get(0);
+			int ssrLength = ssrString.length();
+			String currentStr = getCurrentStr();
+			String[] ssrLetter;
+			int[] ssrLocates;
+			if(ssrLength>6){}
+			else{
+			switch (ssrLength) {
+			case 6:
+				ssrLetter = new String[6];
+				ssrLocates = new int[6];
+				ssrLetter[0] = String.valueOf(ssrString.charAt(0));
+				ssrLetter[1] = String.valueOf(ssrString.charAt(1));
+				ssrLetter[2] = String.valueOf(ssrString.charAt(2));
+				ssrLetter[3] = String.valueOf(ssrString.charAt(3));
+				ssrLetter[4] = String.valueOf(ssrString.charAt(4));
+				ssrLetter[5] = String.valueOf(ssrString.charAt(5));
+				
+				if(!currentStr.contains(ssrLetter[0])){}
+				else {
+					ssrLocates[0]=currentStr.indexOf(ssrLetter[0]);
+					String currentStr1 = currentStr.replaceFirst(ssrLetter[0], "0");
+					if(!currentStr1.contains(ssrLetter[1])){}
+					else {
+						ssrLocates[1]=currentStr.indexOf(ssrLetter[1]);
+						String currentStr2 = currentStr.replaceFirst(ssrLetter[1], "1");
+						if(!currentStr2.contains(ssrLetter[2])){}
+						else {
+							ssrLocates[2]=currentStr.indexOf(ssrLetter[2]);
+							String currentStr3 = currentStr.replaceFirst(ssrLetter[2], "2");
+							if(!currentStr3.contains(ssrLetter[3])){}
+							else {
+								ssrLocates[3]=currentStr.indexOf(ssrLetter[3]);
+								String currentStr4 = currentStr.replaceFirst(ssrLetter[3], "3");
+								if(!currentStr4.contains(ssrLetter[4])){}
+								else {
+									ssrLocates[4]=currentStr.indexOf(ssrLetter[4]);
+									String currentStr5 = currentStr.replaceFirst(ssrLetter[4], "4");
+									if(!currentStr5.contains(ssrLetter[5])){}
+									else {
+										ssrLocates[5]=currentStr.indexOf(ssrLetter[5]);
+										
+										swapIfValid(ssrLocates[0]);
+										swapIfValid(0);
+										
+										
+										currentStr = getCurrentStr();
+										String currentStrTemp1 = "1"+currentStr.substring(1, 18);
+										ssrLocates[1]=currentStrTemp1.indexOf(ssrLetter[1]);
+										swapIfValid(ssrLocates[1]);
+										swapIfValid(1);
+										
+										
+										currentStr = getCurrentStr();
+										String currentStrTemp2 = "11"+currentStr.substring(2, 18);
+										ssrLocates[2]=currentStrTemp2.indexOf(ssrLetter[2]);
+										swapIfValid(ssrLocates[2]);
+										swapIfValid(2);
+										
+										
+										currentStr = getCurrentStr();
+										String currentStrTemp3 = "111"+currentStr.substring(3, 18);
+										ssrLocates[3]=currentStrTemp3.indexOf(ssrLetter[3]);
+										swapIfValid(ssrLocates[3]);
+										swapIfValid(3);
+										
+										
+										currentStr = getCurrentStr();
+										String currentStrTemp4 = "1111"+currentStr.substring(4, 18);
+										ssrLocates[4]=currentStrTemp4.indexOf(ssrLetter[4]);
+										swapIfValid(ssrLocates[4]);
+										swapIfValid(4);
+										
+										
+										currentStr = getCurrentStr();
+										String currentStrTemp5 = "11111"+currentStr.substring(5, 18);
+										ssrLocates[5]=currentStrTemp5.indexOf(ssrLetter[5]);
+										if(ssrLocates[5]==5){ssrDetected = true;
+										PushTask pushTask = new PushTask(CommGame.this);
+										//pushTask.execute(ssrString.toString());
+										pushTask.execute(ssrString.toString());}
+										else{
+										swapIfValid(ssrLocates[5]);
+										swapIfValid(5);
+										ssrDetected = true;
+										PushTask pushTask = new PushTask(CommGame.this);
+										//pushTask.execute(ssrString.toString());
+										pushTask.execute(ssrString.toString());}
+	
+									}
+								}
+							}
+						}
+					}
+				}
+
+				break;
+				
+			case 5:
+				ssrLetter = new String[5];
+				ssrLocates = new int[5];
+				ssrLetter[0] = String.valueOf(ssrString.charAt(0));
+				ssrLetter[1] = String.valueOf(ssrString.charAt(1));
+				ssrLetter[2] = String.valueOf(ssrString.charAt(2));
+				ssrLetter[3] = String.valueOf(ssrString.charAt(3));
+				ssrLetter[4] = String.valueOf(ssrString.charAt(4));
+				
+				
+				if(!currentStr.contains(ssrLetter[0])){}
+				else {
+					ssrLocates[0]=currentStr.indexOf(ssrLetter[0]);
+					String currentStr1 = currentStr.replaceFirst(ssrLetter[0], "0");
+					System.out.println("Hello Done");
+					if(!currentStr1.contains(ssrLetter[1])){}
+					else {
+						ssrLocates[1]=currentStr.indexOf(ssrLetter[1]);
+						String currentStr2 = currentStr.replaceFirst(ssrLetter[1], "1");
+						System.out.println("Hello Done");
+						if(!currentStr2.contains(ssrLetter[2])){}
+						else {
+							ssrLocates[2]=currentStr.indexOf(ssrLetter[2]);
+							String currentStr3 = currentStr.replaceFirst(ssrLetter[2], "2");
+							System.out.println("Hello Done");
+							if(!currentStr3.contains(ssrLetter[3])){}
+							else {
+								ssrLocates[3]=currentStr.indexOf(ssrLetter[3]);
+								String currentStr4 = currentStr.replaceFirst(ssrLetter[3], "3");
+								System.out.println("Hello Done");
+								
+								if(!currentStr4.contains(ssrLetter[4])){}
+								else {
+									ssrLocates[4]=currentStr.indexOf(ssrLetter[4]);
+									System.out.println(currentStr);
+									swapIfValid(ssrLocates[0]);
+									swapIfValid(6);
+									
+									
+									currentStr = getCurrentStr();
+									String currentStrTemp1 = currentStr.substring(0, 6)+"1"+currentStr.substring(7, 18);
+									ssrLocates[1]=currentStrTemp1.indexOf(ssrLetter[1]);
+									swapIfValid(ssrLocates[1]);
+									swapIfValid(7);
+									
+									
+									currentStr = getCurrentStr();
+									String currentStrTemp2 = currentStr.substring(0, 6)+"11"+currentStr.substring(8, 18);
+									ssrLocates[2]=currentStrTemp2.indexOf(ssrLetter[2]);
+									swapIfValid(ssrLocates[2]);
+									swapIfValid(8);
+									
+									
+									currentStr = getCurrentStr();
+									String currentStrTemp3 = currentStr.substring(0, 6)+"111"+currentStr.substring(9, 18);
+									ssrLocates[3]=currentStrTemp3.indexOf(ssrLetter[3]);
+									swapIfValid(ssrLocates[3]);
+									swapIfValid(9);
+									
+									
+									currentStr = getCurrentStr();
+									String currentStrTemp4 = currentStr.substring(0, 6)+"1111"+currentStr.substring(10, 18);
+									ssrLocates[4]=currentStrTemp4.indexOf(ssrLetter[4]);
+									if(ssrLocates[4]==10){ssrDetected = true;
+									PushTask pushTask = new PushTask(CommGame.this);
+									//pushTask.execute(ssrString.toString());
+									pushTask.execute(ssrString.toString());}
+									else{
+									swapIfValid(ssrLocates[4]);
+									swapIfValid(10);
+									ssrDetected = true;
+									PushTask pushTask = new PushTask(CommGame.this);
+									//pushTask.execute(ssrString.toString());
+									pushTask.execute(ssrString.toString());}	
+								}
+							}
+						}
+					}
+				}
+
+				break;
+				
+			case 4:
+				ssrLetter = new String[4];
+				ssrLocates = new int[4];
+				ssrLetter[0] = String.valueOf(ssrString.charAt(0));
+				ssrLetter[1] = String.valueOf(ssrString.charAt(1));
+				ssrLetter[2] = String.valueOf(ssrString.charAt(2));
+				ssrLetter[3] = String.valueOf(ssrString.charAt(3));
+				
+				if(!currentStr.contains(ssrLetter[0])){}
+				else {
+					ssrLocates[0]=currentStr.indexOf(ssrLetter[0]);
+					String currentStr1 = currentStr.replaceFirst(ssrLetter[0], "0");
+					if(!currentStr1.contains(ssrLetter[1])){}
+					else {
+						ssrLocates[1]=currentStr.indexOf(ssrLetter[1]);
+						String currentStr2 = currentStr.replaceFirst(ssrLetter[1], "1");
+						if(!currentStr2.contains(ssrLetter[2])){}
+						else {
+							ssrLocates[2]=currentStr.indexOf(ssrLetter[2]);
+							String currentStr3 = currentStr.replaceFirst(ssrLetter[2], "2");
+							if(!currentStr3.contains(ssrLetter[3])){}
+							else {
+								ssrLocates[3]=currentStr.indexOf(ssrLetter[3]);
+								
+								swapIfValid(ssrLocates[0]);
+								swapIfValid(11);
+								
+								
+								currentStr = getCurrentStr();
+								String currentStrTemp1 = currentStr.substring(0, 11)+"1"+currentStr.substring(12, 18);
+								ssrLocates[1]=currentStrTemp1.indexOf(ssrLetter[1]);
+								swapIfValid(ssrLocates[1]);
+								swapIfValid(12);
+								
+								
+								currentStr = getCurrentStr();
+								String currentStrTemp2 = currentStr.substring(0, 11)+"11"+currentStr.substring(13, 18);
+								ssrLocates[2]=currentStrTemp2.indexOf(ssrLetter[2]);
+								swapIfValid(ssrLocates[2]);
+								swapIfValid(13);
+								
+								
+								currentStr = getCurrentStr();
+								String currentStrTemp3 = currentStr.substring(0, 11)+"111"+currentStr.substring(14, 18);
+								ssrLocates[3]=currentStrTemp3.indexOf(ssrLetter[3]);
+								if(ssrLocates[3]==14){ssrDetected = true;
+								PushTask pushTask = new PushTask(CommGame.this);
+								//pushTask.execute(ssrString.toString());
+								pushTask.execute(ssrString.toString());}
+								else{
+								swapIfValid(ssrLocates[3]);
+								swapIfValid(14);
+								ssrDetected = true;
+								PushTask pushTask = new PushTask(CommGame.this);
+								//pushTask.execute(ssrString.toString());
+								pushTask.execute(ssrString.toString());}
+											
+							}
+						}
+					}
+				}
+
+				break;
+				
+			case 3:
+				ssrLetter = new String[3];
+				ssrLocates = new int[3];
+				ssrLetter[0] = String.valueOf(ssrString.charAt(0));
+				ssrLetter[1] = String.valueOf(ssrString.charAt(1));
+				ssrLetter[2] = String.valueOf(ssrString.charAt(2));
+				
+				if(!currentStr.contains(ssrLetter[0])){}
+				else {
+					ssrLocates[0]=currentStr.indexOf(ssrLetter[0]);
+					String currentStr1 = currentStr.replaceFirst(ssrLetter[0], "0");
+					if(!currentStr1.contains(ssrLetter[1])){}
+					else {
+						ssrLocates[1]=currentStr.indexOf(ssrLetter[1]);
+						String currentStr2 = currentStr.replaceFirst(ssrLetter[1], "1");
+						if(!currentStr2.contains(ssrLetter[2])){}
+						else {
+							ssrLocates[2]=currentStr.indexOf(ssrLetter[2]);
+							
+							swapIfValid(ssrLocates[0]);
+							swapIfValid(15);
+							
+							
+							currentStr = getCurrentStr();
+							String currentStrTemp1 = currentStr.substring(0, 15)+"1"+currentStr.substring(16, 18);
+							ssrLocates[1]=currentStrTemp1.indexOf(ssrLetter[1]);
+							swapIfValid(ssrLocates[1]);
+							swapIfValid(16);
+							
+							
+							currentStr = getCurrentStr();
+							String currentStrTemp2 = currentStr.substring(0, 15)+"11"+currentStr.substring(17, 18);
+							ssrLocates[2]=currentStrTemp2.indexOf(ssrLetter[2]);
+							if(ssrLocates[2]==17){ssrDetected = true;
+							PushTask pushTask = new PushTask(CommGame.this);
+							//pushTask.execute(ssrString.toString());
+							pushTask.execute(ssrString.toString());}
+							else{
+							swapIfValid(ssrLocates[2]);
+							swapIfValid(17);
+							ssrDetected = true;
+							PushTask pushTask = new PushTask(CommGame.this);
+							//pushTask.execute(ssrString.toString());
+							pushTask.execute(ssrString.toString());}
+							
+							
+						}
+					}
+				}
+
+				break;
+
+			default:
+				break;
+			}
+			}
+
+			}
+			if(ssrDetected == false && results.size()>1){
+				ssrString = results.get(1);
+				int ssrLength = ssrString.length();
+				String currentStr = getCurrentStr();
+				String[] ssrLetter;
+				int[] ssrLocates;
+				if(ssrLength>6){}
+				else{
+					switch (ssrLength) {
+					case 6:
+						ssrLetter = new String[6];
+						ssrLocates = new int[6];
+						ssrLetter[0] = String.valueOf(ssrString.charAt(0));
+						ssrLetter[1] = String.valueOf(ssrString.charAt(1));
+						ssrLetter[2] = String.valueOf(ssrString.charAt(2));
+						ssrLetter[3] = String.valueOf(ssrString.charAt(3));
+						ssrLetter[4] = String.valueOf(ssrString.charAt(4));
+						ssrLetter[5] = String.valueOf(ssrString.charAt(5));
+						
+						if(!currentStr.contains(ssrLetter[0])){}
+						else {
+							ssrLocates[0]=currentStr.indexOf(ssrLetter[0]);
+							String currentStr1 = currentStr.replaceFirst(ssrLetter[0], "0");
+							if(!currentStr1.contains(ssrLetter[1])){}
+							else {
+								ssrLocates[1]=currentStr.indexOf(ssrLetter[1]);
+								String currentStr2 = currentStr.replaceFirst(ssrLetter[1], "1");
+								if(!currentStr2.contains(ssrLetter[2])){}
+								else {
+									ssrLocates[2]=currentStr.indexOf(ssrLetter[2]);
+									String currentStr3 = currentStr.replaceFirst(ssrLetter[2], "2");
+									if(!currentStr3.contains(ssrLetter[3])){}
+									else {
+										ssrLocates[3]=currentStr.indexOf(ssrLetter[3]);
+										String currentStr4 = currentStr.replaceFirst(ssrLetter[3], "3");
+										if(!currentStr4.contains(ssrLetter[4])){}
+										else {
+											ssrLocates[4]=currentStr.indexOf(ssrLetter[4]);
+											String currentStr5 = currentStr.replaceFirst(ssrLetter[4], "4");
+											if(!currentStr5.contains(ssrLetter[5])){}
+											else {
+												ssrLocates[5]=currentStr.indexOf(ssrLetter[5]);
+												
+												swapIfValid(ssrLocates[0]);
+												swapIfValid(0);
+												
+												
+												currentStr = getCurrentStr();
+												String currentStrTemp1 = "1"+currentStr.substring(1, 18);
+												ssrLocates[1]=currentStrTemp1.indexOf(ssrLetter[1]);
+												swapIfValid(ssrLocates[1]);
+												swapIfValid(1);
+												
+												
+												currentStr = getCurrentStr();
+												String currentStrTemp2 = "11"+currentStr.substring(2, 18);
+												ssrLocates[2]=currentStrTemp2.indexOf(ssrLetter[2]);
+												swapIfValid(ssrLocates[2]);
+												swapIfValid(2);
+												
+												
+												currentStr = getCurrentStr();
+												String currentStrTemp3 = "111"+currentStr.substring(3, 18);
+												ssrLocates[3]=currentStrTemp3.indexOf(ssrLetter[3]);
+												swapIfValid(ssrLocates[3]);
+												swapIfValid(3);
+												
+												
+												currentStr = getCurrentStr();
+												String currentStrTemp4 = "1111"+currentStr.substring(4, 18);
+												ssrLocates[4]=currentStrTemp4.indexOf(ssrLetter[4]);
+												swapIfValid(ssrLocates[4]);
+												swapIfValid(4);
+												
+												
+												currentStr = getCurrentStr();
+												String currentStrTemp5 = "11111"+currentStr.substring(5, 18);
+												ssrLocates[5]=currentStrTemp5.indexOf(ssrLetter[5]);
+												if(ssrLocates[5]==5){ssrDetected = true;
+												PushTask pushTask = new PushTask(CommGame.this);
+												//pushTask.execute(ssrString.toString());
+												pushTask.execute(ssrString.toString());}
+												else{
+												swapIfValid(ssrLocates[5]);
+												swapIfValid(5);
+												ssrDetected = true;
+												PushTask pushTask = new PushTask(CommGame.this);
+												//pushTask.execute(ssrString.toString());
+												pushTask.execute(ssrString.toString());}
+			
+											}
+										}
+									}
+								}
+							}
+						}
+
+						break;
+						
+					case 5:
+						ssrLetter = new String[5];
+						ssrLocates = new int[5];
+						ssrLetter[0] = String.valueOf(ssrString.charAt(0));
+						ssrLetter[1] = String.valueOf(ssrString.charAt(1));
+						ssrLetter[2] = String.valueOf(ssrString.charAt(2));
+						ssrLetter[3] = String.valueOf(ssrString.charAt(3));
+						ssrLetter[4] = String.valueOf(ssrString.charAt(4));
+						
+						
+						if(!currentStr.contains(ssrLetter[0])){}
+						else {
+							ssrLocates[0]=currentStr.indexOf(ssrLetter[0]);
+							String currentStr1 = currentStr.replaceFirst(ssrLetter[0], "0");
+							System.out.println("Hello Done");
+							if(!currentStr1.contains(ssrLetter[1])){}
+							else {
+								ssrLocates[1]=currentStr.indexOf(ssrLetter[1]);
+								String currentStr2 = currentStr.replaceFirst(ssrLetter[1], "1");
+								System.out.println("Hello Done");
+								if(!currentStr2.contains(ssrLetter[2])){}
+								else {
+									ssrLocates[2]=currentStr.indexOf(ssrLetter[2]);
+									String currentStr3 = currentStr.replaceFirst(ssrLetter[2], "2");
+									System.out.println("Hello Done");
+									if(!currentStr3.contains(ssrLetter[3])){}
+									else {
+										ssrLocates[3]=currentStr.indexOf(ssrLetter[3]);
+										String currentStr4 = currentStr.replaceFirst(ssrLetter[3], "3");
+										System.out.println("Hello Done");
+										
+										if(!currentStr4.contains(ssrLetter[4])){}
+										else {
+											ssrLocates[4]=currentStr.indexOf(ssrLetter[4]);
+											
+											swapIfValid(ssrLocates[0]);
+											swapIfValid(6);
+											
+											
+											currentStr = getCurrentStr();
+											String currentStrTemp1 = currentStr.substring(0, 6)+"1"+currentStr.substring(7, 18);
+											ssrLocates[1]=currentStrTemp1.indexOf(ssrLetter[1]);
+											swapIfValid(ssrLocates[1]);
+											swapIfValid(7);
+											
+											
+											currentStr = getCurrentStr();
+											String currentStrTemp2 = currentStr.substring(0, 6)+"11"+currentStr.substring(8, 18);
+											ssrLocates[2]=currentStrTemp2.indexOf(ssrLetter[2]);
+											swapIfValid(ssrLocates[2]);
+											swapIfValid(8);
+											
+											
+											currentStr = getCurrentStr();
+											String currentStrTemp3 = currentStr.substring(0, 6)+"111"+currentStr.substring(9, 18);
+											ssrLocates[3]=currentStrTemp3.indexOf(ssrLetter[3]);
+											swapIfValid(ssrLocates[3]);
+											swapIfValid(9);
+											
+											
+											currentStr = getCurrentStr();
+											String currentStrTemp4 = currentStr.substring(0, 6)+"1111"+currentStr.substring(10, 18);
+											ssrLocates[4]=currentStrTemp4.indexOf(ssrLetter[4]);
+											if(ssrLocates[4]==10){ssrDetected = true;
+											PushTask pushTask = new PushTask(CommGame.this);
+											//pushTask.execute(ssrString.toString());
+											pushTask.execute(ssrString.toString());}
+											else{
+											swapIfValid(ssrLocates[4]);
+											swapIfValid(10);
+											ssrDetected = true;
+											PushTask pushTask = new PushTask(CommGame.this);
+											//pushTask.execute(ssrString.toString());
+											pushTask.execute(ssrString.toString());}	
+										}
+									}
+								}
+							}
+						}
+
+						break;
+						
+					case 4:
+						ssrLetter = new String[4];
+						ssrLocates = new int[4];
+						ssrLetter[0] = String.valueOf(ssrString.charAt(0));
+						ssrLetter[1] = String.valueOf(ssrString.charAt(1));
+						ssrLetter[2] = String.valueOf(ssrString.charAt(2));
+						ssrLetter[3] = String.valueOf(ssrString.charAt(3));
+						
+						if(!currentStr.contains(ssrLetter[0])){}
+						else {
+							ssrLocates[0]=currentStr.indexOf(ssrLetter[0]);
+							String currentStr1 = currentStr.replaceFirst(ssrLetter[0], "0");
+							if(!currentStr1.contains(ssrLetter[1])){}
+							else {
+								ssrLocates[1]=currentStr.indexOf(ssrLetter[1]);
+								String currentStr2 = currentStr.replaceFirst(ssrLetter[1], "1");
+								if(!currentStr2.contains(ssrLetter[2])){}
+								else {
+									ssrLocates[2]=currentStr.indexOf(ssrLetter[2]);
+									String currentStr3 = currentStr.replaceFirst(ssrLetter[2], "2");
+									if(!currentStr3.contains(ssrLetter[3])){}
+									else {
+										ssrLocates[3]=currentStr.indexOf(ssrLetter[3]);
+										
+										swapIfValid(ssrLocates[0]);
+										swapIfValid(11);
+										
+										
+										currentStr = getCurrentStr();
+										String currentStrTemp1 = currentStr.substring(0, 11)+"1"+currentStr.substring(12, 18);
+										ssrLocates[1]=currentStrTemp1.indexOf(ssrLetter[1]);
+										swapIfValid(ssrLocates[1]);
+										swapIfValid(12);
+										
+										
+										currentStr = getCurrentStr();
+										String currentStrTemp2 = currentStr.substring(0, 11)+"11"+currentStr.substring(13, 18);
+										ssrLocates[2]=currentStrTemp2.indexOf(ssrLetter[2]);
+										swapIfValid(ssrLocates[2]);
+										swapIfValid(13);
+										
+										
+										currentStr = getCurrentStr();
+										String currentStrTemp3 = currentStr.substring(0, 11)+"111"+currentStr.substring(14, 18);
+										ssrLocates[3]=currentStrTemp3.indexOf(ssrLetter[3]);
+										if(ssrLocates[3]==14){ssrDetected = true;
+										PushTask pushTask = new PushTask(CommGame.this);
+										//pushTask.execute(ssrString.toString());
+										pushTask.execute(ssrString.toString());}
+										else{
+										swapIfValid(ssrLocates[3]);
+										swapIfValid(14);
+										ssrDetected = true;
+										PushTask pushTask = new PushTask(CommGame.this);
+										//pushTask.execute(ssrString.toString());
+										pushTask.execute(ssrString.toString());}
+													
+									}
+								}
+							}
+						}
+
+						break;
+						
+					case 3:
+						ssrLetter = new String[3];
+						ssrLocates = new int[3];
+						ssrLetter[0] = String.valueOf(ssrString.charAt(0));
+						ssrLetter[1] = String.valueOf(ssrString.charAt(1));
+						ssrLetter[2] = String.valueOf(ssrString.charAt(2));
+						
+						if(!currentStr.contains(ssrLetter[0])){}
+						else {
+							ssrLocates[0]=currentStr.indexOf(ssrLetter[0]);
+							String currentStr1 = currentStr.replaceFirst(ssrLetter[0], "0");
+							if(!currentStr1.contains(ssrLetter[1])){}
+							else {
+								ssrLocates[1]=currentStr.indexOf(ssrLetter[1]);
+								String currentStr2 = currentStr.replaceFirst(ssrLetter[1], "1");
+								if(!currentStr2.contains(ssrLetter[2])){}
+								else {
+									ssrLocates[2]=currentStr.indexOf(ssrLetter[2]);
+									
+									swapIfValid(ssrLocates[0]);
+									swapIfValid(15);
+									
+									
+									currentStr = getCurrentStr();
+									String currentStrTemp1 = currentStr.substring(0, 15)+"1"+currentStr.substring(16, 18);
+									ssrLocates[1]=currentStrTemp1.indexOf(ssrLetter[1]);
+									swapIfValid(ssrLocates[1]);
+									swapIfValid(16);
+									
+									
+									currentStr = getCurrentStr();
+									String currentStrTemp2 = currentStr.substring(0, 15)+"11"+currentStr.substring(17, 18);
+									ssrLocates[2]=currentStrTemp2.indexOf(ssrLetter[2]);
+									if(ssrLocates[2]==17){ssrDetected = true;
+									PushTask pushTask = new PushTask(CommGame.this);
+									//pushTask.execute(ssrString.toString());
+									pushTask.execute(ssrString.toString());}
+									else{
+									swapIfValid(ssrLocates[2]);
+									swapIfValid(17);
+									ssrDetected = true;
+									PushTask pushTask = new PushTask(CommGame.this);
+									//pushTask.execute(ssrString.toString());
+									pushTask.execute(ssrString.toString());}
+									
+									
+								}
+							}
+						}
+
+						break;
+
+					default:
+						break;
+					}
+				}
+			}
+			
+			if(ssrDetected == false && results.size()>2){
+				ssrString = results.get(2);
+				int ssrLength = ssrString.length();
+				String currentStr = getCurrentStr();
+				String[] ssrLetter;
+				int[] ssrLocates;
+				if(ssrLength>6){}
+				else{
+					switch (ssrLength) {
+					case 6:
+						ssrLetter = new String[6];
+						ssrLocates = new int[6];
+						ssrLetter[0] = String.valueOf(ssrString.charAt(0));
+						ssrLetter[1] = String.valueOf(ssrString.charAt(1));
+						ssrLetter[2] = String.valueOf(ssrString.charAt(2));
+						ssrLetter[3] = String.valueOf(ssrString.charAt(3));
+						ssrLetter[4] = String.valueOf(ssrString.charAt(4));
+						ssrLetter[5] = String.valueOf(ssrString.charAt(5));
+						
+						if(!currentStr.contains(ssrLetter[0])){}
+						else {
+							ssrLocates[0]=currentStr.indexOf(ssrLetter[0]);
+							String currentStr1 = currentStr.replaceFirst(ssrLetter[0], "0");
+							if(!currentStr1.contains(ssrLetter[1])){}
+							else {
+								ssrLocates[1]=currentStr.indexOf(ssrLetter[1]);
+								String currentStr2 = currentStr.replaceFirst(ssrLetter[1], "1");
+								if(!currentStr2.contains(ssrLetter[2])){}
+								else {
+									ssrLocates[2]=currentStr.indexOf(ssrLetter[2]);
+									String currentStr3 = currentStr.replaceFirst(ssrLetter[2], "2");
+									if(!currentStr3.contains(ssrLetter[3])){}
+									else {
+										ssrLocates[3]=currentStr.indexOf(ssrLetter[3]);
+										String currentStr4 = currentStr.replaceFirst(ssrLetter[3], "3");
+										if(!currentStr4.contains(ssrLetter[4])){}
+										else {
+											ssrLocates[4]=currentStr.indexOf(ssrLetter[4]);
+											String currentStr5 = currentStr.replaceFirst(ssrLetter[4], "4");
+											if(!currentStr5.contains(ssrLetter[5])){}
+											else {
+												ssrLocates[5]=currentStr.indexOf(ssrLetter[5]);
+												
+												swapIfValid(ssrLocates[0]);
+												swapIfValid(0);
+												
+												
+												currentStr = getCurrentStr();
+												String currentStrTemp1 = "1"+currentStr.substring(1, 18);
+												ssrLocates[1]=currentStrTemp1.indexOf(ssrLetter[1]);
+												swapIfValid(ssrLocates[1]);
+												swapIfValid(1);
+												
+												
+												currentStr = getCurrentStr();
+												String currentStrTemp2 = "11"+currentStr.substring(2, 18);
+												ssrLocates[2]=currentStrTemp2.indexOf(ssrLetter[2]);
+												swapIfValid(ssrLocates[2]);
+												swapIfValid(2);
+												
+												
+												currentStr = getCurrentStr();
+												String currentStrTemp3 = "111"+currentStr.substring(3, 18);
+												ssrLocates[3]=currentStrTemp3.indexOf(ssrLetter[3]);
+												swapIfValid(ssrLocates[3]);
+												swapIfValid(3);
+												
+												
+												currentStr = getCurrentStr();
+												String currentStrTemp4 = "1111"+currentStr.substring(4, 18);
+												ssrLocates[4]=currentStrTemp4.indexOf(ssrLetter[4]);
+												swapIfValid(ssrLocates[4]);
+												swapIfValid(4);
+												
+												
+												currentStr = getCurrentStr();
+												String currentStrTemp5 = "11111"+currentStr.substring(5, 18);
+												ssrLocates[5]=currentStrTemp5.indexOf(ssrLetter[5]);
+												if(ssrLocates[5]==5){ssrDetected = true;
+												PushTask pushTask = new PushTask(CommGame.this);
+												//pushTask.execute(ssrString.toString());
+												pushTask.execute(ssrString.toString());}
+												else{
+												swapIfValid(ssrLocates[5]);
+												swapIfValid(5);
+												ssrDetected = true;
+												PushTask pushTask = new PushTask(CommGame.this);
+												//pushTask.execute(ssrString.toString());
+												pushTask.execute(ssrString.toString());}
+			
+											}
+										}
+									}
+								}
+							}
+						}
+
+						break;
+						
+					case 5:
+						ssrLetter = new String[5];
+						ssrLocates = new int[5];
+						ssrLetter[0] = String.valueOf(ssrString.charAt(0));
+						ssrLetter[1] = String.valueOf(ssrString.charAt(1));
+						ssrLetter[2] = String.valueOf(ssrString.charAt(2));
+						ssrLetter[3] = String.valueOf(ssrString.charAt(3));
+						ssrLetter[4] = String.valueOf(ssrString.charAt(4));
+						
+						
+						if(!currentStr.contains(ssrLetter[0])){}
+						else {
+							ssrLocates[0]=currentStr.indexOf(ssrLetter[0]);
+							String currentStr1 = currentStr.replaceFirst(ssrLetter[0], "0");
+							System.out.println("Hello Done");
+							if(!currentStr1.contains(ssrLetter[1])){}
+							else {
+								ssrLocates[1]=currentStr.indexOf(ssrLetter[1]);
+								String currentStr2 = currentStr.replaceFirst(ssrLetter[1], "1");
+								System.out.println("Hello Done");
+								if(!currentStr2.contains(ssrLetter[2])){}
+								else {
+									ssrLocates[2]=currentStr.indexOf(ssrLetter[2]);
+									String currentStr3 = currentStr.replaceFirst(ssrLetter[2], "2");
+									System.out.println("Hello Done");
+									if(!currentStr3.contains(ssrLetter[3])){}
+									else {
+										ssrLocates[3]=currentStr.indexOf(ssrLetter[3]);
+										String currentStr4 = currentStr.replaceFirst(ssrLetter[3], "3");
+										System.out.println("Hello Done");
+										
+										if(!currentStr4.contains(ssrLetter[4])){}
+										else {
+											ssrLocates[4]=currentStr.indexOf(ssrLetter[4]);
+											
+											swapIfValid(ssrLocates[0]);
+											swapIfValid(6);
+											
+											
+											currentStr = getCurrentStr();
+											String currentStrTemp1 = currentStr.substring(0, 6)+"1"+currentStr.substring(7, 18);
+											ssrLocates[1]=currentStrTemp1.indexOf(ssrLetter[1]);
+											swapIfValid(ssrLocates[1]);
+											swapIfValid(7);
+											
+											
+											currentStr = getCurrentStr();
+											String currentStrTemp2 = currentStr.substring(0, 6)+"11"+currentStr.substring(8, 18);
+											ssrLocates[2]=currentStrTemp2.indexOf(ssrLetter[2]);
+											swapIfValid(ssrLocates[2]);
+											swapIfValid(8);
+											
+											
+											currentStr = getCurrentStr();
+											String currentStrTemp3 = currentStr.substring(0, 6)+"111"+currentStr.substring(9, 18);
+											ssrLocates[3]=currentStrTemp3.indexOf(ssrLetter[3]);
+											swapIfValid(ssrLocates[3]);
+											swapIfValid(9);
+											
+											
+											currentStr = getCurrentStr();
+											String currentStrTemp4 = currentStr.substring(0, 6)+"1111"+currentStr.substring(10, 18);
+											ssrLocates[4]=currentStrTemp4.indexOf(ssrLetter[4]);
+											if(ssrLocates[4]==10){ssrDetected = true;
+											PushTask pushTask = new PushTask(CommGame.this);
+											//pushTask.execute(ssrString.toString());
+											pushTask.execute(ssrString.toString());}
+											else{
+											swapIfValid(ssrLocates[4]);
+											swapIfValid(10);
+											ssrDetected = true;
+											PushTask pushTask = new PushTask(CommGame.this);
+											//pushTask.execute(ssrString.toString());
+											pushTask.execute(ssrString.toString());}	
+										}
+									}
+								}
+							}
+						}
+
+						break;
+						
+					case 4:
+						ssrLetter = new String[4];
+						ssrLocates = new int[4];
+						ssrLetter[0] = String.valueOf(ssrString.charAt(0));
+						ssrLetter[1] = String.valueOf(ssrString.charAt(1));
+						ssrLetter[2] = String.valueOf(ssrString.charAt(2));
+						ssrLetter[3] = String.valueOf(ssrString.charAt(3));
+						
+						if(!currentStr.contains(ssrLetter[0])){}
+						else {
+							ssrLocates[0]=currentStr.indexOf(ssrLetter[0]);
+							String currentStr1 = currentStr.replaceFirst(ssrLetter[0], "0");
+							if(!currentStr1.contains(ssrLetter[1])){}
+							else {
+								ssrLocates[1]=currentStr.indexOf(ssrLetter[1]);
+								String currentStr2 = currentStr.replaceFirst(ssrLetter[1], "1");
+								if(!currentStr2.contains(ssrLetter[2])){}
+								else {
+									ssrLocates[2]=currentStr.indexOf(ssrLetter[2]);
+									String currentStr3 = currentStr.replaceFirst(ssrLetter[2], "2");
+									if(!currentStr3.contains(ssrLetter[3])){}
+									else {
+										ssrLocates[3]=currentStr.indexOf(ssrLetter[3]);
+										
+										swapIfValid(ssrLocates[0]);
+										swapIfValid(11);
+										
+										
+										currentStr = getCurrentStr();
+										String currentStrTemp1 = currentStr.substring(0, 11)+"1"+currentStr.substring(12, 18);
+										ssrLocates[1]=currentStrTemp1.indexOf(ssrLetter[1]);
+										swapIfValid(ssrLocates[1]);
+										swapIfValid(12);
+										
+										
+										currentStr = getCurrentStr();
+										String currentStrTemp2 = currentStr.substring(0, 11)+"11"+currentStr.substring(13, 18);
+										ssrLocates[2]=currentStrTemp2.indexOf(ssrLetter[2]);
+										swapIfValid(ssrLocates[2]);
+										swapIfValid(13);
+										
+										
+										currentStr = getCurrentStr();
+										String currentStrTemp3 = currentStr.substring(0, 11)+"111"+currentStr.substring(14, 18);
+										ssrLocates[3]=currentStrTemp3.indexOf(ssrLetter[3]);
+										if(ssrLocates[3]==14){ssrDetected = true;
+										PushTask pushTask = new PushTask(CommGame.this);
+										//pushTask.execute(ssrString.toString());
+										pushTask.execute(ssrString.toString());}
+										else{
+										swapIfValid(ssrLocates[3]);
+										swapIfValid(14);
+										ssrDetected = true;
+										PushTask pushTask = new PushTask(CommGame.this);
+										//pushTask.execute(ssrString.toString());
+										pushTask.execute(ssrString.toString());}
+													
+									}
+								}
+							}
+						}
+
+						break;
+						
+					case 3:
+						ssrLetter = new String[3];
+						ssrLocates = new int[3];
+						ssrLetter[0] = String.valueOf(ssrString.charAt(0));
+						ssrLetter[1] = String.valueOf(ssrString.charAt(1));
+						ssrLetter[2] = String.valueOf(ssrString.charAt(2));
+						
+						if(!currentStr.contains(ssrLetter[0])){}
+						else {
+							ssrLocates[0]=currentStr.indexOf(ssrLetter[0]);
+							String currentStr1 = currentStr.replaceFirst(ssrLetter[0], "0");
+							if(!currentStr1.contains(ssrLetter[1])){}
+							else {
+								ssrLocates[1]=currentStr.indexOf(ssrLetter[1]);
+								String currentStr2 = currentStr.replaceFirst(ssrLetter[1], "1");
+								if(!currentStr2.contains(ssrLetter[2])){}
+								else {
+									ssrLocates[2]=currentStr.indexOf(ssrLetter[2]);
+									
+									swapIfValid(ssrLocates[0]);
+									swapIfValid(15);
+									
+									
+									currentStr = getCurrentStr();
+									String currentStrTemp1 = currentStr.substring(0, 15)+"1"+currentStr.substring(16, 18);
+									ssrLocates[1]=currentStrTemp1.indexOf(ssrLetter[1]);
+									swapIfValid(ssrLocates[1]);
+									swapIfValid(16);
+									
+									
+									currentStr = getCurrentStr();
+									String currentStrTemp2 = currentStr.substring(0, 15)+"11"+currentStr.substring(17, 18);
+									ssrLocates[2]=currentStrTemp2.indexOf(ssrLetter[2]);
+									if(ssrLocates[2]==17){ssrDetected = true;
+									PushTask pushTask = new PushTask(CommGame.this);
+									//pushTask.execute(ssrString.toString());
+									pushTask.execute(ssrString.toString());}
+									else{
+									swapIfValid(ssrLocates[2]);
+									swapIfValid(17);
+									ssrDetected = true;
+									PushTask pushTask = new PushTask(CommGame.this);
+									//pushTask.execute(ssrString.toString());
+									pushTask.execute(ssrString.toString());}
+									
+									
+								}
+							}
+						}
+
+						break;
+
+					default:
+						break;
+					}
+				}
+			}
+			if(ssrDetected == false && results.size()>3){
+				ssrString = results.get(3);
+				int ssrLength = ssrString.length();
+				String currentStr = getCurrentStr();
+				String[] ssrLetter;
+				int[] ssrLocates;
+				if(ssrLength>6){}
+				else{
+					switch (ssrLength) {
+					case 6:
+						ssrLetter = new String[6];
+						ssrLocates = new int[6];
+						ssrLetter[0] = String.valueOf(ssrString.charAt(0));
+						ssrLetter[1] = String.valueOf(ssrString.charAt(1));
+						ssrLetter[2] = String.valueOf(ssrString.charAt(2));
+						ssrLetter[3] = String.valueOf(ssrString.charAt(3));
+						ssrLetter[4] = String.valueOf(ssrString.charAt(4));
+						ssrLetter[5] = String.valueOf(ssrString.charAt(5));
+						
+						if(!currentStr.contains(ssrLetter[0])){}
+						else {
+							ssrLocates[0]=currentStr.indexOf(ssrLetter[0]);
+							String currentStr1 = currentStr.replaceFirst(ssrLetter[0], "0");
+							if(!currentStr1.contains(ssrLetter[1])){}
+							else {
+								ssrLocates[1]=currentStr.indexOf(ssrLetter[1]);
+								String currentStr2 = currentStr.replaceFirst(ssrLetter[1], "1");
+								if(!currentStr2.contains(ssrLetter[2])){}
+								else {
+									ssrLocates[2]=currentStr.indexOf(ssrLetter[2]);
+									String currentStr3 = currentStr.replaceFirst(ssrLetter[2], "2");
+									if(!currentStr3.contains(ssrLetter[3])){}
+									else {
+										ssrLocates[3]=currentStr.indexOf(ssrLetter[3]);
+										String currentStr4 = currentStr.replaceFirst(ssrLetter[3], "3");
+										if(!currentStr4.contains(ssrLetter[4])){}
+										else {
+											ssrLocates[4]=currentStr.indexOf(ssrLetter[4]);
+											String currentStr5 = currentStr.replaceFirst(ssrLetter[4], "4");
+											if(!currentStr5.contains(ssrLetter[5])){}
+											else {
+												ssrLocates[5]=currentStr.indexOf(ssrLetter[5]);
+												
+												swapIfValid(ssrLocates[0]);
+												swapIfValid(0);
+												
+												
+												currentStr = getCurrentStr();
+												String currentStrTemp1 = "1"+currentStr.substring(1, 18);
+												ssrLocates[1]=currentStrTemp1.indexOf(ssrLetter[1]);
+												swapIfValid(ssrLocates[1]);
+												swapIfValid(1);
+												
+												
+												currentStr = getCurrentStr();
+												String currentStrTemp2 = "11"+currentStr.substring(2, 18);
+												ssrLocates[2]=currentStrTemp2.indexOf(ssrLetter[2]);
+												swapIfValid(ssrLocates[2]);
+												swapIfValid(2);
+												
+												
+												currentStr = getCurrentStr();
+												String currentStrTemp3 = "111"+currentStr.substring(3, 18);
+												ssrLocates[3]=currentStrTemp3.indexOf(ssrLetter[3]);
+												swapIfValid(ssrLocates[3]);
+												swapIfValid(3);
+												
+												
+												currentStr = getCurrentStr();
+												String currentStrTemp4 = "1111"+currentStr.substring(4, 18);
+												ssrLocates[4]=currentStrTemp4.indexOf(ssrLetter[4]);
+												swapIfValid(ssrLocates[4]);
+												swapIfValid(4);
+												
+												
+												currentStr = getCurrentStr();
+												String currentStrTemp5 = "11111"+currentStr.substring(5, 18);
+												ssrLocates[5]=currentStrTemp5.indexOf(ssrLetter[5]);
+												if(ssrLocates[5]==5){ssrDetected = true;
+												PushTask pushTask = new PushTask(CommGame.this);
+												//pushTask.execute(ssrString.toString());
+												pushTask.execute(ssrString.toString());}
+												else{
+												swapIfValid(ssrLocates[5]);
+												swapIfValid(5);
+												ssrDetected = true;
+												PushTask pushTask = new PushTask(CommGame.this);
+												//pushTask.execute(ssrString.toString());
+												pushTask.execute(ssrString.toString());}
+			
+											}
+										}
+									}
+								}
+							}
+						}
+
+						break;
+						
+					case 5:
+						ssrLetter = new String[5];
+						ssrLocates = new int[5];
+						ssrLetter[0] = String.valueOf(ssrString.charAt(0));
+						ssrLetter[1] = String.valueOf(ssrString.charAt(1));
+						ssrLetter[2] = String.valueOf(ssrString.charAt(2));
+						ssrLetter[3] = String.valueOf(ssrString.charAt(3));
+						ssrLetter[4] = String.valueOf(ssrString.charAt(4));
+						
+						
+						if(!currentStr.contains(ssrLetter[0])){}
+						else {
+							ssrLocates[0]=currentStr.indexOf(ssrLetter[0]);
+							String currentStr1 = currentStr.replaceFirst(ssrLetter[0], "0");
+							System.out.println("Hello Done");
+							if(!currentStr1.contains(ssrLetter[1])){}
+							else {
+								ssrLocates[1]=currentStr.indexOf(ssrLetter[1]);
+								String currentStr2 = currentStr.replaceFirst(ssrLetter[1], "1");
+								System.out.println("Hello Done");
+								if(!currentStr2.contains(ssrLetter[2])){}
+								else {
+									ssrLocates[2]=currentStr.indexOf(ssrLetter[2]);
+									String currentStr3 = currentStr.replaceFirst(ssrLetter[2], "2");
+									System.out.println("Hello Done");
+									if(!currentStr3.contains(ssrLetter[3])){}
+									else {
+										ssrLocates[3]=currentStr.indexOf(ssrLetter[3]);
+										String currentStr4 = currentStr.replaceFirst(ssrLetter[3], "3");
+										System.out.println("Hello Done");
+										
+										if(!currentStr4.contains(ssrLetter[4])){}
+										else {
+											ssrLocates[4]=currentStr.indexOf(ssrLetter[4]);
+											
+											swapIfValid(ssrLocates[0]);
+											swapIfValid(6);
+											
+											
+											currentStr = getCurrentStr();
+											String currentStrTemp1 = currentStr.substring(0, 6)+"1"+currentStr.substring(7, 18);
+											ssrLocates[1]=currentStrTemp1.indexOf(ssrLetter[1]);
+											swapIfValid(ssrLocates[1]);
+											swapIfValid(7);
+											
+											
+											currentStr = getCurrentStr();
+											String currentStrTemp2 = currentStr.substring(0, 6)+"11"+currentStr.substring(8, 18);
+											ssrLocates[2]=currentStrTemp2.indexOf(ssrLetter[2]);
+											swapIfValid(ssrLocates[2]);
+											swapIfValid(8);
+											
+											
+											currentStr = getCurrentStr();
+											String currentStrTemp3 = currentStr.substring(0, 6)+"111"+currentStr.substring(9, 18);
+											ssrLocates[3]=currentStrTemp3.indexOf(ssrLetter[3]);
+											swapIfValid(ssrLocates[3]);
+											swapIfValid(9);
+											
+											
+											currentStr = getCurrentStr();
+											String currentStrTemp4 = currentStr.substring(0, 6)+"1111"+currentStr.substring(10, 18);
+											ssrLocates[4]=currentStrTemp4.indexOf(ssrLetter[4]);
+											if(ssrLocates[4]==10){ssrDetected = true;
+											PushTask pushTask = new PushTask(CommGame.this);
+											//pushTask.execute(ssrString.toString());
+											pushTask.execute(ssrString.toString());}
+											else{
+											swapIfValid(ssrLocates[4]);
+											swapIfValid(10);
+											ssrDetected = true;
+											PushTask pushTask = new PushTask(CommGame.this);
+											//pushTask.execute(ssrString.toString());
+											pushTask.execute(ssrString.toString());}	
+										}
+									}
+								}
+							}
+						}
+
+						break;
+						
+					case 4:
+						ssrLetter = new String[4];
+						ssrLocates = new int[4];
+						ssrLetter[0] = String.valueOf(ssrString.charAt(0));
+						ssrLetter[1] = String.valueOf(ssrString.charAt(1));
+						ssrLetter[2] = String.valueOf(ssrString.charAt(2));
+						ssrLetter[3] = String.valueOf(ssrString.charAt(3));
+						
+						if(!currentStr.contains(ssrLetter[0])){}
+						else {
+							ssrLocates[0]=currentStr.indexOf(ssrLetter[0]);
+							String currentStr1 = currentStr.replaceFirst(ssrLetter[0], "0");
+							if(!currentStr1.contains(ssrLetter[1])){}
+							else {
+								ssrLocates[1]=currentStr.indexOf(ssrLetter[1]);
+								String currentStr2 = currentStr.replaceFirst(ssrLetter[1], "1");
+								if(!currentStr2.contains(ssrLetter[2])){}
+								else {
+									ssrLocates[2]=currentStr.indexOf(ssrLetter[2]);
+									String currentStr3 = currentStr.replaceFirst(ssrLetter[2], "2");
+									if(!currentStr3.contains(ssrLetter[3])){}
+									else {
+										ssrLocates[3]=currentStr.indexOf(ssrLetter[3]);
+										
+										swapIfValid(ssrLocates[0]);
+										swapIfValid(11);
+										
+										
+										currentStr = getCurrentStr();
+										String currentStrTemp1 = currentStr.substring(0, 11)+"1"+currentStr.substring(12, 18);
+										ssrLocates[1]=currentStrTemp1.indexOf(ssrLetter[1]);
+										swapIfValid(ssrLocates[1]);
+										swapIfValid(12);
+										
+										
+										currentStr = getCurrentStr();
+										String currentStrTemp2 = currentStr.substring(0, 11)+"11"+currentStr.substring(13, 18);
+										ssrLocates[2]=currentStrTemp2.indexOf(ssrLetter[2]);
+										swapIfValid(ssrLocates[2]);
+										swapIfValid(13);
+										
+										
+										currentStr = getCurrentStr();
+										String currentStrTemp3 = currentStr.substring(0, 11)+"111"+currentStr.substring(14, 18);
+										ssrLocates[3]=currentStrTemp3.indexOf(ssrLetter[3]);
+										if(ssrLocates[3]==14){ssrDetected = true;
+										PushTask pushTask = new PushTask(CommGame.this);
+										//pushTask.execute(ssrString.toString());
+										pushTask.execute(ssrString.toString());}
+										else{
+										swapIfValid(ssrLocates[3]);
+										swapIfValid(14);
+										ssrDetected = true;
+										PushTask pushTask = new PushTask(CommGame.this);
+										//pushTask.execute(ssrString.toString());
+										pushTask.execute(ssrString.toString());}
+													
+									}
+								}
+							}
+						}
+
+						break;
+						
+					case 3:
+						ssrLetter = new String[3];
+						ssrLocates = new int[3];
+						ssrLetter[0] = String.valueOf(ssrString.charAt(0));
+						ssrLetter[1] = String.valueOf(ssrString.charAt(1));
+						ssrLetter[2] = String.valueOf(ssrString.charAt(2));
+						
+						if(!currentStr.contains(ssrLetter[0])){}
+						else {
+							ssrLocates[0]=currentStr.indexOf(ssrLetter[0]);
+							String currentStr1 = currentStr.replaceFirst(ssrLetter[0], "0");
+							if(!currentStr1.contains(ssrLetter[1])){}
+							else {
+								ssrLocates[1]=currentStr.indexOf(ssrLetter[1]);
+								String currentStr2 = currentStr.replaceFirst(ssrLetter[1], "1");
+								if(!currentStr2.contains(ssrLetter[2])){}
+								else {
+									ssrLocates[2]=currentStr.indexOf(ssrLetter[2]);
+									
+									swapIfValid(ssrLocates[0]);
+									swapIfValid(15);
+									
+									
+									currentStr = getCurrentStr();
+									String currentStrTemp1 = currentStr.substring(0, 15)+"1"+currentStr.substring(16, 18);
+									ssrLocates[1]=currentStrTemp1.indexOf(ssrLetter[1]);
+									swapIfValid(ssrLocates[1]);
+									swapIfValid(16);
+									
+									
+									currentStr = getCurrentStr();
+									String currentStrTemp2 = currentStr.substring(0, 15)+"11"+currentStr.substring(17, 18);
+									ssrLocates[2]=currentStrTemp2.indexOf(ssrLetter[2]);
+									if(ssrLocates[2]==17){ssrDetected = true;
+									PushTask pushTask = new PushTask(CommGame.this);
+									//pushTask.execute(ssrString.toString());
+									pushTask.execute(ssrString.toString());}
+									else{
+									swapIfValid(ssrLocates[2]);
+									swapIfValid(17);
+									ssrDetected = true;
+									PushTask pushTask = new PushTask(CommGame.this);
+									//pushTask.execute(ssrString.toString());
+									pushTask.execute(ssrString.toString());}
+									
+									
+								}
+							}
+						}
+
+						break;
+
+					default:
+						break;
+					}
+				}
+			}
+			if(ssrDetected == false && results.size()>4){
+				ssrString = results.get(4);
+				int ssrLength = ssrString.length();
+				String currentStr = getCurrentStr();
+				String[] ssrLetter;
+				int[] ssrLocates;
+				if(ssrLength>6){}
+				else{
+					switch (ssrLength) {
+					case 6:
+						ssrLetter = new String[6];
+						ssrLocates = new int[6];
+						ssrLetter[0] = String.valueOf(ssrString.charAt(0));
+						ssrLetter[1] = String.valueOf(ssrString.charAt(1));
+						ssrLetter[2] = String.valueOf(ssrString.charAt(2));
+						ssrLetter[3] = String.valueOf(ssrString.charAt(3));
+						ssrLetter[4] = String.valueOf(ssrString.charAt(4));
+						ssrLetter[5] = String.valueOf(ssrString.charAt(5));
+						
+						if(!currentStr.contains(ssrLetter[0])){}
+						else {
+							ssrLocates[0]=currentStr.indexOf(ssrLetter[0]);
+							String currentStr1 = currentStr.replaceFirst(ssrLetter[0], "0");
+							if(!currentStr1.contains(ssrLetter[1])){}
+							else {
+								ssrLocates[1]=currentStr.indexOf(ssrLetter[1]);
+								String currentStr2 = currentStr.replaceFirst(ssrLetter[1], "1");
+								if(!currentStr2.contains(ssrLetter[2])){}
+								else {
+									ssrLocates[2]=currentStr.indexOf(ssrLetter[2]);
+									String currentStr3 = currentStr.replaceFirst(ssrLetter[2], "2");
+									if(!currentStr3.contains(ssrLetter[3])){}
+									else {
+										ssrLocates[3]=currentStr.indexOf(ssrLetter[3]);
+										String currentStr4 = currentStr.replaceFirst(ssrLetter[3], "3");
+										if(!currentStr4.contains(ssrLetter[4])){}
+										else {
+											ssrLocates[4]=currentStr.indexOf(ssrLetter[4]);
+											String currentStr5 = currentStr.replaceFirst(ssrLetter[4], "4");
+											if(!currentStr5.contains(ssrLetter[5])){}
+											else {
+												ssrLocates[5]=currentStr.indexOf(ssrLetter[5]);
+												
+												swapIfValid(ssrLocates[0]);
+												swapIfValid(0);
+												
+												
+												currentStr = getCurrentStr();
+												String currentStrTemp1 = "1"+currentStr.substring(1, 18);
+												ssrLocates[1]=currentStrTemp1.indexOf(ssrLetter[1]);
+												swapIfValid(ssrLocates[1]);
+												swapIfValid(1);
+												
+												
+												currentStr = getCurrentStr();
+												String currentStrTemp2 = "11"+currentStr.substring(2, 18);
+												ssrLocates[2]=currentStrTemp2.indexOf(ssrLetter[2]);
+												swapIfValid(ssrLocates[2]);
+												swapIfValid(2);
+												
+												
+												currentStr = getCurrentStr();
+												String currentStrTemp3 = "111"+currentStr.substring(3, 18);
+												ssrLocates[3]=currentStrTemp3.indexOf(ssrLetter[3]);
+												swapIfValid(ssrLocates[3]);
+												swapIfValid(3);
+												
+												
+												currentStr = getCurrentStr();
+												String currentStrTemp4 = "1111"+currentStr.substring(4, 18);
+												ssrLocates[4]=currentStrTemp4.indexOf(ssrLetter[4]);
+												swapIfValid(ssrLocates[4]);
+												swapIfValid(4);
+												
+												
+												currentStr = getCurrentStr();
+												String currentStrTemp5 = "11111"+currentStr.substring(5, 18);
+												ssrLocates[5]=currentStrTemp5.indexOf(ssrLetter[5]);
+												if(ssrLocates[5]==5){ssrDetected = true;
+												PushTask pushTask = new PushTask(CommGame.this);
+												//pushTask.execute(ssrString.toString());
+												pushTask.execute(ssrString.toString());}
+												else{
+												swapIfValid(ssrLocates[5]);
+												swapIfValid(5);
+												ssrDetected = true;
+												PushTask pushTask = new PushTask(CommGame.this);
+												//pushTask.execute(ssrString.toString());
+												pushTask.execute(ssrString.toString());}
+			
+											}
+										}
+									}
+								}
+							}
+						}
+
+						break;
+						
+					case 5:
+						ssrLetter = new String[5];
+						ssrLocates = new int[5];
+						ssrLetter[0] = String.valueOf(ssrString.charAt(0));
+						ssrLetter[1] = String.valueOf(ssrString.charAt(1));
+						ssrLetter[2] = String.valueOf(ssrString.charAt(2));
+						ssrLetter[3] = String.valueOf(ssrString.charAt(3));
+						ssrLetter[4] = String.valueOf(ssrString.charAt(4));
+						
+						
+						if(!currentStr.contains(ssrLetter[0])){}
+						else {
+							ssrLocates[0]=currentStr.indexOf(ssrLetter[0]);
+							String currentStr1 = currentStr.replaceFirst(ssrLetter[0], "0");
+							System.out.println("Hello Done");
+							if(!currentStr1.contains(ssrLetter[1])){}
+							else {
+								ssrLocates[1]=currentStr.indexOf(ssrLetter[1]);
+								String currentStr2 = currentStr.replaceFirst(ssrLetter[1], "1");
+								System.out.println("Hello Done");
+								if(!currentStr2.contains(ssrLetter[2])){}
+								else {
+									ssrLocates[2]=currentStr.indexOf(ssrLetter[2]);
+									String currentStr3 = currentStr.replaceFirst(ssrLetter[2], "2");
+									System.out.println("Hello Done");
+									if(!currentStr3.contains(ssrLetter[3])){}
+									else {
+										ssrLocates[3]=currentStr.indexOf(ssrLetter[3]);
+										String currentStr4 = currentStr.replaceFirst(ssrLetter[3], "3");
+										System.out.println("Hello Done");
+										
+										if(!currentStr4.contains(ssrLetter[4])){}
+										else {
+											ssrLocates[4]=currentStr.indexOf(ssrLetter[4]);
+											
+											swapIfValid(ssrLocates[0]);
+											swapIfValid(6);
+											
+											
+											currentStr = getCurrentStr();
+											String currentStrTemp1 = currentStr.substring(0, 6)+"1"+currentStr.substring(7, 18);
+											ssrLocates[1]=currentStrTemp1.indexOf(ssrLetter[1]);
+											swapIfValid(ssrLocates[1]);
+											swapIfValid(7);
+											
+											
+											currentStr = getCurrentStr();
+											String currentStrTemp2 = currentStr.substring(0, 6)+"11"+currentStr.substring(8, 18);
+											ssrLocates[2]=currentStrTemp2.indexOf(ssrLetter[2]);
+											swapIfValid(ssrLocates[2]);
+											swapIfValid(8);
+											
+											
+											currentStr = getCurrentStr();
+											String currentStrTemp3 = currentStr.substring(0, 6)+"111"+currentStr.substring(9, 18);
+											ssrLocates[3]=currentStrTemp3.indexOf(ssrLetter[3]);
+											swapIfValid(ssrLocates[3]);
+											swapIfValid(9);
+											
+											
+											currentStr = getCurrentStr();
+											String currentStrTemp4 = currentStr.substring(0, 6)+"1111"+currentStr.substring(10, 18);
+											ssrLocates[4]=currentStrTemp4.indexOf(ssrLetter[4]);
+											if(ssrLocates[4]==10){ssrDetected = true;
+											PushTask pushTask = new PushTask(CommGame.this);
+											//pushTask.execute(ssrString.toString());
+											pushTask.execute(ssrString.toString());}
+											else{
+											swapIfValid(ssrLocates[4]);
+											swapIfValid(10);
+											ssrDetected = true;
+											PushTask pushTask = new PushTask(CommGame.this);
+											//pushTask.execute(ssrString.toString());
+											pushTask.execute(ssrString.toString());}	
+										}
+									}
+								}
+							}
+						}
+
+						break;
+						
+					case 4:
+						ssrLetter = new String[4];
+						ssrLocates = new int[4];
+						ssrLetter[0] = String.valueOf(ssrString.charAt(0));
+						ssrLetter[1] = String.valueOf(ssrString.charAt(1));
+						ssrLetter[2] = String.valueOf(ssrString.charAt(2));
+						ssrLetter[3] = String.valueOf(ssrString.charAt(3));
+						
+						if(!currentStr.contains(ssrLetter[0])){}
+						else {
+							ssrLocates[0]=currentStr.indexOf(ssrLetter[0]);
+							String currentStr1 = currentStr.replaceFirst(ssrLetter[0], "0");
+							if(!currentStr1.contains(ssrLetter[1])){}
+							else {
+								ssrLocates[1]=currentStr.indexOf(ssrLetter[1]);
+								String currentStr2 = currentStr.replaceFirst(ssrLetter[1], "1");
+								if(!currentStr2.contains(ssrLetter[2])){}
+								else {
+									ssrLocates[2]=currentStr.indexOf(ssrLetter[2]);
+									String currentStr3 = currentStr.replaceFirst(ssrLetter[2], "2");
+									if(!currentStr3.contains(ssrLetter[3])){}
+									else {
+										ssrLocates[3]=currentStr.indexOf(ssrLetter[3]);
+										
+										swapIfValid(ssrLocates[0]);
+										swapIfValid(11);
+										
+										
+										currentStr = getCurrentStr();
+										String currentStrTemp1 = currentStr.substring(0, 11)+"1"+currentStr.substring(12, 18);
+										ssrLocates[1]=currentStrTemp1.indexOf(ssrLetter[1]);
+										swapIfValid(ssrLocates[1]);
+										swapIfValid(12);
+										
+										
+										currentStr = getCurrentStr();
+										String currentStrTemp2 = currentStr.substring(0, 11)+"11"+currentStr.substring(13, 18);
+										ssrLocates[2]=currentStrTemp2.indexOf(ssrLetter[2]);
+										swapIfValid(ssrLocates[2]);
+										swapIfValid(13);
+										
+										
+										currentStr = getCurrentStr();
+										String currentStrTemp3 = currentStr.substring(0, 11)+"111"+currentStr.substring(14, 18);
+										ssrLocates[3]=currentStrTemp3.indexOf(ssrLetter[3]);
+										if(ssrLocates[3]==14){ssrDetected = true;
+										PushTask pushTask = new PushTask(CommGame.this);
+										//pushTask.execute(ssrString.toString());
+										pushTask.execute(ssrString.toString());}
+										else{
+										swapIfValid(ssrLocates[3]);
+										swapIfValid(14);
+										ssrDetected = true;
+										PushTask pushTask = new PushTask(CommGame.this);
+										//pushTask.execute(ssrString.toString());
+										pushTask.execute(ssrString.toString());}
+													
+									}
+								}
+							}
+						}
+
+						break;
+						
+					case 3:
+						ssrLetter = new String[3];
+						ssrLocates = new int[3];
+						ssrLetter[0] = String.valueOf(ssrString.charAt(0));
+						ssrLetter[1] = String.valueOf(ssrString.charAt(1));
+						ssrLetter[2] = String.valueOf(ssrString.charAt(2));
+						
+						if(!currentStr.contains(ssrLetter[0])){}
+						else {
+							ssrLocates[0]=currentStr.indexOf(ssrLetter[0]);
+							String currentStr1 = currentStr.replaceFirst(ssrLetter[0], "0");
+							if(!currentStr1.contains(ssrLetter[1])){}
+							else {
+								ssrLocates[1]=currentStr.indexOf(ssrLetter[1]);
+								String currentStr2 = currentStr.replaceFirst(ssrLetter[1], "1");
+								if(!currentStr2.contains(ssrLetter[2])){}
+								else {
+									ssrLocates[2]=currentStr.indexOf(ssrLetter[2]);
+									
+									swapIfValid(ssrLocates[0]);
+									swapIfValid(15);
+									
+									
+									currentStr = getCurrentStr();
+									String currentStrTemp1 = currentStr.substring(0, 15)+"1"+currentStr.substring(16, 18);
+									ssrLocates[1]=currentStrTemp1.indexOf(ssrLetter[1]);
+									swapIfValid(ssrLocates[1]);
+									swapIfValid(16);
+									
+									
+									currentStr = getCurrentStr();
+									String currentStrTemp2 = currentStr.substring(0, 15)+"11"+currentStr.substring(17, 18);
+									ssrLocates[2]=currentStrTemp2.indexOf(ssrLetter[2]);
+									if(ssrLocates[2]==17){ssrDetected = true;
+									PushTask pushTask = new PushTask(CommGame.this);
+									//pushTask.execute(ssrString.toString());
+									pushTask.execute(ssrString.toString());}
+									else{
+									swapIfValid(ssrLocates[2]);
+									swapIfValid(17);
+									ssrDetected = true;
+									PushTask pushTask = new PushTask(CommGame.this);
+									//pushTask.execute(ssrString.toString());
+									pushTask.execute(ssrString.toString());}
+									
+									
+								}
+							}
+						}
+
+						break;
+
+					default:
+						break;
+					}
+				}
+			}
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+
+	
+	private String getCurrentStr(){
+		return String.valueOf(letterButtons[0].getText().charAt(0))+
+				String.valueOf(letterButtons[1].getText().charAt(0))+
+					String.valueOf(letterButtons[2].getText().charAt(0))+
+						String.valueOf(letterButtons[3].getText().charAt(0))+
+							String.valueOf(letterButtons[4].getText().charAt(0))+
+								String.valueOf(letterButtons[5].getText().charAt(0))+String.valueOf(letterButtons[6].getText().charAt(0))+
+				String.valueOf(letterButtons[7].getText().charAt(0))+
+					String.valueOf(letterButtons[8].getText().charAt(0))+
+						String.valueOf(letterButtons[9].getText().charAt(0))+
+							String.valueOf(letterButtons[10].getText().charAt(0))+String.valueOf(letterButtons[11].getText().charAt(0))+
+				String.valueOf(letterButtons[12].getText().charAt(0))+
+					String.valueOf(letterButtons[13].getText().charAt(0))+
+						String.valueOf(letterButtons[14].getText().charAt(0))+String.valueOf(letterButtons[15].getText().charAt(0))+
+				String.valueOf(letterButtons[16].getText().charAt(0))+
+					String.valueOf(letterButtons[17].getText().charAt(0));
 	}
 	
 	class HintListener implements OnClickListener{
@@ -1974,6 +3553,10 @@ class PushTask extends AsyncTask<String, Integer, String> {
         protected String doInBackground(String... params) {  
 
         	
+        	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, params[0]);
+        	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, params[0]);
+        	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, params[0]);
+        	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, params[0]);
         	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, params[0]);
         	return params[0];
         }  

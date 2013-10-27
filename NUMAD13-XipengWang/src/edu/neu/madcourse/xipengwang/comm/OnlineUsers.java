@@ -234,7 +234,7 @@ public class OnlineUsers extends Activity{
 	        	String pullMeTaskString = KeyValueAPI.get("basin", "basin576095", "Jim");
                 while(!pullMeTaskString.equals("#QUIT")&&!pullMeTaskString.equals("#QUIT2")){  
 	                	//System.out.println("PullMMMMMMEEEEEEETASK");
-	                	System.out.println("SubTask----------------------------");
+	                	System.out.println("PullMeSubTask----------------------------");
 			    		System.out.println("My Status: "+KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName));
 			    		System.out.println("Tom's Status: "+KeyValueAPI.get("basin", "basin576095", "Tom"));
 			    		System.out.println("Mary's Status: "+KeyValueAPI.get("basin", "basin576095", "Mary"));
@@ -512,7 +512,15 @@ public class OnlineUsers extends Activity{
 		    	String pullOthersString = KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName);
 		    	while(!pullOthersString.equals("#QUIT")&&
 		    			!pullOthersString.equals("#QUIT2")){
-		    		
+		    		System.out.println("PullOthersSubTask----------------------------");
+		    		System.out.println("My Status: "+KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName));
+		    		System.out.println("Tom's Status: "+KeyValueAPI.get("basin", "basin576095", "Tom"));
+		    		System.out.println("Mary's Status: "+KeyValueAPI.get("basin", "basin576095", "Mary"));
+		    		System.out.println("Fred's Status: "+KeyValueAPI.get("basin", "basin576095", "Fred"));
+                    
+    	        	//String resString1=KeyValueAPI.get("basin", "basin576095", "Tom");
+    	        	//String resString2=KeyValueAPI.get("basin", "basin576095", "Mary");
+    	        	//String resString3=KeyValueAPI.get("basin", "basin576095", "Fred");
 		    		subPullOthersTask = new SubPullOthersTask(OnlineUsers.this);
 		    		subPullOthersTask.execute();
 		    		

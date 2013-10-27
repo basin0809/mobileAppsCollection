@@ -25,6 +25,7 @@ public class MainActivity extends Activity {
 	private Button dictButton;
 	private Button dabbleButton;
 	private Button commButton;
+	private Button twoPDabbleButton;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -32,7 +33,7 @@ public class MainActivity extends Activity {
 		
 		setTitle("Xipeng Wang");
 		
-	PhoneCheckAPI.doAuthorization(this);
+	//PhoneCheckAPI.doAuthorization(this);
 
 		aboutButton = (Button)findViewById(R.id.about_button);
 		sudokuButton = (Button)findViewById(R.id.sudoku_button);
@@ -40,19 +41,26 @@ public class MainActivity extends Activity {
 		dictButton = (Button)findViewById(R.id.dict_button);
 		dabbleButton = (Button)findViewById(R.id.dabble_button);
 		commButton = (Button)findViewById(R.id.comm_button);
+		twoPDabbleButton = (Button)findViewById(R.id.twoPDabble_button);
 		quitButton = (Button)findViewById(R.id.exit_button);
 		sudokuButton.setOnClickListener(new SudokuButtonListener());
 		aboutButton.setOnClickListener(new AboutButtonListener());
 		errorButton.setOnClickListener(new ErrorButtonListener());
 		dictButton.setOnClickListener(new DictButtonListener());
 		dabbleButton.setOnClickListener(new DabbleButtonListener());
+		twoPDabbleButton.setOnClickListener(new DabbleButtonListener());
 		commButton.setOnClickListener(new CommButtonListener());
+		
 		quitButton.setOnClickListener(new ExitButtonListener());
 		//System.out.println("!!! "+KeyValueAPI.get("basin", "basin576095", "Jim"));
 		//KeyValueAPI.clearKey("basin", "basin576095", "Jim"+"@HS");
 		//KeyValueAPI.clearKey("basin", "basin576095", "Tom"+"@HS");
 		//KeyValueAPI.clearKey("basin", "basin576095", "Mary"+"@HS");
 		//KeyValueAPI.clearKey("basin", "basin576095", "Fred"+"@HS");
+		KeyValueAPI.put("basin", "basin576095", "Jim","#QUIT");
+		KeyValueAPI.put("basin", "basin576095", "Tom","#QUIT");
+		KeyValueAPI.put("basin", "basin576095", "Mary","#QUIT");
+		KeyValueAPI.put("basin", "basin576095", "Fred","#QUIT");
 	}
 
 
