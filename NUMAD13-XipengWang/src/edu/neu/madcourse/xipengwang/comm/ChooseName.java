@@ -20,6 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import edu.neu.madcourse.xipengwang.R;
+import edu.neu.madcourse.xipengwang.dabble.BGMManager;
 import edu.neu.madcourse.xipengwang.dabble.Game;
 import edu.neu.madcourse.xipengwang.dabble.TwiceActiveCheck;
 import edu.neu.mhealth.api.KeyValueAPI;
@@ -28,6 +29,8 @@ import edu.neu.mhealth.api.KeyValueAPI;
 public class ChooseName extends Activity{
 	private boolean nameIsValid;
 	private boolean oppIsValid;
+	private boolean musicGoOn;
+	private boolean musicGoOn2;
 	private EditText myFakeNameET;
 	private TextView chooseNameText;
 
@@ -43,6 +46,19 @@ public class ChooseName extends Activity{
 		// TODO Auto-generated method stub
 		
 		super.onCreate(savedInstanceState);
+		
+		musicGoOn = true;
+		   Intent intent = getIntent();
+			int musicSt = Integer.parseInt(intent.getStringExtra("music_stuate"));
+			
+			if(musicSt==1){
+				musicGoOn2 = false;
+				
+			}
+			else{
+				musicGoOn2 = true;
+				
+			}
 		setContentView(R.layout.comm_choosename); 
         
 		//progressBar.setBackgroundColor(getResources().getColor(R.color.white));
@@ -171,7 +187,9 @@ public class ChooseName extends Activity{
 	        protected void onPostExecute(Boolean results) {  
 	        	if(results==true){
 	        	finish();
+	        	
 	        	Intent intent = new Intent(ChooseName.this, OnlineUsers.class);
+	        	intent.putExtra("music_stuate", TwiceActiveCheck.musicTwicePressed.get(TwiceActiveCheck.musicTwicePressed.size()-1).toString());
 	        	startActivity(intent);}
 	        	else {
 	        	Toast.makeText(context,"Server is full, please wait for a while.",Toast.LENGTH_LONG).show();  
@@ -195,6 +213,27 @@ public class ChooseName extends Activity{
 	        }  
 	 
 	     }
+
+		@Override
+		protected void onPause() {
+			// TODO Auto-generated method stub
+			super.onPause();
+			if(!musicGoOn)
+	            BGMManager.pause();
+			
+		}
+
+		@Override
+		protected void onResume() {
+			// TODO Auto-generated method stub
+			super.onResume();
+			if(musicGoOn2==true){
+				musicGoOn=false;
+		      BGMManager.start(this,R.raw.game);}
+				else {
+					
+				}
+		}
 
 
 

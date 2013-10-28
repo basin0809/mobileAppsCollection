@@ -90,10 +90,10 @@ public class AsyncPullService extends Service{
 				
 				System.out.println("[Service]opponent's movement: "+result);
 				String result2 ="";
-				if(result.equals(OppNameMyName.myName)){
+				if(result.equals("("+OppNameMyName.myName)){
 					result2=OppNameMyName.oppFakeName+" joins the game";
 				}
-				if(!result.equals(OppNameMyName.myName)){
+				if(!result.equals("("+OppNameMyName.myName)){
 					if(result.equals("#AFK")){
 						result2=OppNameMyName.oppFakeName+" is not actively playing";
 					}else{
@@ -113,7 +113,11 @@ public class AsyncPullService extends Service{
 									result2="Cannot access to server. Please check your NetWork.";
 								}
 								else{
-								result2=OppNameMyName.oppFakeName+" spells: "+result;
+									if(result.substring(0, 1).equals("$")){
+										result2=OppNameMyName.oppFakeName+" spells: "+result.substring(1, result.length());}
+									else {
+										result2=OppNameMyName.oppFakeName+" quits";
+									}
 				}}}}}}
 				
 				if(!result.equals(pullTwiceCheck.get(pullTwiceCheck.size()-1))){

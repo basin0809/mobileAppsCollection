@@ -24,6 +24,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import edu.neu.madcourse.xipengwang.R;
 import edu.neu.madcourse.xipengwang.comm.OnlineUsers.PullOthersTask.SubPullOthersTask;
+import edu.neu.madcourse.xipengwang.dabble.BGMManager;
+import edu.neu.madcourse.xipengwang.dabble.TwiceActiveCheck;
 
 
 import edu.neu.mhealth.api.KeyValueAPI;
@@ -39,7 +41,8 @@ public class OnlineUsers extends Activity{
 	private AlphaAnimation alphaDes;
     private AlphaAnimation alphaInc;
     
-
+    private boolean musicGoOn;
+    private boolean musicGoOn2;
 
  
     PullOthersTask pullOthersTask;
@@ -60,6 +63,18 @@ public class OnlineUsers extends Activity{
 		// TODO Auto-generated method stub
 		
 		super.onCreate(savedInstanceState);
+		musicGoOn = true;
+		   Intent intent = getIntent();
+			int musicSt = Integer.parseInt(intent.getStringExtra("music_stuate"));
+			
+			if(musicSt==1){
+				musicGoOn2 = false;
+				
+			}
+			else{
+				musicGoOn2 = true;
+				
+			}
 		setContentView(R.layout.comm_online); 
         alphaDes = new AlphaAnimation(0.3f, 0.3f);
         alphaInc = new AlphaAnimation(1.0f, 1.0f);
@@ -115,6 +130,8 @@ public class OnlineUsers extends Activity{
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
+		if(!musicGoOn)
+            BGMManager.pause();
 		System.out.println("-----------------------Pause--------------------------");
 	}
 
@@ -123,6 +140,12 @@ public class OnlineUsers extends Activity{
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
+		if(musicGoOn2==true){
+			musicGoOn=false;
+	      BGMManager.start(this,R.raw.game);}
+			else {
+				
+			}
 		pullOthersTask = new PullOthersTask(this);
 		pullOthersTask.execute();
 		pullMeAfterCancelTask = new PullMeAfterCancelTask(this);
@@ -411,7 +434,7 @@ public class OnlineUsers extends Activity{
 			                	 //Toast.makeText(context,"Opponent Connected! Loading Game",Toast.LENGTH_LONG).show();  
 			        
 			       		      	Intent intent = new Intent(OnlineUsers.this, CommGame.class);
-			       		      	
+			       		     intent.putExtra("music_stuate", TwiceActiveCheck.musicTwicePressed.get(TwiceActiveCheck.musicTwicePressed.size()-1).toString());
 			       		      	startActivity(intent);
 			                	 
 			                	finish();
@@ -443,7 +466,7 @@ public class OnlineUsers extends Activity{
 				                	 //Toast.makeText(context,"Opponent Connected! Loading Game",Toast.LENGTH_LONG).show();  
 				        
 				       		      	Intent intent = new Intent(OnlineUsers.this, CommGame.class);
-				       		      	
+				       		     intent.putExtra("music_stuate", TwiceActiveCheck.musicTwicePressed.get(TwiceActiveCheck.musicTwicePressed.size()-1).toString());
 				       		      	startActivity(intent);
 				                	 
 				                	finish();
@@ -475,7 +498,7 @@ public class OnlineUsers extends Activity{
 					                	 //Toast.makeText(context,"Opponent Connected! Loading Game",Toast.LENGTH_LONG).show();  
 					        
 					       		      	Intent intent = new Intent(OnlineUsers.this, CommGame.class);
-					       		      	
+					       		     intent.putExtra("music_stuate", TwiceActiveCheck.musicTwicePressed.get(TwiceActiveCheck.musicTwicePressed.size()-1).toString());
 					       		      	startActivity(intent);
 					                	 
 					                	finish();
@@ -589,7 +612,11 @@ public class OnlineUsers extends Activity{
 		        			resStrings[0]=resString1;
 		        			}
 		        		}else {
-		        			resStrings[0]="#REJ";
+		        			if(resString1.equals("#REJ")){
+		        			resStrings[0]="#REJ";}
+		        			else {
+		        				resStrings[0]="#AFK/LOS";
+							}
 						}
 		        		
 		        		
@@ -608,7 +635,11 @@ public class OnlineUsers extends Activity{
 		        			resStrings[1]=resString2;
 		        			}
 		        		}else {
-		        			resStrings[1]="#REJ";
+		        			if(resString2.equals("#REJ")){
+			        			resStrings[1]="#REJ";}
+			        			else {
+			        				resStrings[1]="#AFK/LOS";
+								}
 						}
 		        		
 		        		
@@ -626,7 +657,11 @@ public class OnlineUsers extends Activity{
 		        			resStrings[2]=resString3;
 		        			}
 		        		}else {
-		        			resStrings[2]="#REJ";
+		        			if(resString3.equals("#REJ")){
+			        			resStrings[2]="#REJ";}
+			        			else {
+			        				resStrings[2]="#AFK/LOS";
+								}
 						}
 		        		
 		        		
@@ -648,7 +683,11 @@ public class OnlineUsers extends Activity{
 		        			resStrings[0]=resString1;
 		        			}
 		        		}else {
-		        			resStrings[0]="#REJ";
+		        			if(resString1.equals("#REJ")){
+			        			resStrings[0]="#REJ";}
+			        			else {
+			        				resStrings[0]="#AFK/LOS";
+								}
 						}
 		        		
 		        		
@@ -666,7 +705,11 @@ public class OnlineUsers extends Activity{
 		        			resStrings[1]=resString2;
 		        			}
 		        		}else {
-		        			resStrings[1]="#REJ";
+		        			if(resString2.equals("#REJ")){
+			        			resStrings[1]="#REJ";}
+			        			else {
+			        				resStrings[1]="#AFK/LOS";
+								}
 						}
 		        		
 		        		
@@ -684,7 +727,11 @@ public class OnlineUsers extends Activity{
 		        			resStrings[2]=resString3;
 		        			}
 		        		}else {
-		        			resStrings[2]="#REJ";
+		        			if(resString3.equals("#REJ")){
+			        			resStrings[2]="#REJ";}
+			        			else {
+			        				resStrings[2]="#AFK/LOS";
+								}
 						}
 		        		
 		        		
@@ -706,7 +753,11 @@ public class OnlineUsers extends Activity{
 			        			resStrings[0]=resString1;
 			        			}
 			        		}else {
-			        			resStrings[0]="#REJ";
+			        			if(resString1.equals("#REJ")){
+				        			resStrings[0]="#REJ";}
+				        			else {
+				        				resStrings[0]="#AFK/LOS";
+									}
 							}
 			        		
 			        		
@@ -724,7 +775,11 @@ public class OnlineUsers extends Activity{
 			        			resStrings[1]=resString2;
 			        			}
 			        		}else {
-			        			resStrings[1]="#REJ";
+			        			if(resString2.equals("#REJ")){
+				        			resStrings[1]="#REJ";}
+				        			else {
+				        				resStrings[1]="#AFK/LOS";
+									}
 							}
 			        		
 			        		
@@ -742,7 +797,11 @@ public class OnlineUsers extends Activity{
 			        			resStrings[2]=resString3;
 			        			}
 			        		}else {
-			        			resStrings[2]="#REJ";
+			        			if(resString3.equals("#REJ")){
+				        			resStrings[2]="#REJ";}
+				        			else {
+				        				resStrings[2]="#AFK/LOS";
+									}
 							}
 			        		
 			        		
@@ -763,7 +822,11 @@ public class OnlineUsers extends Activity{
 			        			resStrings[0]=resString1;
 			        			}
 			        		}else {
-			        			resStrings[0]="#REJ";
+			        			if(resString1.equals("#REJ")){
+				        			resStrings[0]="#REJ";}
+				        			else {
+				        				resStrings[0]="#AFK/LOS";
+									}
 							}
 			        		
 			        		
@@ -781,7 +844,11 @@ public class OnlineUsers extends Activity{
 			        			resStrings[1]=resString2;
 			        			}
 			        		}else {
-			        			resStrings[1]="#REJ";
+			        			if(resString2.equals("#REJ")){
+				        			resStrings[1]="#REJ";}
+				        			else {
+				        				resStrings[1]="#AFK/LOS";
+									}
 							}
 			        		
 			        		
@@ -799,7 +866,11 @@ public class OnlineUsers extends Activity{
 			        			resStrings[2]=resString3;
 			        			}
 			        		}else {
-			        			resStrings[2]="#REJ";
+			        			if(resString3.equals("#REJ")){
+				        			resStrings[2]="#REJ";}
+				        			else {
+				        				resStrings[2]="#AFK/LOS";
+									}
 							}
 			        		
 			        		
@@ -821,9 +892,10 @@ public class OnlineUsers extends Activity{
 				protected void onPostExecute(String[] results) {
 					// TODO Auto-generated method stub
 					super.onPostExecute(results);
+					System.out.println("Tom's actuall status: "+results[0]);
 					//System.out.println("results[0].substring(0, 0) "+results[0].substring(0, 1));
 					if(!results[0].substring(0, 1).equals("#")){
-						if(results[0].substring(0, 1).equals("@")){
+						if(results[0].substring(0, 1).equals("@")||results[0].substring(0, 1).equals("$")||results[0].substring(0, 1).equals("(")){
 							
 							buttonN1.startAnimation(alphaDes);
 							buttonN1.setOnClickListener(null);
@@ -846,7 +918,7 @@ public class OnlineUsers extends Activity{
 					}
 					
 					if(!results[1].substring(0, 1).equals("#")){
-						if(results[1].substring(0, 1).equals("@")){
+						if(results[1].substring(0, 1).equals("@")||results[0].substring(0, 1).equals("$")||results[0].substring(0, 1).equals("(")){
 							
 							buttonN2.startAnimation(alphaDes);
 							buttonN2.setOnClickListener(null);
@@ -869,7 +941,7 @@ public class OnlineUsers extends Activity{
 					}
 					
 					if(!results[2].substring(0, 1).equals("#")){
-						if(results[2].substring(0, 1).equals("@")){
+						if(results[2].substring(0, 1).equals("@")||results[0].substring(0, 1).equals("$")||results[0].substring(0, 1).equals("(")){
 							
 							buttonN3.startAnimation(alphaDes);
 							buttonN3.setOnClickListener(null);
@@ -916,9 +988,9 @@ public class OnlineUsers extends Activity{
 			@Override
 			protected Void doInBackground(String... params) {
 				// TODO Auto-generated method stub
-				KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, params[0]);
-				KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, params[0]);
-				KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, params[0]);
+				KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "("+params[0]);
+				KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "("+params[0]);
+				
 				return null;
 			}
 			
@@ -974,7 +1046,7 @@ public class OnlineUsers extends Activity{
 	                    String oppStatus = KeyValueAPI.get("basin", "basin576095", params[0][0]);
 	                    //System.out.println("Searching opponent:"+params[0]);	
 	                    //System.out.println("Opponent's status:"+oppStatus);
-	                    if(oppStatus.equals(OppNameMyName.myName)){
+	                    if(oppStatus.equals(OppNameMyName.myName)||oppStatus.equals("("+OppNameMyName.myName)){
 	                    	OppNameMyName.oppName = params[0][0];
 	                    	OppNameMyName.oppFakeName = params[0][1];
 	                    	//System.out.println("Opponent: "+params[0]);	                   
@@ -1020,7 +1092,7 @@ public class OnlineUsers extends Activity{
 	        	   //System.out.println("Opponent Connected! Loading Game");
 	        	   Toast.makeText(context,"Opponent Connected! Loading Game",Toast.LENGTH_LONG).show();  
 	 		      	Intent intent = new Intent(OnlineUsers.this, CommGame.class);
-	 		 
+	 		      	intent.putExtra("music_stuate", TwiceActiveCheck.musicTwicePressed.get(TwiceActiveCheck.musicTwicePressed.size()-1).toString());
 	 		      	startActivity(intent);
 	 		      	finish();}
 	        	

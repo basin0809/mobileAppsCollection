@@ -39,6 +39,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import edu.neu.madcourse.xipengwang.R;
 import edu.neu.madcourse.xipengwang.comm.AsyncPullService.FirBinder;
+import edu.neu.madcourse.xipengwang.dabble.BGMManager;
 import edu.neu.mhealth.api.KeyValueAPI;
 
 
@@ -85,6 +86,8 @@ public class CommGame extends Activity{
 	private MyCount mc;
 	private long timeLeft=300000;
 
+	private boolean musicGoOn;
+	private boolean musicGoOn2;
 	
 	private AlphaAnimation alphaDes;
     private AlphaAnimation alphaInc;
@@ -124,7 +127,15 @@ public class CommGame extends Activity{
 		
 		setContentView(R.layout.comm_game);
 		Intent intent = getIntent();
-		
+		int musicSt = Integer.parseInt(intent.getStringExtra("music_stuate"));
+		if(musicSt==1){
+			musicGoOn2 = false;
+			
+		}
+		else{
+			musicGoOn2 = true;
+			
+		}
 		
 		
 		
@@ -320,6 +331,8 @@ public class CommGame extends Activity{
 		//realTimePullTask.cancel(true);
 		
 		mc.cancel();
+		if(!musicGoOn)
+            BGMManager.pause();
 	    System.out.println("--------------------------------Pause");
 		 
 	}
@@ -346,6 +359,13 @@ public class CommGame extends Activity{
 			mc = new MyCount(timeLeft, 1000);  
 		       mc.start();
 		}
+		
+		if(musicGoOn2==true){
+			musicGoOn=false;
+	        BGMManager.start(this,R.raw.game);}
+			else {
+				
+			}
 		
         System.out.println("--------------------------------Reume");
 
@@ -1953,7 +1973,8 @@ public class CommGame extends Activity{
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
 			
-			
+			if(musicGoOn2==true){
+				musicGoOn = true;
 			new AlertDialog.Builder(CommGame.this)  
 			
             .setTitle("Are you sure to leave the game?")
@@ -1974,7 +1995,30 @@ public class CommGame extends Activity{
                  }
          })
 
-            .show();
+            .show();}
+			else {
+				new AlertDialog.Builder(CommGame.this)  
+				
+	            .setTitle("Are you sure to leave the game?")
+
+	            .setMessage("Your score will not be saved if disconnect now")
+
+	            .setPositiveButton("OK",   new DialogInterface.OnClickListener(){
+	                 public void onClick(DialogInterface dialoginterface, int i){
+	                	 setResult(RESULT_OK);
+	                	 mc.cancel();
+	         			 realTimePullTask.cancel(true);
+	                     finish();
+	                 }
+	         })
+	         .setNegativeButton("Cancel",   new DialogInterface.OnClickListener(){
+	                 public void onClick(DialogInterface dialoginterface, int i){
+	                	 setResult(RESULT_CANCELED);
+	                 }
+	         })
+
+	            .show();
+			}
 		}
 	}
 	class PauseListener implements OnClickListener{
@@ -1992,6 +2036,9 @@ public class CommGame extends Activity{
 				letterButtons[i].setOnClickListener(null);
 			}
 			//hintButton.setClickable(false);
+			csrButton.startAnimation(alphaDes);
+			csrButton.setOnClickListener(null);
+			
 			hintButton.startAnimation(alphaDes);
 			hintButton.setOnClickListener(null);
 			
@@ -2013,6 +2060,9 @@ public class CommGame extends Activity{
 				}
 
 				//hintButton.setClickable(true);
+				csrButton.startAnimation(alphaInc);
+				csrButton.setOnClickListener(new CSRListener());
+				
 				hintButton.startAnimation(alphaInc);
 				hintButton.setOnClickListener(new HintListener());
 				
@@ -3553,11 +3603,11 @@ class PushTask extends AsyncTask<String, Integer, String> {
         protected String doInBackground(String... params) {  
 
         	
-        	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, params[0]);
-        	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, params[0]);
-        	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, params[0]);
-        	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, params[0]);
-        	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, params[0]);
+        	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "$"+params[0]);
+        	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "$"+params[0]);
+        	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "$"+params[0]);
+        	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "$"+params[0]);
+        	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "$"+params[0]);
         	return params[0];
         }  
  
@@ -3608,7 +3658,8 @@ class RealTimePullTask extends AsyncTask<Void, Integer, Void> {
     protected Void doInBackground(Void... params) {  
     	SubRealTimePullTask subRealTimePullTask = null;
     	//String oppQuitStatuString =KeyValueAPI.get("basin", "basin576095", oppName);
-    	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, OppNameMyName.oppName);
+    	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "("+OppNameMyName.oppName);
+    	//KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "("+OppNameMyName.oppName);
     	while(KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName).equals("#AFK")==false && 
     			KeyValueAPI.get("basin", "basin576095", OppNameMyName.oppName).equals("#QUIT2")==false&& 
     				KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName).equals("#QUIT2")==false){
@@ -3676,10 +3727,10 @@ class RealTimePullTask extends AsyncTask<Void, Integer, Void> {
 		protected void onPostExecute(String result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
-			if(result.equals(OppNameMyName.myName)){
+			if(result.equals("("+OppNameMyName.myName)){
 			oppMsg.setText(OppNameMyName.oppFakeName+"'s movement:"+"\n"+OppNameMyName.oppFakeName+" joins the game");
 			}
-			if(!result.equals(OppNameMyName.myName)){
+			if(!result.equals("("+OppNameMyName.myName)){
 				if(result.equals("#AFK")){
 					oppMsg.setText(OppNameMyName.oppFakeName+"'s movement:"+"\n"+OppNameMyName.oppFakeName+" is not actively playing");
 					System.out.println("opponent's movement: "+result);
@@ -3700,8 +3751,15 @@ class RealTimePullTask extends AsyncTask<Void, Integer, Void> {
 									oppMsg.setText("Cannot access to server. Please check your NetWork.");
 								}
 								else{
-								oppMsg.setText(OppNameMyName.oppFakeName+"'s movement:"+"\n"+OppNameMyName.oppFakeName+" spells: "+result);
-								System.out.println("opponent's movement: "+result);}}}}}}
+									if(result.substring(0, 1).equals("$")){
+										oppMsg.setText(OppNameMyName.oppFakeName+"'s movement:"+"\n"+OppNameMyName.oppFakeName+" spells: "+result.substring(1, result.length()));
+										System.out.println("opponent's movement: "+result);}
+									else {
+										oppMsg.setText(OppNameMyName.oppFakeName+"'s movement:"+"\n"+OppNameMyName.oppFakeName+" quits");
+										System.out.println("opponent's movement: "+result);
+									}
+								
+			}}}}}}
 		}
 
 		@Override  

@@ -92,9 +92,15 @@
               android:theme="@android:style/Theme.Dialog">
            
         </activity>
+        
         <activity android:name="edu.neu.madcourse.xipengwang.dabble.Introduction"
               android:label="Rules"
               android:theme="@android:style/Theme.Dialog">
+        </activity>
+        
+        <activity android:name="edu.neu.madcourse.xipengwang.dabble.Setting"
+              android:label="Options"
+               android:theme="@android:style/Theme.Dialog">
             
         </activity>
         

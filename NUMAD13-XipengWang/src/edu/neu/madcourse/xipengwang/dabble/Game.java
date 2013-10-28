@@ -1825,6 +1825,9 @@ public class Game extends Activity{
 				BGMManager.pause();
 			}
 			//hintButton.setClickable(false);
+			ssrButton.startAnimation(alphaDes);
+			ssrButton.setOnClickListener(null);
+			
 			hintButton.startAnimation(alphaDes);
 			hintButton.setOnClickListener(null);
 			
@@ -1848,6 +1851,10 @@ public class Game extends Activity{
 					BGMManager.start(Game.this, R.raw.game);
 				}
 				//hintButton.setClickable(true);
+				ssrButton.startAnimation(alphaInc);
+				ssrButton.setOnClickListener(new SSRListener());
+				
+				
 				hintButton.startAnimation(alphaInc);
 				hintButton.setOnClickListener(new HintListener());
 				
