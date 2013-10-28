@@ -2,9 +2,15 @@ package edu.neu.madcourse.xipengwang.comm;
 
 
 import edu.neu.madcourse.xipengwang.R;
+import edu.neu.madcourse.xipengwang.comm.ChooseName.CheckNetWorkTask;
 import edu.neu.madcourse.xipengwang.dabble.BGMManager;
+import edu.neu.mhealth.api.KeyValueAPI;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,6 +24,10 @@ public class HighScore extends Activity {
    private boolean musicGoOn;
    private boolean musicGoOn2;
    
+   AlertDialog alertDialog;
+   AlertDialog.Builder alertDialogBuilder;
+   CheckNetWorkTask checkNetWorkTask;
+
    @Override
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
@@ -47,6 +57,7 @@ public class HighScore extends Activity {
 protected void onPause() {
 	// TODO Auto-generated method stub
 	super.onPause();
+	checkNetWorkTask.cancel(true);
 	if(!musicGoOn)
         BGMManager.pause();
 }
@@ -56,6 +67,8 @@ protected void onPause() {
 protected void onResume() {
 	// TODO Auto-generated method stub
 	super.onResume();
+	checkNetWorkTask = new CheckNetWorkTask(this);
+	checkNetWorkTask.execute();
 	if(musicGoOn2==true){
 		musicGoOn=false;
       BGMManager.start(this,R.raw.game);}
@@ -63,6 +76,56 @@ protected void onResume() {
 			
 		}
 }
+class CheckNetWorkTask extends AsyncTask<Void, Integer, Boolean>{
+	private Context context;  
+	
+	CheckNetWorkTask(Context context) {  
+          this.context = context;  
+          //progressBar.setBackgroundColor(getResources().getColor(R.color.black));  
+          
+      }  
+	@Override
+	protected Boolean doInBackground(Void... params) {
+		// TODO Auto-generated method stub
+		while(KeyValueAPI.isServerAvailable()==true){
+			System.out.println("Check NetWork: true");
+		 try {  
+              Thread.sleep(1500);  
+          } 
+		 catch (InterruptedException e) { 
+          	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, OppNameMyName.myFakeName);
+          	return false;
+          } 
+		 }
+		System.out.println("Check NetWork: false");
+		return false;
+	}
+
+	@Override
+	protected void onPostExecute(Boolean result) {
+		// TODO Auto-generated method stub
+		super.onPostExecute(result);
+		if(result==false){
+			alertDialogBuilder=new AlertDialog.Builder(HighScore.this);  
+			
+			alertDialogBuilder.setTitle("Opps, cannot conncet to server.")
+
+            .setMessage("Please check your network and then restart the application.")
+
+            .setPositiveButton("OK",   new DialogInterface.OnClickListener(){
+                 public void onClick(DialogInterface dialoginterface, int i){
+                	 setResult(RESULT_OK);
+                	 finish();
+                 }
+         });
+			alertDialog = alertDialogBuilder.show(); 
+		}
+	}
+	
+	
+	
+}
+    
 
 
 class HighScoreBackListener implements OnClickListener{

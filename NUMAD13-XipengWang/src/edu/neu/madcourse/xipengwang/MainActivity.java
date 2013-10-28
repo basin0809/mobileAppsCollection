@@ -53,10 +53,10 @@ public class MainActivity extends Activity {
 		
 		quitButton.setOnClickListener(new ExitButtonListener());
 		//System.out.println("!!! "+KeyValueAPI.get("basin", "basin576095", "Jim"));
-		//KeyValueAPI.clearKey("basin", "basin576095", "Jim"+"@HS");
-		//KeyValueAPI.clearKey("basin", "basin576095", "Tom"+"@HS");
-		//KeyValueAPI.clearKey("basin", "basin576095", "Mary"+"@HS");
-		//KeyValueAPI.clearKey("basin", "basin576095", "Fred"+"@HS");
+		KeyValueAPI.clearKey("basin", "basin576095", "Jim"+"@HS");
+		KeyValueAPI.clearKey("basin", "basin576095", "Tom"+"@HS");
+		KeyValueAPI.clearKey("basin", "basin576095", "Mary"+"@HS");
+		KeyValueAPI.clearKey("basin", "basin576095", "Fred"+"@HS");
 		KeyValueAPI.put("basin", "basin576095", "Jim","#QUIT");
 		KeyValueAPI.put("basin", "basin576095", "Tom","#QUIT");
 		KeyValueAPI.put("basin", "basin576095", "Mary","#QUIT");

@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-import android.R.integer;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
@@ -31,6 +30,7 @@ import android.os.IBinder;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.format.Time;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
@@ -41,8 +41,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import edu.neu.madcourse.xipengwang.R;
 import edu.neu.madcourse.xipengwang.comm.AsyncPullService.FirBinder;
-import edu.neu.madcourse.xipengwang.comm.OnlineUsers.CheckNetWorkTask;
-import edu.neu.madcourse.xipengwang.comm.OnlineUsers.ProgessDialogCancelTask;
 import edu.neu.madcourse.xipengwang.dabble.BGMManager;
 import edu.neu.mhealth.api.KeyValueAPI;
 
@@ -3791,17 +3789,22 @@ class PushScoreTask extends AsyncTask<String, Integer, String> {
 
         @Override  
         protected String doInBackground(String... params) {  
-
+        	Time t=new Time(); 
+			t.setToNow(); 
+			int year = t.year;
+			int month = t.month+1;
+			int date = t.monthDay;
         	String preScore = KeyValueAPI.get("basin", "basin576095", params[0]+"@HS");
         	if(preScore.equals("Error: No Such Key")){
-        	KeyValueAPI.put("basin", "basin576095", params[0]+"@HFS", OppNameMyName.myFakeName+": "+score+"");
+        	KeyValueAPI.put("basin", "basin576095", params[0]+"@HFS", OppNameMyName.myFakeName+" got "+score+"pts"+" in "+date+"/"+month+"/"+year+"");
         	KeyValueAPI.put("basin", "basin576095", params[0]+"@HS", score+"");
         	return score+"";}
         	
         	else {
 				int preIntScore = Integer.parseInt(preScore);
 				if(score>preIntScore){
-					KeyValueAPI.put("basin", "basin576095", params[0]+"@HFS", OppNameMyName.myFakeName+": "+score+"");
+					
+					KeyValueAPI.put("basin", "basin576095", params[0]+"@HFS", OppNameMyName.myFakeName+" got "+score+"pts"+" in "+date+"/"+month+"/"+year+"");
 					KeyValueAPI.put("basin", "basin576095", params[0]+"@HS", score+"");
 					return score+"";
 				}
@@ -3859,6 +3862,9 @@ class PushTask extends AsyncTask<String, Integer, String> {
         protected String doInBackground(String... params) {  
 
         	
+        	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "$"+params[0]);
+        	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "$"+params[0]);
+        	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "$"+params[0]);
         	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "$"+params[0]);
         	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "$"+params[0]);
         	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "$"+params[0]);
