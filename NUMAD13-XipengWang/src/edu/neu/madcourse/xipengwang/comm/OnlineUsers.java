@@ -58,6 +58,11 @@ public class OnlineUsers extends Activity{
     ProgressDialog pdialog;  
     AlertDialog alertDialog;
     AlertDialog.Builder alertDialogBuilder;
+    
+    AlertDialog alertDialog2;
+    AlertDialog.Builder alertDialogBuilder2;
+    
+    CheckNetWorkTask checkNetWorkTask;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -130,6 +135,7 @@ public class OnlineUsers extends Activity{
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
+		checkNetWorkTask.cancel(true);
 		if(!musicGoOn)
             BGMManager.pause();
 		System.out.println("-----------------------Pause--------------------------");
@@ -140,6 +146,8 @@ public class OnlineUsers extends Activity{
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
+		checkNetWorkTask = new CheckNetWorkTask(this);
+		checkNetWorkTask.execute();
 		if(musicGoOn2==true){
 			musicGoOn=false;
 	      BGMManager.start(this,R.raw.game);}
@@ -152,7 +160,58 @@ public class OnlineUsers extends Activity{
 		pullMeAfterCancelTask.execute();
 	}
 
+		class CheckNetWorkTask extends AsyncTask<Void, Integer, Boolean>{
+			private Context context;  
+			
+			CheckNetWorkTask(Context context) {  
+		          this.context = context;  
+		          //progressBar.setBackgroundColor(getResources().getColor(R.color.black));  
+		          
+		      }  
+			@Override
+			protected Boolean doInBackground(Void... params) {
+				// TODO Auto-generated method stub
+				while(KeyValueAPI.isServerAvailable()==true){
+					System.out.println("Check NetWork: true");
+				 try {  
+		              Thread.sleep(1500);  
+		          } 
+				 catch (InterruptedException e) { 
+		          	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, OppNameMyName.myFakeName);
+		          	return false;
+		          } 
+				 }
+				System.out.println("Check NetWork: false");
+				return false;
+			}
 
+			@Override
+			protected void onPostExecute(Boolean result) {
+				// TODO Auto-generated method stub
+				super.onPostExecute(result);
+				if(result==false){
+					alertDialogBuilder2=new AlertDialog.Builder(OnlineUsers.this);  
+					
+					alertDialogBuilder2.setTitle("Opps, cannot conncet to server.")
+
+		            .setMessage("Please check your network and then restart the application.")
+
+		            .setPositiveButton("OK",   new DialogInterface.OnClickListener(){
+		                 public void onClick(DialogInterface dialoginterface, int i){
+		                	 setResult(RESULT_OK);
+		                	 finish();
+		                 }
+		         });
+					alertDialog2 = alertDialogBuilder2.show(); 
+				}
+			}
+			
+			
+			
+		}
+		    
+
+		
 		class OpponentButtonListener implements android.view.View.OnClickListener{
 
 			@Override

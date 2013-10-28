@@ -1,10 +1,7 @@
 package edu.neu.madcourse.xipengwang.comm;
 
-import java.security.PublicKey;
-import java.util.Stack;
-
 import android.app.Activity;
-import android.app.ProgressDialog;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,12 +10,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 import edu.neu.madcourse.xipengwang.R;
-import edu.neu.madcourse.xipengwang.dabble.Game;
+import edu.neu.madcourse.xipengwang.comm.OnlineUsers.AcceptTask;
 import edu.neu.madcourse.xipengwang.dabble.TwiceActiveCheck;
 import edu.neu.mhealth.api.KeyValueAPI;
 
@@ -33,9 +27,13 @@ public class Regist extends Activity{
 	private AlphaAnimation alphaDes;
     private AlphaAnimation alphaInc;
     
+    AlertDialog alertDialog;
+    AlertDialog.Builder alertDialogBuilder;
     
     QuitTask quitTask;
     QuitTask2 quitTask2;
+    
+    CheckNetWorkTask checkNetWorkTask;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -126,6 +124,8 @@ public class Regist extends Activity{
 			stopConn.startAnimation(alphaDes);
 			progressBar.startAnimation(alphaDes);
 			stopConn.setOnClickListener(null);
+			checkNetWorkTask = new CheckNetWorkTask(this);
+			checkNetWorkTask.execute();
 			quitTask = new QuitTask(this);
 			quitTask.execute();
 			stopService(new Intent(this, AsyncPullService.class));
@@ -134,6 +134,57 @@ public class Regist extends Activity{
 			}*/
 
 		}
+
+class CheckNetWorkTask extends AsyncTask<Void, Integer, Boolean>{
+	private Context context;  
+	
+	CheckNetWorkTask(Context context) {  
+          this.context = context;  
+          //progressBar.setBackgroundColor(getResources().getColor(R.color.black));  
+          
+      }  
+	@Override
+	protected Boolean doInBackground(Void... params) {
+		// TODO Auto-generated method stub
+		while(KeyValueAPI.isServerAvailable()==true){
+			System.out.println("Check NetWork: true");
+		 try {  
+              Thread.sleep(1000);  
+          } 
+		 catch (InterruptedException e) { 
+          	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, OppNameMyName.myFakeName);
+          	return false;
+          } 
+		 }
+		System.out.println("Check NetWork: false");
+		return false;
+	}
+
+	@Override
+	protected void onPostExecute(Boolean result) {
+		// TODO Auto-generated method stub
+		super.onPostExecute(result);
+		if(result==false){
+			alertDialogBuilder=new AlertDialog.Builder(Regist.this);  
+			
+			alertDialogBuilder.setTitle("Opps, cannot conncet to server.")
+
+            .setMessage("Please check your network and then restart the application.")
+
+            .setPositiveButton("OK",   new DialogInterface.OnClickListener(){
+                 public void onClick(DialogInterface dialoginterface, int i){
+                	 setResult(RESULT_OK);
+                	 finish();
+                 }
+         });
+			alertDialog = alertDialogBuilder.show(); 
+		}
+	}
+	
+	
+	
+}
+    
 
 class CheckScoreTask extends AsyncTask<String, Integer, String[]> {  
     	

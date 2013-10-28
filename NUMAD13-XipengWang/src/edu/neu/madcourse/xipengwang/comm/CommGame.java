@@ -41,6 +41,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import edu.neu.madcourse.xipengwang.R;
 import edu.neu.madcourse.xipengwang.comm.AsyncPullService.FirBinder;
+import edu.neu.madcourse.xipengwang.comm.OnlineUsers.CheckNetWorkTask;
 import edu.neu.madcourse.xipengwang.comm.OnlineUsers.ProgessDialogCancelTask;
 import edu.neu.madcourse.xipengwang.dabble.BGMManager;
 import edu.neu.mhealth.api.KeyValueAPI;
@@ -106,6 +107,12 @@ public class CommGame extends Activity{
 	
 	ProgressDialog pdialog; 
 	private String masterOrGuest;
+	
+    AlertDialog alertDialog2;
+    AlertDialog.Builder alertDialogBuilder2;
+    
+    CheckNetWorkTask checkNetWorkTask;
+    
 	final  ServiceConnection conn = new ServiceConnection(){
 
 		@Override
@@ -386,6 +393,7 @@ public class CommGame extends Activity{
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
+		checkNetWorkTask.cancel(true);
 		aTask= new AFKTask(this);
 		aTask.execute();
 		Intent intent2 =new Intent();
@@ -408,7 +416,8 @@ public class CommGame extends Activity{
 		super.onResume();
 		//GoOnTask gTask = new GoOnTask(this);
 		//gTask.execute();
-		
+		checkNetWorkTask = new CheckNetWorkTask(this);
+		checkNetWorkTask.execute();
 		oppMsg.setText(OppNameMyName.oppFakeName+"'s movement:");
 		
 		stopService(new Intent(this, AsyncPullService.class));
@@ -2088,6 +2097,58 @@ public class CommGame extends Activity{
 				String.valueOf(letterButtons[16].getText().charAt(letterButtons[16].getText().length()-1))+
 				String.valueOf(letterButtons[17].getText().charAt(letterButtons[17].getText().length()-1));
 	}
+	
+	class CheckNetWorkTask extends AsyncTask<Void, Integer, Boolean>{
+		private Context context;  
+		
+		CheckNetWorkTask(Context context) {  
+	          this.context = context;  
+	          //progressBar.setBackgroundColor(getResources().getColor(R.color.black));  
+	          
+	      }  
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			while(KeyValueAPI.isServerAvailable()==true){
+				System.out.println("Check NetWork: true");
+			 try {  
+	              Thread.sleep(1500);  
+	          } 
+			 catch (InterruptedException e) { 
+	          	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, OppNameMyName.myFakeName);
+	          	return false;
+	          } 
+			 }
+			System.out.println("Check NetWork: false");
+			return false;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			if(result==false){
+				alertDialogBuilder2=new AlertDialog.Builder(CommGame.this);  
+				
+				alertDialogBuilder2.setTitle("Opps, cannot conncet to server.")
+
+	            .setMessage("Please check your network and then restart the application.")
+
+	            .setPositiveButton("OK",   new DialogInterface.OnClickListener(){
+	                 public void onClick(DialogInterface dialoginterface, int i){
+	                	 setResult(RESULT_OK);
+	                	 finish();
+	                 }
+	         });
+				alertDialog2 = alertDialogBuilder2.show(); 
+			}
+		}
+		
+		
+		
+	}
+	    
+
 	
 	class HintListener implements OnClickListener{
 

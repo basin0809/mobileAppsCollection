@@ -5,6 +5,7 @@ import java.util.Stack;
 
 import android.R.integer;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -37,7 +38,9 @@ public class ChooseName extends Activity{
 	private Button userListButton  ;
 	
 
-    
+	 AlertDialog alertDialog;
+	    AlertDialog.Builder alertDialogBuilder;
+	    CheckNetWorkTask checkNetWorkTask;
 
 
     NameValidTask nameValidTask;
@@ -71,6 +74,58 @@ public class ChooseName extends Activity{
 
 	}
 
+	class CheckNetWorkTask extends AsyncTask<Void, Integer, Boolean>{
+		private Context context;  
+		
+		CheckNetWorkTask(Context context) {  
+	          this.context = context;  
+	          //progressBar.setBackgroundColor(getResources().getColor(R.color.black));  
+	          
+	      }  
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			while(KeyValueAPI.isServerAvailable()==true){
+				System.out.println("Check NetWork: true");
+			 try {  
+	              Thread.sleep(1500);  
+	          } 
+			 catch (InterruptedException e) { 
+	          	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, OppNameMyName.myFakeName);
+	          	return false;
+	          } 
+			 }
+			System.out.println("Check NetWork: false");
+			return false;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			if(result==false){
+				alertDialogBuilder=new AlertDialog.Builder(ChooseName.this);  
+				
+				alertDialogBuilder.setTitle("Opps, cannot conncet to server.")
+
+	            .setMessage("Please check your network and then restart the application.")
+
+	            .setPositiveButton("OK",   new DialogInterface.OnClickListener(){
+	                 public void onClick(DialogInterface dialoginterface, int i){
+	                	 setResult(RESULT_OK);
+	                	 finish();
+	                 }
+	         });
+				alertDialog = alertDialogBuilder.show(); 
+			}
+		}
+		
+		
+		
+	}
+	    
+
+	
 		class UserListButton implements android.view.View.OnClickListener{
 
 			@Override
@@ -218,6 +273,7 @@ public class ChooseName extends Activity{
 		protected void onPause() {
 			// TODO Auto-generated method stub
 			super.onPause();
+			checkNetWorkTask.cancel(true);
 			if(!musicGoOn)
 	            BGMManager.pause();
 			
@@ -227,6 +283,8 @@ public class ChooseName extends Activity{
 		protected void onResume() {
 			// TODO Auto-generated method stub
 			super.onResume();
+			checkNetWorkTask = new CheckNetWorkTask(this);
+			checkNetWorkTask.execute();
 			if(musicGoOn2==true){
 				musicGoOn=false;
 		      BGMManager.start(this,R.raw.game);}
