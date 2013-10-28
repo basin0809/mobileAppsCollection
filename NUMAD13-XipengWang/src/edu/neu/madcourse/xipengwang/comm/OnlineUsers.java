@@ -257,11 +257,11 @@ public class OnlineUsers extends Activity{
 	        	String pullMeTaskString = KeyValueAPI.get("basin", "basin576095", "Jim");
                 while(!pullMeTaskString.equals("#QUIT")&&!pullMeTaskString.equals("#QUIT2")){  
 	                	//System.out.println("PullMMMMMMEEEEEEETASK");
-	                	System.out.println("PullMeSubTask----------------------------");
-			    		System.out.println("My Status: "+KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName));
-			    		System.out.println("Tom's Status: "+KeyValueAPI.get("basin", "basin576095", "Tom"));
-			    		System.out.println("Mary's Status: "+KeyValueAPI.get("basin", "basin576095", "Mary"));
-			    		System.out.println("Fred's Status: "+KeyValueAPI.get("basin", "basin576095", "Fred"));
+	                	//System.out.println("PullMeSubTask----------------------------");
+			    		//System.out.println("My Status: "+KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName));
+			    		//System.out.println("Tom's Status: "+KeyValueAPI.get("basin", "basin576095", "Tom"));
+			    		//System.out.println("Mary's Status: "+KeyValueAPI.get("basin", "basin576095", "Mary"));
+			    		//System.out.println("Fred's Status: "+KeyValueAPI.get("basin", "basin576095", "Fred"));
 	                    i++;  
 	    	        	String resString1=KeyValueAPI.get("basin", "basin576095", "Tom");
 	    	        	String resString2=KeyValueAPI.get("basin", "basin576095", "Mary");
@@ -435,6 +435,7 @@ public class OnlineUsers extends Activity{
 			        
 			       		      	Intent intent = new Intent(OnlineUsers.this, CommGame.class);
 			       		     intent.putExtra("music_stuate", TwiceActiveCheck.musicTwicePressed.get(TwiceActiveCheck.musicTwicePressed.size()-1).toString());
+			       		  intent.putExtra("masterOrGuest", "guest");
 			       		      	startActivity(intent);
 			                	 
 			                	finish();
@@ -467,6 +468,7 @@ public class OnlineUsers extends Activity{
 				        
 				       		      	Intent intent = new Intent(OnlineUsers.this, CommGame.class);
 				       		     intent.putExtra("music_stuate", TwiceActiveCheck.musicTwicePressed.get(TwiceActiveCheck.musicTwicePressed.size()-1).toString());
+				       		  intent.putExtra("masterOrGuest", "guest");
 				       		      	startActivity(intent);
 				                	 
 				                	finish();
@@ -499,6 +501,7 @@ public class OnlineUsers extends Activity{
 					        
 					       		      	Intent intent = new Intent(OnlineUsers.this, CommGame.class);
 					       		     intent.putExtra("music_stuate", TwiceActiveCheck.musicTwicePressed.get(TwiceActiveCheck.musicTwicePressed.size()-1).toString());
+					       		  intent.putExtra("masterOrGuest", "guest");
 					       		      	startActivity(intent);
 					                	 
 					                	finish();
@@ -535,11 +538,11 @@ public class OnlineUsers extends Activity{
 		    	String pullOthersString = KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName);
 		    	while(!pullOthersString.equals("#QUIT")&&
 		    			!pullOthersString.equals("#QUIT2")){
-		    		System.out.println("PullOthersSubTask----------------------------");
-		    		System.out.println("My Status: "+KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName));
-		    		System.out.println("Tom's Status: "+KeyValueAPI.get("basin", "basin576095", "Tom"));
-		    		System.out.println("Mary's Status: "+KeyValueAPI.get("basin", "basin576095", "Mary"));
-		    		System.out.println("Fred's Status: "+KeyValueAPI.get("basin", "basin576095", "Fred"));
+		    		//System.out.println("PullOthersSubTask----------------------------");
+		    		//System.out.println("My Status: "+KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName));
+		    		//System.out.println("Tom's Status: "+KeyValueAPI.get("basin", "basin576095", "Tom"));
+		    		//System.out.println("Mary's Status: "+KeyValueAPI.get("basin", "basin576095", "Mary"));
+		    		//System.out.println("Fred's Status: "+KeyValueAPI.get("basin", "basin576095", "Fred"));
                     
     	        	//String resString1=KeyValueAPI.get("basin", "basin576095", "Tom");
     	        	//String resString2=KeyValueAPI.get("basin", "basin576095", "Mary");
@@ -1093,6 +1096,7 @@ public class OnlineUsers extends Activity{
 	        	   Toast.makeText(context,"Opponent Connected! Loading Game",Toast.LENGTH_LONG).show();  
 	 		      	Intent intent = new Intent(OnlineUsers.this, CommGame.class);
 	 		      	intent.putExtra("music_stuate", TwiceActiveCheck.musicTwicePressed.get(TwiceActiveCheck.musicTwicePressed.size()-1).toString());
+	 		      	intent.putExtra("masterOrGuest", "master");
 	 		      	startActivity(intent);
 	 		      	finish();}
 	        	

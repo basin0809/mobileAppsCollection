@@ -9,9 +9,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import android.R.integer;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -39,6 +41,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import edu.neu.madcourse.xipengwang.R;
 import edu.neu.madcourse.xipengwang.comm.AsyncPullService.FirBinder;
+import edu.neu.madcourse.xipengwang.comm.OnlineUsers.ProgessDialogCancelTask;
 import edu.neu.madcourse.xipengwang.dabble.BGMManager;
 import edu.neu.mhealth.api.KeyValueAPI;
 
@@ -62,6 +65,7 @@ public class CommGame extends Activity{
 	private String result5="";
 	private String result6="";
 	private String resultString;
+	private String guestsShield;
 	private String ssrString = "1";
 	private InputStream input = null;
 	private boolean[] buttonIsPressed = new boolean[18];
@@ -99,6 +103,9 @@ public class CommGame extends Activity{
 	AsyncPullService boundService;
 	boolean isBound;
 	private boolean ssrDetected = false;
+	
+	ProgressDialog pdialog; 
+	private String masterOrGuest;
 	final  ServiceConnection conn = new ServiceConnection(){
 
 		@Override
@@ -136,8 +143,8 @@ public class CommGame extends Activity{
 			musicGoOn2 = true;
 			
 		}
-		
-		
+		masterOrGuest = intent.getStringExtra("masterOrGuest");
+		 System.out.println("masterOrGuest is "+masterOrGuest);
 		
 		//pauseTwicePressed.add(0);
 		letterButtons[0]=(Button)findViewById(R.id.cbutton1);
@@ -187,31 +194,89 @@ public class CommGame extends Activity{
 		scoreText.setText("Score:0");
 		cdText.setText("00:00");
 		oppMsg.setText(OppNameMyName.oppFakeName+"'s movement:");
-		resultString = (randomWords(6)+randomWords(5)+randomWords(4)+randomWords(3));
-		System.out.println("String: "+resultString);
-		ArrayList<String> sList = new ArrayList<String>();
-		for (int i =0; i<18; i++) {
-			sList.add(scoreList[i]);
-		}
-		Collections.shuffle(sList);
-		ArrayList<String> arrayList = new ArrayList<String>();
-		for(int i =0; i<18; i++){
-			arrayList.add(String.valueOf(resultString.charAt(i))+"\n"+"     "+sList.get(i));
+		if(masterOrGuest.equals("master")){
+			resultString = (randomWords(6)+randomWords(5)+randomWords(4)+randomWords(3));
+			System.out.println("String: "+resultString);
+			ArrayList<String> sList = new ArrayList<String>();
+			for (int i =0; i<18; i++) {
+				sList.add(scoreList[i]);
+			}
+			Collections.shuffle(sList);
+			ArrayList<String> arrayList = new ArrayList<String>();
+			for(int i =0; i<18; i++){
+				arrayList.add(String.valueOf(resultString.charAt(i))+"\n"+"     "+sList.get(i));
+				
+			}
+			Collections.shuffle(arrayList);
+			for(int i =0; i<18; i++){
+				puzzle[i]=arrayList.get(i);
+				//puzzleScore[i]=arrayList.get(i)[1];
+				//System.out.println(puzzle[i]);
+			}
+			  
+			for (int i =0; i<18; i++) {
+				
+				//letterButtons[i].setText(puzzle[i].charAt(0)+"\n"+"   "+puzzleScore[i].charAt(1));	
+				letterButtons[i].setText(puzzle[i]);
+				letterButtons[i].setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+			}
+			String mastersWar = getCurrentStr();
+			String mastersSword = getCurrentScore();
 			
-		}
-		Collections.shuffle(arrayList);
-		for(int i =0; i<18; i++){
-			puzzle[i]=arrayList.get(i);
-			//puzzleScore[i]=arrayList.get(i)[1];
-			//System.out.println(puzzle[i]);
-		}
-		  
-		for (int i =0; i<18; i++) {
+			pdialog = new ProgressDialog(CommGame.this);
+			pdialog.setTitle("Pleas wait for seconds");
+			pdialog.setMessage("Creating Dabble board for you and "+ OppNameMyName.oppFakeName);
+			pdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			pdialog.show();
+			KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, mastersWar+mastersSword+resultString);
+			KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, mastersWar+mastersSword+resultString);
+			KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, mastersWar+mastersSword+resultString);
+			KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, mastersWar+mastersSword+resultString);
+			pdialog.dismiss();
 			
-			//letterButtons[i].setText(puzzle[i].charAt(0)+"\n"+"   "+puzzleScore[i].charAt(1));	
-			letterButtons[i].setText(puzzle[i]);
-			letterButtons[i].setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+		}else {
+			boolean boardReceived = false;
+			String board="";
+			String mastersSword;
+			String mastersWar;
+			int i = 0;
+			pdialog = new ProgressDialog(CommGame.this);
+			pdialog.setTitle("Pleas wait for seconds");
+			pdialog.setMessage("Creating Dabble board for you and "+ OppNameMyName.oppFakeName);
+			pdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			pdialog.show();
+			while(boardReceived == false){
+				if(i>100){
+					boardReceived = true;
+					Toast.makeText(this,"Fail to load dabble, please check your network.",Toast.LENGTH_LONG).show();
+					finish();
+				}else{
+				board = KeyValueAPI.get("basin", "basin576095", OppNameMyName.oppName);
+				if(board.length()>17){
+					boardReceived = true;
+				}
+				i++;}
+			}
+			pdialog.dismiss();
+			
+			mastersWar = board.substring(0, 18);
+			mastersSword = board.substring(18,36);
+			resultString = board.substring(36, 54);
+			
+			for(int j =0; j<18; j++){
+				puzzle[j]=mastersWar.charAt(j)+"\n"+"     "+mastersSword.charAt(j);
+				//puzzleScore[i]=arrayList.get(i)[1];
+				//System.out.println(puzzle[i]);
+			}
+			  
+			for (int k =0; k<18; k++) {
+				
+				//letterButtons[i].setText(puzzle[i].charAt(0)+"\n"+"   "+puzzleScore[i].charAt(1));	
+				letterButtons[k].setText(puzzle[k]);
+				letterButtons[k].setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+			}
 		}
+
 		
 		for (int i =0; i<18; i++) {
 			buttonIsPressed[i]= false;
@@ -478,14 +543,50 @@ public class CommGame extends Activity{
 										if(ssrLocates[5]==5){ssrDetected = true;
 										PushTask pushTask = new PushTask(CommGame.this);
 										//pushTask.execute(ssrString.toString());
-										pushTask.execute(ssrString.toString());}
+										int len = ssrString.length();
+										switch (len) {
+										case 3:
+											pushTask.execute("a 3-letter word! "+"\n"+"Score:"+score);
+											break;
+										case 4:
+											pushTask.execute("a 4-letter word! "+"\n"+"Score:"+score);
+											break;
+										case 5:
+											pushTask.execute("a 5-letter word! "+"\n"+"Score:"+score);
+											break;
+										case 6:
+											pushTask.execute("a 6-letter word! "+"\n"+"Score:"+score);
+											break;
+
+										default:
+											break;
+										}
+										}
 										else{
 										swapIfValid(ssrLocates[5]);
 										swapIfValid(5);
 										ssrDetected = true;
 										PushTask pushTask = new PushTask(CommGame.this);
 										//pushTask.execute(ssrString.toString());
-										pushTask.execute(ssrString.toString());}
+										int len = ssrString.length();
+										switch (len) {
+										case 3:
+											pushTask.execute("a 3-letter word! "+"\n"+"Score:"+score);
+											break;
+										case 4:
+											pushTask.execute("a 4-letter word! "+"\n"+"Score:"+score);
+											break;
+										case 5:
+											pushTask.execute("a 5-letter word! "+"\n"+"Score:"+score);
+											break;
+										case 6:
+											pushTask.execute("a 6-letter word! "+"\n"+"Score:"+score);
+											break;
+
+										default:
+											break;
+										}
+										}
 	
 									}
 								}
@@ -562,14 +663,48 @@ public class CommGame extends Activity{
 									if(ssrLocates[4]==10){ssrDetected = true;
 									PushTask pushTask = new PushTask(CommGame.this);
 									//pushTask.execute(ssrString.toString());
-									pushTask.execute(ssrString.toString());}
+									int len = ssrString.length();
+									switch (len) {
+									case 3:
+										pushTask.execute("a 3-letter word! "+"\n"+"Score:"+score);
+										break;
+									case 4:
+										pushTask.execute("a 4-letter word! "+"\n"+"Score:"+score);
+										break;
+									case 5:
+										pushTask.execute("a 5-letter word! "+"\n"+"Score:"+score);
+										break;
+									case 6:
+										pushTask.execute("a 6-letter word! "+"\n"+"Score:"+score);
+										break;
+
+									default:
+										break;
+									}}
 									else{
 									swapIfValid(ssrLocates[4]);
 									swapIfValid(10);
 									ssrDetected = true;
 									PushTask pushTask = new PushTask(CommGame.this);
 									//pushTask.execute(ssrString.toString());
-									pushTask.execute(ssrString.toString());}	
+									int len = ssrString.length();
+									switch (len) {
+									case 3:
+										pushTask.execute("a 3-letter word! "+"\n"+"Score:"+score);
+										break;
+									case 4:
+										pushTask.execute("a 4-letter word! "+"\n"+"Score:"+score);
+										break;
+									case 5:
+										pushTask.execute("a 5-letter word! "+"\n"+"Score:"+score);
+										break;
+									case 6:
+										pushTask.execute("a 6-letter word! "+"\n"+"Score:"+score);
+										break;
+
+									default:
+										break;
+									}}	
 								}
 							}
 						}
@@ -626,14 +761,14 @@ public class CommGame extends Activity{
 								if(ssrLocates[3]==14){ssrDetected = true;
 								PushTask pushTask = new PushTask(CommGame.this);
 								//pushTask.execute(ssrString.toString());
-								pushTask.execute(ssrString.toString());}
+								pushTask.execute("a 4-letter word! "+"\n"+"Score:"+score);}
 								else{
 								swapIfValid(ssrLocates[3]);
 								swapIfValid(14);
 								ssrDetected = true;
 								PushTask pushTask = new PushTask(CommGame.this);
 								//pushTask.execute(ssrString.toString());
-								pushTask.execute(ssrString.toString());}
+								pushTask.execute("a 4-letter word! "+"\n"+"Score:"+score);}
 											
 							}
 						}
@@ -678,14 +813,14 @@ public class CommGame extends Activity{
 							if(ssrLocates[2]==17){ssrDetected = true;
 							PushTask pushTask = new PushTask(CommGame.this);
 							//pushTask.execute(ssrString.toString());
-							pushTask.execute(ssrString.toString());}
+							pushTask.execute("a 3-letter word! "+"\n"+"Score:"+score);}
 							else{
 							swapIfValid(ssrLocates[2]);
 							swapIfValid(17);
 							ssrDetected = true;
 							PushTask pushTask = new PushTask(CommGame.this);
 							//pushTask.execute(ssrString.toString());
-							pushTask.execute(ssrString.toString());}
+							pushTask.execute("a 3-letter word! "+"\n"+"Score:"+score);}
 							
 							
 						}
@@ -781,14 +916,14 @@ public class CommGame extends Activity{
 												if(ssrLocates[5]==5){ssrDetected = true;
 												PushTask pushTask = new PushTask(CommGame.this);
 												//pushTask.execute(ssrString.toString());
-												pushTask.execute(ssrString.toString());}
+												pushTask.execute("a 6-letter word! "+"\n"+"Score:"+score);}
 												else{
 												swapIfValid(ssrLocates[5]);
 												swapIfValid(5);
 												ssrDetected = true;
 												PushTask pushTask = new PushTask(CommGame.this);
 												//pushTask.execute(ssrString.toString());
-												pushTask.execute(ssrString.toString());}
+												pushTask.execute("a 6-letter word! "+"\n"+"Score:"+score);}
 			
 											}
 										}
@@ -865,14 +1000,14 @@ public class CommGame extends Activity{
 											if(ssrLocates[4]==10){ssrDetected = true;
 											PushTask pushTask = new PushTask(CommGame.this);
 											//pushTask.execute(ssrString.toString());
-											pushTask.execute(ssrString.toString());}
+											pushTask.execute("a 5-letter word! "+"\n"+"Score:"+score);}
 											else{
 											swapIfValid(ssrLocates[4]);
 											swapIfValid(10);
 											ssrDetected = true;
 											PushTask pushTask = new PushTask(CommGame.this);
 											//pushTask.execute(ssrString.toString());
-											pushTask.execute(ssrString.toString());}	
+											pushTask.execute("a 5-letter word! "+"\n"+"Score:"+score);}	
 										}
 									}
 								}
@@ -929,14 +1064,14 @@ public class CommGame extends Activity{
 										if(ssrLocates[3]==14){ssrDetected = true;
 										PushTask pushTask = new PushTask(CommGame.this);
 										//pushTask.execute(ssrString.toString());
-										pushTask.execute(ssrString.toString());}
+										pushTask.execute("a 4-letter word! "+"\n"+"Score:"+score);}
 										else{
 										swapIfValid(ssrLocates[3]);
 										swapIfValid(14);
 										ssrDetected = true;
 										PushTask pushTask = new PushTask(CommGame.this);
 										//pushTask.execute(ssrString.toString());
-										pushTask.execute(ssrString.toString());}
+										pushTask.execute("a 4-letter word! "+"\n"+"Score:"+score);}
 													
 									}
 								}
@@ -981,14 +1116,14 @@ public class CommGame extends Activity{
 									if(ssrLocates[2]==17){ssrDetected = true;
 									PushTask pushTask = new PushTask(CommGame.this);
 									//pushTask.execute(ssrString.toString());
-									pushTask.execute(ssrString.toString());}
+									pushTask.execute("a 3-letter word! "+"\n"+"Score:"+score);}
 									else{
 									swapIfValid(ssrLocates[2]);
 									swapIfValid(17);
 									ssrDetected = true;
 									PushTask pushTask = new PushTask(CommGame.this);
 									//pushTask.execute(ssrString.toString());
-									pushTask.execute(ssrString.toString());}
+									pushTask.execute("a 3-letter word! "+"\n"+"Score:"+score);}
 									
 									
 								}
@@ -1084,14 +1219,14 @@ public class CommGame extends Activity{
 												if(ssrLocates[5]==5){ssrDetected = true;
 												PushTask pushTask = new PushTask(CommGame.this);
 												//pushTask.execute(ssrString.toString());
-												pushTask.execute(ssrString.toString());}
+												pushTask.execute("a 6-letter word! "+"\n"+"Score:"+score);}
 												else{
 												swapIfValid(ssrLocates[5]);
 												swapIfValid(5);
 												ssrDetected = true;
 												PushTask pushTask = new PushTask(CommGame.this);
 												//pushTask.execute(ssrString.toString());
-												pushTask.execute(ssrString.toString());}
+												pushTask.execute("a 6-letter word! "+"\n"+"Score:"+score);}
 			
 											}
 										}
@@ -1168,14 +1303,14 @@ public class CommGame extends Activity{
 											if(ssrLocates[4]==10){ssrDetected = true;
 											PushTask pushTask = new PushTask(CommGame.this);
 											//pushTask.execute(ssrString.toString());
-											pushTask.execute(ssrString.toString());}
+											pushTask.execute("a 5-letter word! "+"\n"+"Score:"+score);}
 											else{
 											swapIfValid(ssrLocates[4]);
 											swapIfValid(10);
 											ssrDetected = true;
 											PushTask pushTask = new PushTask(CommGame.this);
 											//pushTask.execute(ssrString.toString());
-											pushTask.execute(ssrString.toString());}	
+											pushTask.execute("a 5-letter word! "+"\n"+"Score:"+score);}	
 										}
 									}
 								}
@@ -1232,14 +1367,14 @@ public class CommGame extends Activity{
 										if(ssrLocates[3]==14){ssrDetected = true;
 										PushTask pushTask = new PushTask(CommGame.this);
 										//pushTask.execute(ssrString.toString());
-										pushTask.execute(ssrString.toString());}
+										pushTask.execute("a 4-letter word! "+"\n"+"Score:"+score);}
 										else{
 										swapIfValid(ssrLocates[3]);
 										swapIfValid(14);
 										ssrDetected = true;
 										PushTask pushTask = new PushTask(CommGame.this);
 										//pushTask.execute(ssrString.toString());
-										pushTask.execute(ssrString.toString());}
+										pushTask.execute("a 4-letter word! "+"\n"+"Score:"+score);}
 													
 									}
 								}
@@ -1284,14 +1419,14 @@ public class CommGame extends Activity{
 									if(ssrLocates[2]==17){ssrDetected = true;
 									PushTask pushTask = new PushTask(CommGame.this);
 									//pushTask.execute(ssrString.toString());
-									pushTask.execute(ssrString.toString());}
+									pushTask.execute("a 3-letter word! "+"\n"+"Score:"+score);}
 									else{
 									swapIfValid(ssrLocates[2]);
 									swapIfValid(17);
 									ssrDetected = true;
 									PushTask pushTask = new PushTask(CommGame.this);
 									//pushTask.execute(ssrString.toString());
-									pushTask.execute(ssrString.toString());}
+									pushTask.execute("a 3-letter word! "+"\n"+"Score:"+score);}
 									
 									
 								}
@@ -1386,14 +1521,14 @@ public class CommGame extends Activity{
 												if(ssrLocates[5]==5){ssrDetected = true;
 												PushTask pushTask = new PushTask(CommGame.this);
 												//pushTask.execute(ssrString.toString());
-												pushTask.execute(ssrString.toString());}
+												pushTask.execute("a 6-letter word! "+"\n"+"Score:"+score);}
 												else{
 												swapIfValid(ssrLocates[5]);
 												swapIfValid(5);
 												ssrDetected = true;
 												PushTask pushTask = new PushTask(CommGame.this);
 												//pushTask.execute(ssrString.toString());
-												pushTask.execute(ssrString.toString());}
+												pushTask.execute("a 6-letter word! "+"\n"+"Score:"+score);}
 			
 											}
 										}
@@ -1470,14 +1605,14 @@ public class CommGame extends Activity{
 											if(ssrLocates[4]==10){ssrDetected = true;
 											PushTask pushTask = new PushTask(CommGame.this);
 											//pushTask.execute(ssrString.toString());
-											pushTask.execute(ssrString.toString());}
+											pushTask.execute("a 5-letter word! "+"\n"+"Score:"+score);}
 											else{
 											swapIfValid(ssrLocates[4]);
 											swapIfValid(10);
 											ssrDetected = true;
 											PushTask pushTask = new PushTask(CommGame.this);
 											//pushTask.execute(ssrString.toString());
-											pushTask.execute(ssrString.toString());}	
+											pushTask.execute("a 5-letter word! "+"\n"+"Score:"+score);}	
 										}
 									}
 								}
@@ -1534,14 +1669,14 @@ public class CommGame extends Activity{
 										if(ssrLocates[3]==14){ssrDetected = true;
 										PushTask pushTask = new PushTask(CommGame.this);
 										//pushTask.execute(ssrString.toString());
-										pushTask.execute(ssrString.toString());}
+										pushTask.execute("a 4-letter word! "+"\n"+"Score:"+score);}
 										else{
 										swapIfValid(ssrLocates[3]);
 										swapIfValid(14);
 										ssrDetected = true;
 										PushTask pushTask = new PushTask(CommGame.this);
 										//pushTask.execute(ssrString.toString());
-										pushTask.execute(ssrString.toString());}
+										pushTask.execute("a 4-letter word! "+"\n"+"Score:"+score);}
 													
 									}
 								}
@@ -1586,14 +1721,14 @@ public class CommGame extends Activity{
 									if(ssrLocates[2]==17){ssrDetected = true;
 									PushTask pushTask = new PushTask(CommGame.this);
 									//pushTask.execute(ssrString.toString());
-									pushTask.execute(ssrString.toString());}
+									pushTask.execute("a 3-letter word! "+"\n"+"Score:"+score);}
 									else{
 									swapIfValid(ssrLocates[2]);
 									swapIfValid(17);
 									ssrDetected = true;
 									PushTask pushTask = new PushTask(CommGame.this);
 									//pushTask.execute(ssrString.toString());
-									pushTask.execute(ssrString.toString());}
+									pushTask.execute("a 3-letter word! "+"\n"+"Score:"+score);}
 									
 									
 								}
@@ -1688,14 +1823,14 @@ public class CommGame extends Activity{
 												if(ssrLocates[5]==5){ssrDetected = true;
 												PushTask pushTask = new PushTask(CommGame.this);
 												//pushTask.execute(ssrString.toString());
-												pushTask.execute(ssrString.toString());}
+												pushTask.execute("a 6-letter word! "+"\n"+"Score:"+score);}
 												else{
 												swapIfValid(ssrLocates[5]);
 												swapIfValid(5);
 												ssrDetected = true;
 												PushTask pushTask = new PushTask(CommGame.this);
 												//pushTask.execute(ssrString.toString());
-												pushTask.execute(ssrString.toString());}
+												pushTask.execute("a 6-letter word! "+"\n"+"Score:"+score);}
 			
 											}
 										}
@@ -1772,14 +1907,14 @@ public class CommGame extends Activity{
 											if(ssrLocates[4]==10){ssrDetected = true;
 											PushTask pushTask = new PushTask(CommGame.this);
 											//pushTask.execute(ssrString.toString());
-											pushTask.execute(ssrString.toString());}
+											pushTask.execute("a 5-letter word! "+"\n"+"Score:"+score);}
 											else{
 											swapIfValid(ssrLocates[4]);
 											swapIfValid(10);
 											ssrDetected = true;
 											PushTask pushTask = new PushTask(CommGame.this);
 											//pushTask.execute(ssrString.toString());
-											pushTask.execute(ssrString.toString());}	
+											pushTask.execute("a 5-letter word! "+"\n"+"Score:"+score);}	
 										}
 									}
 								}
@@ -1836,14 +1971,14 @@ public class CommGame extends Activity{
 										if(ssrLocates[3]==14){ssrDetected = true;
 										PushTask pushTask = new PushTask(CommGame.this);
 										//pushTask.execute(ssrString.toString());
-										pushTask.execute(ssrString.toString());}
+										pushTask.execute("a 4-letter word! "+"\n"+"Score:"+score);}
 										else{
 										swapIfValid(ssrLocates[3]);
 										swapIfValid(14);
 										ssrDetected = true;
 										PushTask pushTask = new PushTask(CommGame.this);
 										//pushTask.execute(ssrString.toString());
-										pushTask.execute(ssrString.toString());}
+										pushTask.execute("a 4-letter word! "+"\n"+"Score:"+score);}
 													
 									}
 								}
@@ -1888,14 +2023,14 @@ public class CommGame extends Activity{
 									if(ssrLocates[2]==17){ssrDetected = true;
 									PushTask pushTask = new PushTask(CommGame.this);
 									//pushTask.execute(ssrString.toString());
-									pushTask.execute(ssrString.toString());}
+									pushTask.execute("a 3-letter word! "+"\n"+"Score:"+score);}
 									else{
 									swapIfValid(ssrLocates[2]);
 									swapIfValid(17);
 									ssrDetected = true;
 									PushTask pushTask = new PushTask(CommGame.this);
 									//pushTask.execute(ssrString.toString());
-									pushTask.execute(ssrString.toString());}
+									pushTask.execute("a 3-letter word! "+"\n"+"Score:"+score);}
 									
 									
 								}
@@ -1933,6 +2068,27 @@ public class CommGame extends Activity{
 					String.valueOf(letterButtons[17].getText().charAt(0));
 	}
 	
+	private String getCurrentScore(){
+		return String.valueOf(letterButtons[0].getText().charAt(letterButtons[0].getText().length()-1))+
+				String.valueOf(letterButtons[1].getText().charAt(letterButtons[1].getText().length()-1))+
+				String.valueOf(letterButtons[2].getText().charAt(letterButtons[2].getText().length()-1))+
+				String.valueOf(letterButtons[3].getText().charAt(letterButtons[3].getText().length()-1))+
+				String.valueOf(letterButtons[4].getText().charAt(letterButtons[4].getText().length()-1))+
+				String.valueOf(letterButtons[5].getText().charAt(letterButtons[5].getText().length()-1))+
+				String.valueOf(letterButtons[6].getText().charAt(letterButtons[6].getText().length()-1))+
+				String.valueOf(letterButtons[7].getText().charAt(letterButtons[7].getText().length()-1))+
+				String.valueOf(letterButtons[8].getText().charAt(letterButtons[8].getText().length()-1))+
+				String.valueOf(letterButtons[9].getText().charAt(letterButtons[9].getText().length()-1))+
+				String.valueOf(letterButtons[10].getText().charAt(letterButtons[10].getText().length()-1))+
+				String.valueOf(letterButtons[11].getText().charAt(letterButtons[11].getText().length()-1))+
+				String.valueOf(letterButtons[12].getText().charAt(letterButtons[12].getText().length()-1))+
+				String.valueOf(letterButtons[13].getText().charAt(letterButtons[13].getText().length()-1))+
+				String.valueOf(letterButtons[14].getText().charAt(letterButtons[14].getText().length()-1))+
+				String.valueOf(letterButtons[15].getText().charAt(letterButtons[15].getText().length()-1))+
+				String.valueOf(letterButtons[16].getText().charAt(letterButtons[16].getText().length()-1))+
+				String.valueOf(letterButtons[17].getText().charAt(letterButtons[17].getText().length()-1));
+	}
+	
 	class HintListener implements OnClickListener{
 
 		@Override
@@ -1941,12 +2097,13 @@ public class CommGame extends Activity{
 			
 				//System.out.println("PAUSE");
 			// TODO Auto-generated method stub
-			
+				
 				result1=resultString.substring(0, 6);
 				result2=resultString.substring(6, 11);
 				result3=resultString.substring(11, 15);
 				result4=resultString.substring(15, 18);
 				result=result1+"\n"+result2+"\n"+result3+"\n"+result4;
+				
 				new AlertDialog.Builder(CommGame.this)  
 				
                 .setTitle("Hint")
@@ -3475,7 +3632,7 @@ public class CommGame extends Activity{
 		else{
 		if(words.containsKey(s.toString())){
 			PushTask pushTask = new PushTask(CommGame.this);
-			pushTask.execute(s.toString());
+			
 			if(countBack<200){
 				wordsBack[countBack]=s.toString();
 				countBack++;
@@ -3491,6 +3648,24 @@ public class CommGame extends Activity{
 			score= pscore*(9-locate)+score-tempScore[locate-1];
 			tempScore[locate-1]=pscore*(9-locate);
 			scoreText.setText("Score: "+score);
+			int len = s.length();
+			switch (len) {
+			case 3:
+				pushTask.execute("a 3-letter word! "+"\n"+"Score:"+score);
+				break;
+			case 4:
+				pushTask.execute("a 4-letter word! "+"\n"+"Score:"+score);
+				break;
+			case 5:
+				pushTask.execute("a 5-letter word! "+"\n"+"Score:"+score);
+				break;
+			case 6:
+				pushTask.execute("a 6-letter word! "+"\n"+"Score:"+score);
+				break;
+
+			default:
+				break;
+			}
 			
 			
 			invisibleScore= pscore+invisibleScore-invisibleTempScore[locate-1];
@@ -3522,6 +3697,26 @@ public class CommGame extends Activity{
 		
 	}
 	
+	
+	
+class PushBoardTask extends AsyncTask<String, Integer, Void>{
+	private Context context;  
+	PushBoardTask(Context context) {  
+          this.context = context;  
+          //progressBar.setBackgroundColor(getResources().getColor(R.color.black));  
+         // progressBar.startAnimation(alphaInc);
+          
+      } 
+	@Override
+	protected Void doInBackground(String... params) {
+		// TODO Auto-generated method stub
+		KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName,params[0]);
+		KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName,params[0]);
+		KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName,params[0]);
+		return null;
+	}
+	
+}
 class PushScoreTask extends AsyncTask<String, Integer, String> {  
     	
     	private Context context;  
@@ -3752,7 +3947,7 @@ class RealTimePullTask extends AsyncTask<Void, Integer, Void> {
 								}
 								else{
 									if(result.substring(0, 1).equals("$")){
-										oppMsg.setText(OppNameMyName.oppFakeName+"'s movement:"+"\n"+OppNameMyName.oppFakeName+" spells: "+result.substring(1, result.length()));
+										oppMsg.setText(OppNameMyName.oppFakeName+"'s movement:"+"\n"+OppNameMyName.oppFakeName+" spells "+result.substring(1, result.length()));
 										System.out.println("opponent's movement: "+result);}
 									else {
 										oppMsg.setText(OppNameMyName.oppFakeName+"'s movement:"+"\n"+OppNameMyName.oppFakeName+" quits");

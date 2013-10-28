@@ -114,7 +114,7 @@ public class AsyncPullService extends Service{
 								}
 								else{
 									if(result.substring(0, 1).equals("$")){
-										result2=OppNameMyName.oppFakeName+" spells: "+result.substring(1, result.length());}
+										result2=OppNameMyName.oppFakeName+" spells "+result.substring(1, result.length());}
 									else {
 										result2=OppNameMyName.oppFakeName+" quits";
 									}
