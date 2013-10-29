@@ -37,6 +37,12 @@ public class Setting extends Activity{
 		//settingSR = (TextView)findViewById(R.id.settingSR);
 		onOffMusic = (Button)findViewById(R.id.onOffMusic);
 		//onOffSR = (Button)findViewById(R.id.onOffSR);
+		if(TwiceActiveCheck.musicTwicePressed.get(TwiceActiveCheck.musicTwicePressed.size()-1)==0){
+			onOffMusic.setText("OFF");
+			
+		}else {
+			onOffMusic.setText("ON");
+		}
 		onOffMusic.setOnClickListener(new MusicSettingListener());
 	}
 

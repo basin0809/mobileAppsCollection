@@ -50,8 +50,11 @@ public class AsyncPullService extends Service{
 			
 			
 			KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "#AFK");
-			while(KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName).equals("#AFK")==true&& 
-	    			KeyValueAPI.get("basin", "basin576095", OppNameMyName.oppName).equals("#QUIT2")==false){
+			while((KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName).equals("#AFK")==true&& 
+	    			KeyValueAPI.get("basin", "basin576095", OppNameMyName.oppName).equals("#QUIT2")==false)||
+	    			KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName).equals("ERROR: IOException")){
+				System.out.println("My Status: "+KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName));
+	    		System.out.println("Opp's Status: "+KeyValueAPI.get("basin", "basin576095", "Tom"));
 				SubAsyncPullTask subAsyncPullTask = new SubAsyncPullTask(AsyncPullService.this);
 	    		subAsyncPullTask.execute();
 	    		try {

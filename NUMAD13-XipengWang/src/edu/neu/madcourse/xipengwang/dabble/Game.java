@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Random;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -28,8 +30,8 @@ import android.view.View.OnClickListener;
 import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 import edu.neu.madcourse.xipengwang.R;
+import edu.neu.madcourse.xipengwang.comm.CommGame;
 //import android.speech.RecognizerIntent;
 
 
@@ -79,7 +81,8 @@ public class Game extends Activity{
 	private boolean ssrDetected = false;
 	private AlphaAnimation alphaDes;
     private AlphaAnimation alphaInc;
-	
+    AlertDialog alertDialog2,alertDialog3;
+    AlertDialog.Builder alertDialogBuilder2,alertDialogBuilder3;
 	private static MediaPlayer mp = null;
 	final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
 	@Override
@@ -89,6 +92,7 @@ public class Game extends Activity{
 		super.onCreate(savedInstanceState);
 		musicGoOn = true;
 		setContentView(R.layout.dabble_game);
+		setTitle("Single Game");
 		Intent intent = getIntent();
 		int musicSt = Integer.parseInt(intent.getStringExtra("music_stuate"));
 		modeSt = Integer.parseInt(intent.getStringExtra("gameMode"));
@@ -147,7 +151,7 @@ public class Game extends Activity{
 		invisibleScoreText.addTextChangedListener(new ScoreTextListener());
 		scoreText.setText("Score:0");
 		cdText.setText("00:00");
-		resultString = (randomWords(6)+"hello"+randomWords(4)+randomWords(3));
+		resultString = (randomWords(6)+randomWords(5)+randomWords(4)+randomWords(3));
 		System.out.println("String: "+resultString);
 		ArrayList<String> sList = new ArrayList<String>();
 		for (int i =0; i<18; i++) {
@@ -254,8 +258,19 @@ public class Game extends Activity{
         	ssrButton.setOnClickListener(new SSRListener());
         } else {
         	ssrButton.setEnabled(false);
-            Toast.makeText(this,"Oops - Speech Recognition Not Supported!", 
-                                                 Toast.LENGTH_LONG).show();
+        	alertDialogBuilder3=new AlertDialog.Builder(Game.this);  
+			
+			alertDialogBuilder3.setTitle("Speech Recognition Not Supported.")
+
+            .setMessage("To enable Speech Recognition, please make sure that Google Voice Search has been installed on your phone.")
+
+            .setPositiveButton("Continue",   new DialogInterface.OnClickListener(){
+                 public void onClick(DialogInterface dialoginterface, int i){
+                	 setResult(RESULT_OK);
+                	
+                 }
+         });
+			alertDialog3 = alertDialogBuilder3.show(); 
             }     
         
         //ssrButton.setOnClickListener(new SSRListener());

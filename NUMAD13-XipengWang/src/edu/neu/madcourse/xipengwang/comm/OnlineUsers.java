@@ -136,6 +136,8 @@ public class OnlineUsers extends Activity{
 		// TODO Auto-generated method stub
 		super.onPause();
 		checkNetWorkTask.cancel(true);
+		pullMeAfterCancelTask.cancel(true);
+		pullOthersTask.cancel(true);
 		if(!musicGoOn)
             BGMManager.pause();
 		System.out.println("-----------------------Pause--------------------------");
@@ -194,14 +196,15 @@ public class OnlineUsers extends Activity{
 					
 					alertDialogBuilder2.setTitle("Opps, cannot conncet to server.")
 
-		            .setMessage("Please check your network and then restart the application.")
+		            .setMessage("Please check your network.")
 
-		            .setPositiveButton("OK",   new DialogInterface.OnClickListener(){
-		                 public void onClick(DialogInterface dialoginterface, int i){
-		                	 setResult(RESULT_OK);
-		                	 finish();
-		                 }
-		         });
+		                 .setPositiveButton("Quit",   new DialogInterface.OnClickListener(){
+	                 public void onClick(DialogInterface dialoginterface, int i){
+	                	 setResult(RESULT_OK);
+	                	 finish();
+	                	 
+	                 }
+	         });
 					alertDialog2 = alertDialogBuilder2.show(); 
 				}
 			}
@@ -954,7 +957,7 @@ public class OnlineUsers extends Activity{
 				protected void onPostExecute(String[] results) {
 					// TODO Auto-generated method stub
 					super.onPostExecute(results);
-					System.out.println("Tom's actuall status: "+results[0]);
+					//System.out.println("Tom's actuall status: "+results[0]);
 					//System.out.println("results[0].substring(0, 0) "+results[0].substring(0, 1));
 					if(!results[0].substring(0, 1).equals("#")){
 						if(results[0].substring(0, 1).equals("@")||results[0].substring(0, 1).equals("$")||results[0].substring(0, 1).equals("(")){

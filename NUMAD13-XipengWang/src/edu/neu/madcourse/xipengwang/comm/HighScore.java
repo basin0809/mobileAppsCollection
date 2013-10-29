@@ -57,7 +57,7 @@ public class HighScore extends Activity {
 protected void onPause() {
 	// TODO Auto-generated method stub
 	super.onPause();
-	checkNetWorkTask.cancel(true);
+	//checkNetWorkTask.cancel(true);
 	if(!musicGoOn)
         BGMManager.pause();
 }
@@ -67,8 +67,8 @@ protected void onPause() {
 protected void onResume() {
 	// TODO Auto-generated method stub
 	super.onResume();
-	checkNetWorkTask = new CheckNetWorkTask(this);
-	checkNetWorkTask.execute();
+	//checkNetWorkTask = new CheckNetWorkTask(this);
+	//checkNetWorkTask.execute();
 	if(musicGoOn2==true){
 		musicGoOn=false;
       BGMManager.start(this,R.raw.game);}

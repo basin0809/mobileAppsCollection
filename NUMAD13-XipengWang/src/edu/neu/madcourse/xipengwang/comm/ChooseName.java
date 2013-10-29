@@ -108,14 +108,21 @@ public class ChooseName extends Activity{
 				
 				alertDialogBuilder.setTitle("Opps, cannot conncet to server.")
 
-	            .setMessage("Please check your network and then restart the application.")
+	            .setMessage("Please check your network.")
 
-	            .setPositiveButton("OK",   new DialogInterface.OnClickListener(){
+	                 .setPositiveButton("Quit",   new DialogInterface.OnClickListener(){
 	                 public void onClick(DialogInterface dialoginterface, int i){
 	                	 setResult(RESULT_OK);
 	                	 finish();
+	                	 
 	                 }
-	         });
+	         })
+	          .setNegativeButton("Try Again",   new DialogInterface.OnClickListener(){
+                 public void onClick(DialogInterface dialoginterface, int i){
+                	 setResult(RESULT_CANCELED);
+                	 onResume();
+                 }
+         });
 				alertDialog = alertDialogBuilder.show(); 
 			}
 		}

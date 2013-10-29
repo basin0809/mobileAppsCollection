@@ -60,7 +60,7 @@
       	 android:layout_height="wrap_content"
       	 android:singleLine="false"
       	 android:layout_marginTop="10dp"
-      	 android:text="(3) Game Mode:"
+      	 android:text="(3) Single Game Mode:"
        	 android:layout_below="@+id/dabble_introcodeinfo_text"/>
    		<TextView 
    		 android:id="@+id/dabble_introhelpercontent_text"
@@ -70,14 +70,71 @@
       	 android:text="When you start a new game, you have two game modes can be choosed: Normal Mode and Challenge Mode. In Normal Mode, rules are just said in (1). In Challenge Mode, the times you swap the positions between letters are limited, to win the game, you need pay attention to both counting down time and left swap times."
       	 android:layout_marginTop="5dp"
        	 android:layout_below="@+id/dabble_introhelper_text"/>
+   		
+   		<TextView 
+   		 android:id="@+id/dabble_tpg_text1"
+      	 android:layout_width="match_parent"
+      	 android:layout_height="wrap_content"
+      	 android:singleLine="false"
+      	 android:layout_marginTop="10dp"
+      	 android:text="(4) Two Player Game:"
+       	 android:layout_below="@+id/dabble_introhelpercontent_text"/>
+   		
+   		<TextView 
+   		 android:id="@+id/dabble_tpg_text2"
+      	 android:layout_width="match_parent"
+      	 android:layout_height="wrap_content"
+      	 android:singleLine="false"
+      	 android:text="a.First enter your user name, and then press 'Search online opponents' button and this qpp will show you a list of online users. This list will be updated periodically in order to make sure you can always see the current avaiable. When you press one of the online players' names, it means you invite that player to play with you and that player will be notified on his/her phone. If he/she accepts your invitation, then both of you will start a new Dabble game."
+      	 android:layout_marginTop="5dp"
+       	 android:layout_below="@+id/dabble_tpg_text1"/>
+   		
+   		<TextView 
+   		 android:id="@+id/dabble_tpg_text3"
+      	 android:layout_width="match_parent"
+      	 android:layout_height="wrap_content"
+      	 android:singleLine="false"
+      	 android:text="b.Both players need to solve the same Dabble board within the same time limitation. Both players can see information about the moves another player is making (i.e. spell a word)when they are actively playing."
+      	 android:layout_marginTop="5dp"
+       	 android:layout_below="@+id/dabble_tpg_text2"/>
+   		
+   		<TextView 
+   		 android:id="@+id/dabble_tpg_text4"
+      	 android:layout_width="match_parent"
+      	 android:layout_height="wrap_content"
+      	 android:singleLine="false"
+      	 android:text="c.When you are not actively playing the game(i.e. press the home button or the phone is sleeping) and your opponent makes a move, you will receive a notification about that in the notification bar(with a notifying sound)."
+      	 android:layout_marginTop="5dp"
+       	 android:layout_below="@+id/dabble_tpg_text3"/>
+   		
+   		<TextView 
+   		 android:id="@+id/dabble_tpg_text5"
+      	 android:layout_width="match_parent"
+      	 android:layout_height="wrap_content"
+      	 android:singleLine="false"
+      	 android:layout_marginTop="10dp"
+      	 android:text="(4) Speech Recognizition"
+       	 android:layout_below="@+id/dabble_tpg_text4"/>
+   		
+   		<TextView 
+   		 android:id="@+id/dabble_tpg_text6"
+      	 android:layout_width="match_parent"
+      	 android:layout_height="wrap_content"
+      	 android:singleLine="false"
+      	 android:layout_marginTop="5dp"
+      	 android:text="Speech Recognizition uses audio input sensor. When user speaks a word, Speech Recognizition will record this word and matches it with the dictionary. Speech Recognizition is based on Google's voice search service."
+       	 android:layout_below="@+id/dabble_tpg_text5"/>
+   		
    		<Button 
    		 android:id="@+id/dabble_introback_button"
    		 android:layout_width="250dp"
       	 android:layout_height="wrap_content"
       	 android:layout_marginTop="15dp"
       	 android:text="Back to the menu"
-       	 android:layout_below="@+id/dabble_introhelpercontent_text"
+       	 android:layout_below="@+id/dabble_tpg_text6"
       	 android:layout_centerHorizontal="true"/>
+   		
+   	
    		</RelativeLayout>
 </ScrollView>
 

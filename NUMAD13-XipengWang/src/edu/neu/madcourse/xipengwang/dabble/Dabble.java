@@ -1,10 +1,6 @@
 package edu.neu.madcourse.xipengwang.dabble;
 
 
-import java.util.ArrayList;
-
-
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -12,20 +8,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import edu.neu.madcourse.xipengwang.MainActivity;
 import edu.neu.madcourse.xipengwang.R;
+import edu.neu.madcourse.xipengwang.comm.Alert;
 import edu.neu.madcourse.xipengwang.comm.AsyncPullService;
 import edu.neu.madcourse.xipengwang.comm.ChooseName;
 import edu.neu.madcourse.xipengwang.comm.HighScore;
 import edu.neu.madcourse.xipengwang.comm.HighScoreRecord;
 import edu.neu.madcourse.xipengwang.comm.OppNameMyName;
-import edu.neu.madcourse.xipengwang.comm.Regist;
 import edu.neu.mhealth.api.KeyValueAPI;
 
 public class Dabble extends Activity{
@@ -45,7 +39,12 @@ public class Dabble extends Activity{
     private AlphaAnimation alphaInc;   
     QuitTask quitTask;
     QuitTask2 quitTask2;
-	
+    
+    
+    AlertDialog alertDialog;
+    AlertDialog.Builder alertDialogBuilder;
+    CheckNetWorkTask checkNetWorkTask;
+    CheckScoreTask checkScoreTask;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -54,6 +53,7 @@ public class Dabble extends Activity{
 		 
 		musicGoOn=true;
 		setContentView(R.layout.activity_dabble);
+		setTitle("Two Player Dabble");
 		alphaDes = new AlphaAnimation(1.0f, 0.0f);
         alphaInc = new AlphaAnimation(0.0f, 1.0f);
         alphaDes.setDuration(100);
@@ -65,7 +65,7 @@ public class Dabble extends Activity{
 		progressBar.startAnimation(alphaDes);
 	
 		
-		TwiceActiveCheck.musicTwicePressed.add(0);
+		
 		
 		gameButton = (Button)findViewById(R.id.game_button);
 		TPGamebutton = (Button)findViewById(R.id.onLineGame_button);
@@ -88,8 +88,9 @@ public class Dabble extends Activity{
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-			
-				CheckScoreTask checkScoreTask = new CheckScoreTask(Dabble.this);
+				//checkNetWorkTask = new CheckNetWorkTask(Dabble.this);
+				
+				checkScoreTask = new CheckScoreTask(Dabble.this);
 				checkScoreTask.execute();}
 				
 			
@@ -137,7 +138,7 @@ public class Dabble extends Activity{
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		
+		checkNetWorkTask.cancel(true);
         if(!musicGoOn)
             BGMManager.pause();
 	}
@@ -146,6 +147,8 @@ public class Dabble extends Activity{
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
+		checkNetWorkTask = new CheckNetWorkTask(Dabble.this);
+		checkNetWorkTask.execute();
 		if(TwiceActiveCheck.musicTwicePressed.get(TwiceActiveCheck.musicTwicePressed.size()-1)==1){
 			
 		}
@@ -234,6 +237,67 @@ public class Dabble extends Activity{
 		
 	}
 	
+	class CheckNetWorkTask extends AsyncTask<Void, Integer, Boolean>{
+		private Context context;  
+		
+		CheckNetWorkTask(Context context) {  
+	          this.context = context;  
+	          //progressBar.setBackgroundColor(getResources().getColor(R.color.black));  
+	          
+	      }  
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+ 
+			while(KeyValueAPI.isServerAvailable()==true){
+				System.out.println("!!Check NetWork: true");
+			 try {  
+	              Thread.sleep(1000);  
+	          } 
+			 catch (InterruptedException e) { 
+	          	//KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, OppNameMyName.myFakeName);
+	          	return false;
+	          } 
+			 }
+			System.out.println("!!Check NetWork: false");
+			return false;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			if(result==false){
+				//Intent intent = new Intent();
+				//intent.setClass(Dabble.this, Alert.class);
+				//startActivity(intent);
+				alertDialogBuilder=new AlertDialog.Builder(Dabble.this);  
+				
+				alertDialogBuilder.setTitle("Opps, cannot conncet to server.")
+
+	            .setMessage("Please check your network.")
+
+	            .setPositiveButton("Quit",   new DialogInterface.OnClickListener(){
+	                 public void onClick(DialogInterface dialoginterface, int i){
+	                	 setResult(RESULT_OK);
+	                	 finish();
+	                	 
+	                 }
+	         })
+	          .setNegativeButton("Try Again",   new DialogInterface.OnClickListener(){
+                 public void onClick(DialogInterface dialoginterface, int i){
+                	 setResult(RESULT_CANCELED);
+                	 onResume();
+                 }
+         });
+				alertDialog = alertDialogBuilder.show(); 
+			}
+		}
+		
+		
+		
+	}
+	    
 
 class CheckScoreTask extends AsyncTask<String, Integer, String[]> {  
     	

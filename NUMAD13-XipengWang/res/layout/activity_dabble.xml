@@ -8,7 +8,7 @@
        android:layout_width="wrap_content"
        android:text="D A B B L E"
        android:layout_centerHorizontal="true"
-       android:textSize="50sp"/>
+       android:textSize="42sp"/>
     
  <Button
         android:id="@+id/game_button"

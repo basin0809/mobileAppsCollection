@@ -106,8 +106,8 @@ public class CommGame extends Activity{
 	ProgressDialog pdialog; 
 	private String masterOrGuest;
 	
-    AlertDialog alertDialog2;
-    AlertDialog.Builder alertDialogBuilder2;
+    AlertDialog alertDialog2,alertDialog3;
+    AlertDialog.Builder alertDialogBuilder2,alertDialogBuilder3;
     
     CheckNetWorkTask checkNetWorkTask;
     
@@ -138,6 +138,7 @@ public class CommGame extends Activity{
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.comm_game);
+		setTitle("Two player game");
 		Intent intent = getIntent();
 		int musicSt = Integer.parseInt(intent.getStringExtra("music_stuate"));
 		if(musicSt==1){
@@ -363,8 +364,20 @@ public class CommGame extends Activity{
 	        	csrButton.setOnClickListener(new CSRListener());
 	        } else {
 	        	csrButton.setEnabled(false);
-	            Toast.makeText(this,"Oops - Speech Recognition Not Supported!", 
-	                                                 Toast.LENGTH_LONG).show();
+				alertDialogBuilder3=new AlertDialog.Builder(CommGame.this);  
+				
+				alertDialogBuilder3.setTitle("Speech Recognition Not Supported.")
+
+	            .setMessage("To enable Speech Recognition, please make sure that Google Voice Search has been installed on your phone.")
+
+	            .setPositiveButton("Continue",   new DialogInterface.OnClickListener(){
+	                 public void onClick(DialogInterface dialoginterface, int i){
+	                	 setResult(RESULT_OK);
+	                	
+	                 }
+	         });
+				alertDialog3 = alertDialogBuilder3.show(); 
+	            
 	            } 
 		//csrButton.setOnClickListener(new CSRListener());
         pauseButton.setOnClickListener(new PauseListener());
@@ -2132,12 +2145,22 @@ public class CommGame extends Activity{
 
 	            .setMessage("Please check your network and then restart the application.")
 
-	            .setPositiveButton("OK",   new DialogInterface.OnClickListener(){
+	                 .setPositiveButton("Quit",   new DialogInterface.OnClickListener(){
 	                 public void onClick(DialogInterface dialoginterface, int i){
 	                	 setResult(RESULT_OK);
+	                	 mc.cancel();
 	                	 finish();
+	                	 
 	                 }
-	         });
+	         })
+	          .setNegativeButton("Try Again",   new DialogInterface.OnClickListener(){
+                 public void onClick(DialogInterface dialoginterface, int i){
+                	 setResult(RESULT_CANCELED);
+                	 mc.cancel();
+                	 realTimePullTask.cancel(true);
+                	 onResume();
+                 }
+         });
 				alertDialog2 = alertDialogBuilder2.show(); 
 			}
 		}
@@ -3922,9 +3945,12 @@ class RealTimePullTask extends AsyncTask<Void, Integer, Void> {
     	//String oppQuitStatuString =KeyValueAPI.get("basin", "basin576095", oppName);
     	KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "("+OppNameMyName.oppName);
     	//KeyValueAPI.put("basin", "basin576095", OppNameMyName.myName, "("+OppNameMyName.oppName);
+    	
     	while(KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName).equals("#AFK")==false && 
     			KeyValueAPI.get("basin", "basin576095", OppNameMyName.oppName).equals("#QUIT2")==false&& 
     				KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName).equals("#QUIT2")==false){
+    		System.out.println("My Status: "+KeyValueAPI.get("basin", "basin576095", OppNameMyName.myName));
+    		System.out.println("Opp's Status: "+KeyValueAPI.get("basin", "basin576095", "Tom"));
     		subRealTimePullTask = new SubRealTimePullTask(CommGame.this);
     		subRealTimePullTask.execute();
     		try {
@@ -4009,7 +4035,7 @@ class RealTimePullTask extends AsyncTask<Void, Integer, Void> {
 								oppMsg.setText(OppNameMyName.oppFakeName+"'s movement:"+"\n"+OppNameMyName.oppFakeName+" loses the game!");
 								System.out.println("opponent's movement: "+result);
 							}else{
-								if(result.equals("Error: IOException")){
+								if(result.equals("ERROR: IOException")){
 									oppMsg.setText("Cannot access to server. Please check your NetWork.");
 								}
 								else{

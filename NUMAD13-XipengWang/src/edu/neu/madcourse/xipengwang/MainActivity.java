@@ -10,6 +10,7 @@ import android.widget.Button;
 import edu.neu.madcourse.xipengwang.comm.OppNameMyName;
 import edu.neu.madcourse.xipengwang.comm.Regist;
 import edu.neu.madcourse.xipengwang.dabble.Dabble;
+import edu.neu.madcourse.xipengwang.dabble.TwiceActiveCheck;
 import edu.neu.madcourse.xipengwang.dict.Dictionary;
 import edu.neu.madcourse.xipengwang.sudoku.Sudoku;
 import edu.neu.mhealth.api.KeyValueAPI;
@@ -33,8 +34,8 @@ public class MainActivity extends Activity {
 		
 		setTitle("Xipeng Wang");
 		
-	//PhoneCheckAPI.doAuthorization(this);
-
+		PhoneCheckAPI.doAuthorization(this);
+		TwiceActiveCheck.musicTwicePressed.add(0);
 		aboutButton = (Button)findViewById(R.id.about_button);
 		sudokuButton = (Button)findViewById(R.id.sudoku_button);
 		errorButton = (Button)findViewById(R.id.error_button);
@@ -53,14 +54,14 @@ public class MainActivity extends Activity {
 		
 		quitButton.setOnClickListener(new ExitButtonListener());
 		//System.out.println("!!! "+KeyValueAPI.get("basin", "basin576095", "Jim"));
-		KeyValueAPI.clearKey("basin", "basin576095", "Jim"+"@HS");
-		KeyValueAPI.clearKey("basin", "basin576095", "Tom"+"@HS");
-		KeyValueAPI.clearKey("basin", "basin576095", "Mary"+"@HS");
-		KeyValueAPI.clearKey("basin", "basin576095", "Fred"+"@HS");
-		KeyValueAPI.put("basin", "basin576095", "Jim","#QUIT");
-		KeyValueAPI.put("basin", "basin576095", "Tom","#QUIT");
-		KeyValueAPI.put("basin", "basin576095", "Mary","#QUIT");
-		KeyValueAPI.put("basin", "basin576095", "Fred","#QUIT");
+		//KeyValueAPI.clearKey("basin", "basin576095", "Jim"+"@HS");
+		//KeyValueAPI.clearKey("basin", "basin576095", "Tom"+"@HS");
+		//KeyValueAPI.clearKey("basin", "basin576095", "Mary"+"@HS");
+		//KeyValueAPI.clearKey("basin", "basin576095", "Fred"+"@HS");
+		System.out.println("1"+KeyValueAPI.get("basin", "basin576095", "Jim"));
+		System.out.println("2"+KeyValueAPI.get("basin", "basin576095", "Tom"));
+		System.out.println("3"+KeyValueAPI.get("basin", "basin576095", "Mary"));
+		System.out.println("4"+KeyValueAPI.get("basin", "basin576095", "Fred"));
 	}
 
 
@@ -130,7 +131,7 @@ public class MainActivity extends Activity {
 		public void onClick(View arg0) {
 			// TODO Auto-generated method stub
 		 Intent intent =new Intent();
-		 intent.setClass(MainActivity.this, Regist.class);
+		 intent.setClass(MainActivity.this, Dabble.class);
 		 startActivity(intent);
 		}
 		
