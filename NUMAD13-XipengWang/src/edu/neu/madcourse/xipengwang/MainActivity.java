@@ -27,6 +27,7 @@ public class MainActivity extends Activity {
 	private Button dabbleButton;
 	private Button commButton;
 	private Button twoPDabbleButton;
+	private Button finalProject;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -43,6 +44,7 @@ public class MainActivity extends Activity {
 		dabbleButton = (Button)findViewById(R.id.dabble_button);
 		commButton = (Button)findViewById(R.id.comm_button);
 		twoPDabbleButton = (Button)findViewById(R.id.twoPDabble_button);
+		finalProject = (Button)findViewById(R.id.finalProject_button);
 		quitButton = (Button)findViewById(R.id.exit_button);
 		sudokuButton.setOnClickListener(new SudokuButtonListener());
 		aboutButton.setOnClickListener(new AboutButtonListener());
@@ -51,7 +53,7 @@ public class MainActivity extends Activity {
 		dabbleButton.setOnClickListener(new DabbleButtonListener());
 		twoPDabbleButton.setOnClickListener(new DabbleButtonListener());
 		commButton.setOnClickListener(new CommButtonListener());
-		
+		finalProject.setOnClickListener(new FinalProListener());
 		quitButton.setOnClickListener(new ExitButtonListener());
 		//System.out.println("!!! "+KeyValueAPI.get("basin", "basin576095", "Jim"));
 		//KeyValueAPI.clearKey("basin", "basin576095", "Jim"+"@HS");
@@ -70,6 +72,18 @@ public class MainActivity extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
+	}
+	
+	class FinalProListener implements OnClickListener{
+
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			 Intent intent =new Intent();
+			 intent.setClass(MainActivity.this, edu.neu.madcourse.xipengwang.finalProject.MainActivity.class);
+			 startActivity(intent);
+		}
+		
 	}
 	
 	class SudokuButtonListener implements OnClickListener{
