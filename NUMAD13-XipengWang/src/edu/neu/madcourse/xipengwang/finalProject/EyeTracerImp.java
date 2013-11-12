@@ -287,20 +287,17 @@ public class EyeTracerImp implements EyeTracer{
 		Imgproc.threshold(source, tempResult2, pupilIndex*binSize, 255, Imgproc.THRESH_BINARY_INV);
 		
 		/*****Detect Iris Circles*****/
-		Imgproc.morphologyEx(tempResult1, tempResult1, Imgproc.MORPH_GRADIENT, morKernel1);
-		Imgproc.HoughCircles(tempResult1, circles2, Imgproc.CV_HOUGH_GRADIENT, 1,dist, cannyUpperThreshold, accumulator, minRadius, maxRadius);		
+		//Imgproc.morphologyEx(tempResult1, tempResult1, Imgproc.MORPH_GRADIENT, morKernel1);
+		//Imgproc.HoughCircles(tempResult1, circles2, Imgproc.CV_HOUGH_GRADIENT, 1,dist, cannyUpperThreshold, accumulator, minRadius, maxRadius);		
 		/*****Detect Pupil Circles*****/
 		setMinRadius(25);
 		Imgproc.morphologyEx(tempResult2, tempResult2, Imgproc.MORPH_CROSS, morKernel1);
 		Imgproc.morphologyEx(tempResult2, tempResult2, Imgproc.MORPH_GRADIENT, morKernel1);
 		Imgproc.HoughCircles(tempResult2, circles3, Imgproc.CV_HOUGH_GRADIENT, 1,dist, cannyUpperThreshold, accumulator, minRadius, maxRadius);
 		Log.d("hough", "circles:"+circles.rows());
-		if(circles2.rows()!=0){
-			markCircleIris(source ,0,true);}
-			else {
-				markCircle(source ,0,true);
-			}
-		markCirclePupil(source,0,true);
+		
+		markCircle(source ,0,false);			
+		markCirclePupil(source,0,false);
 		return source;
 	}
 	private static Mat buildMatFromCircle(Mat source,int index) {

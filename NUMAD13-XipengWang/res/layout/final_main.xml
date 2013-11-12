@@ -4,16 +4,11 @@
     android:layout_height="match_parent" >
         
     
-    <org.opencv.android.JavaCameraView
+    <edu.neu.madcourse.xipengwang.finalProject.MyJavaCameraView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/camera_preview" />
-    <ImageView
-             android:id="@+id/capture"
-             android:layout_width="fill_parent"
-             android:layout_height="wrap_content"
-             android:layout_toRightOf="@+id/vedio_start_button"/>
-
+   
          <ImageView
              android:id="@+id/grid1"
              android:layout_width="wrap_content"

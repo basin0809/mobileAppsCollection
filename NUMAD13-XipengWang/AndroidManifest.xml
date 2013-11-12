@@ -165,7 +165,12 @@
               android:screenOrientation="landscape"
                   android:configChanges="keyboardHidden|orientation"> 
 	    </activity>
-       
+      
+       <activity android:name="edu.neu.madcourse.xipengwang.finalProject.ShowPupilDetecionResults" 
+			  android:label="Pupil Detection Result"
+              android:screenOrientation="portrait"
+              > 
+	    </activity>
          <service android:name="edu.neu.madcourse.xipengwang.comm.AsyncPullService" />
         
     </application>

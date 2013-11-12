@@ -478,7 +478,7 @@ public class OnlineUsers extends Activity{
 						
 	                	//pullOthersTask.cancel(true);
 						
-						alertDialogBuilder=new AlertDialog.Builder(OnlineUsers.this);  
+						alertDialogBuilder=new AlertDialog.Builder(OnlineUsers.this);
 						
 						alertDialogBuilder.setTitle(buttonN1.getText().toString()+"'s invitation")
 
