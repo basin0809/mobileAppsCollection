@@ -13,6 +13,7 @@ import org.opencv.core.Mat;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.hardware.Camera;
@@ -36,6 +37,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 import edu.neu.madcourse.xipengwang.R;
+import edu.neu.madcourse.xipengwang.comm.HighScore;
+import edu.neu.madcourse.xipengwang.dabble.Dabble;
+import edu.neu.madcourse.xipengwang.dabble.TwiceActiveCheck;
 
 
 
@@ -59,6 +63,7 @@ public class MainActivity extends Activity{
     private ArrayList<Bitmap> pupilImgSet = new ArrayList<Bitmap>();
     private ImageView capture;
     VideoRecordTask videoRecordTask =new VideoRecordTask();
+    private String path;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -174,7 +179,8 @@ public class MainActivity extends Activity{
             try {
                             File newFile =File.createTempFile("videocapture", ".3gp", Environment.getExternalStorageDirectory());
                             mrec.setOutputFile(newFile.getAbsolutePath());
-                            System.out.println(newFile.getName());
+                            path = newFile.getAbsolutePath();
+                            System.out.println(path);
                     } catch (IOException e) {
                             Log.v("mr","Couldn't create file");
                             e.printStackTrace();
@@ -184,7 +190,8 @@ public class MainActivity extends Activity{
             try {
                             File newFile = File.createTempFile("videocapture", ".mp4", Environment.getExternalStorageDirectory());
                             mrec.setOutputFile(newFile.getAbsolutePath());
-                            System.out.println(newFile.getName());
+                            path = newFile.getAbsolutePath();
+                            System.out.println(path);
                     } catch (IOException e) {
                             Log.v("mr","Couldn't create file");
                             e.printStackTrace();
@@ -194,7 +201,8 @@ public class MainActivity extends Activity{
             try {
                             File newFile = File.createTempFile("videocapture", ".mp4", Environment.getExternalStorageDirectory());
                             mrec.setOutputFile(newFile.getAbsolutePath());
-                            System.out.println(newFile.getName());
+                            path = newFile.getAbsolutePath();
+                            System.out.println(path);
                     } catch (IOException e) {
                             Log.v("mr","Couldn't create file");
                             e.printStackTrace();
@@ -209,10 +217,9 @@ public class MainActivity extends Activity{
     }
 
     protected void stopRecording() {
+    	mCamera.setPreviewCallback(null);
         mrec.stop();
-        mrec.release();
-        mCamera.setPreviewCallback(null);
-        mCamera.release();
+        mrec.release();          
         
     }
 
@@ -247,27 +254,7 @@ public class MainActivity extends Activity{
     		}
     		TimerTask myTimerTask= new TimerTask(){
     			private int counter = 0;
-    			/*@Override		 
-    		    public void run() {
-    		        mHandler.post(new Runnable() {
-    		            public void run() {
-    		            	mCaptureFrame=true;
-    		            	System.out.println("run"+counter);
-    		            	 //mCamera.setPreviewCallback(previewCallback);
-    		        		 //mCamera.takePicture(null, raw, postview, jpeg);
-    		       		  //mCamera.startPreview();
-    		            }
-    		        });
-    		        if(++counter == 11) {
-    		        	System.out.println("run finish");
-    		        	//mrec.stop();
-    		            //mrec.release();
-    		           // mrec = null;
-    		        	videoRecordTask.cancel(true);
-    		        	stopRecording();
-    		        	myTimer.cancel();
-    		        }
-    		    }*/
+
     		@Override		 
     		    public void run() {
     		        mHandler.post(new Runnable() {
@@ -276,9 +263,13 @@ public class MainActivity extends Activity{
     	    		        	
     	    		        	mrec.stop();
     	    		            mrec.release();
-    	    		            mrec = null;
+    	    		            //mrec = null;
     	    		            System.out.println("run finish");
     	    		        	myTimer.cancel();
+    	    		        	Intent intent = new Intent(MainActivity.this, VideoPlayer.class);
+    	    		        	intent.putExtra("path", path);
+    	    		        	startActivity(intent);
+    	    		        	finish();
     	    		        }
     	    		        else{
     	    		        	if(counter==3){

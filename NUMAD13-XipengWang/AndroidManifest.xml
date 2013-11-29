@@ -169,7 +169,13 @@
 			  android:label="Pupil Detection Result"
               android:screenOrientation="portrait"
               > 
-	    </activity>
+	   </activity>
+	   
+       <activity
+            android:name="edu.neu.madcourse.xipengwang.finalProject.VideoPlayer"
+            android:label="@string/app_name" >
+            
+        </activity>
          <service android:name="edu.neu.madcourse.xipengwang.comm.AsyncPullService" />
         
     </application>
