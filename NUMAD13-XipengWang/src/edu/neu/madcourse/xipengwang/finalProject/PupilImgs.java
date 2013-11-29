@@ -6,4 +6,5 @@ import org.opencv.core.Mat;
 
 public class PupilImgs {
 	public static ArrayList<Mat> pupilImgSet = new ArrayList<Mat>();
+	public static Mat[] processedImgs = new Mat[6];
 }

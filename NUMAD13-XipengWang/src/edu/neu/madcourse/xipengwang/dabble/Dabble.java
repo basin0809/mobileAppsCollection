@@ -138,7 +138,7 @@ public class Dabble extends Activity{
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		checkNetWorkTask.cancel(true);
+		//checkNetWorkTask.cancel(true);
         if(!musicGoOn)
             BGMManager.pause();
 	}
@@ -147,8 +147,8 @@ public class Dabble extends Activity{
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		checkNetWorkTask = new CheckNetWorkTask(Dabble.this);
-		checkNetWorkTask.execute();
+		//checkNetWorkTask = new CheckNetWorkTask(Dabble.this);
+		//checkNetWorkTask.execute();
 		if(TwiceActiveCheck.musicTwicePressed.get(TwiceActiveCheck.musicTwicePressed.size()-1)==1){
 			
 		}

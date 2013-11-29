@@ -7,11 +7,13 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfFloat;
 import org.opencv.core.MatOfInt;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
-import android.R.integer;
 import android.util.Log;
 
 public class EyeTracerImp implements EyeTracer{
@@ -46,20 +48,32 @@ public class EyeTracerImp implements EyeTracer{
 			int centerX = (int)Math.round(targetCircle[0]);
 			int centerY = (int)Math.round(targetCircle[1]);
 			int radius = (int)Math.round(targetCircle[2]);
-			for(double theata = 0; theata < Math.PI*2; theata+=Math.PI/180){
-				int x = Math.max(Math.min((int)(centerX + radius * Math.cos(theata)+0.5),original.cols()-1),0);
-				int y = Math.max(Math.min((int)(centerY + radius * Math.sin(theata)+0.5),original.rows()-1),0);
-				original.put(y, x, value);
-				original.put(y+1, x, value);
-				original.put(y, x+1, value);
-				original.put(y-1, x, value);
-				original.put(y, x-1, value);
-				
-			}
+			markCircle(original,radius, centerX, centerY,value);
+
 			
 			
 		}
 	}
+	
+
+
+	private static void markCircle(Mat original, int radius, int centerX, int centerY,
+			int value) {
+		for(double theata = 0; theata < Math.PI*2; theata+=Math.PI/180){
+			int x = Math.max(Math.min((int)(centerX + radius * Math.cos(theata)+0.5),original.cols()-2),1);
+			int y = Math.max(Math.min((int)(centerY + radius * Math.sin(theata)+0.5),original.rows()-2),1);
+			original.put(y, x, value);
+			original.put(y+1, x, value);
+			original.put(y, x+1, value);
+			original.put(y-1, x, value);
+			original.put(y, x-1, value);
+			
+		}
+		
+	}
+
+	
+	
 	
 	public static void markCircleIris(Mat original,int index, boolean black){
 		if(circles2.rows()==0){
@@ -166,9 +180,9 @@ public class EyeTracerImp implements EyeTracer{
 
 	
 
-	public static Mat findEyes1(Mat sourceMat) {
-		Mat processedMat = new Mat();
-		return preprocessEye(sourceMat,processedMat);
+	public static void findEyes1(Mat sourceMat) {
+	
+		preprocessEye(sourceMat);
 		
 		/*
 		Imgproc.HoughCircles(processedMat, circles, Imgproc.CV_HOUGH_GRADIENT, 1,dist, cannyUpperThreshold, accumulator, minRadius, maxRadius);
@@ -179,39 +193,19 @@ public class EyeTracerImp implements EyeTracer{
 		}*/
 	}
 //	Center point of image must be inside the pupil
-	private static Mat preprocessEye(Mat source, Mat result) {
+	private static void preprocessEye(Mat source) {
 		Mat resMat = new Mat();
 		Mat tempResult1 = new Mat();
 		Mat tempResult2 = new Mat();
 		
 		Imgproc.GaussianBlur(source, resMat, new Size(11,11), 0);
+		Log.d("OpenCV", "Imgproc.GaussianBlur(source, resMat, new Size(11,11), 0)");
 		resMat.copyTo(tempResult2);
-    	//Imgproc.resize(source, tempResult4, new Size(Math.round(source.cols()/2),Math.round(source.rows()/2)));
-    	//Imgproc.GaussianBlur(tempResult4, tempResult4, new Size(11,11), 0);
-    	//Imgproc.resize(tempResult4, tempResult4, new org.opencv.core.Size (source.cols(),source.rows()));
+    
     	Mat morKernel1 = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(17,17));
-    	//Mat morKernel2 = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(17,17));
-    	//Mat morKernel3 = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(17,17));
-    	//Imgproc.morphologyEx(tempResult2, tempResult3, Imgproc.MORPH_ERODE, morKernel1);
-    	//Imgproc.morphologyEx(tempResult4, tempResult5, Imgproc.MORPH_ERODE, morKernel2);
-    	//Imgproc.morphologyEx(source, tempResult1, Imgproc.MORPH_ERODE, morKernel3);
-    	Imgproc.morphologyEx(resMat, resMat, Imgproc.MORPH_ERODE, morKernel1);
-    	//Imgproc.morphologyEx(resMat, resMat, Imgproc.MORPH_DILATE, morKernel1);
-    	//Imgproc.morphologyEx(resMat, resMat, Imgproc.MORPH_CLOSE, morKernel1);
-    	
-		//resMat.copyTo(tempResult4);
-		int[] darkestPosition = roughLocalizePupil(resMat,1);
-		//int[] centerPosition = new int[2];
-		//centerPosition[0] = source.cols()/2;
-		//centerPosition[1] = source.rows()/2;
+    
+    	Imgproc.morphologyEx(resMat, resMat, Imgproc.MORPH_ERODE, morKernel1);	
 		resMat.copyTo(tempResult1);
-		markPosition(tempResult1,darkestPosition,false);
-		//markPosition(tempResult1,centerPosition,true);
-		int frameSize = 1;
-		double threshold1 = getSumOfGray(resMat, darkestPosition[0], darkestPosition[1], frameSize)/(frameSize*frameSize);
-		double threshold2 = getSumOfGray(resMat, darkestPosition[2], darkestPosition[3], frameSize)/(frameSize*frameSize);
-		//Imgproc.threshold(resMat, resMat, threshold1/2+threshold2/2, 255, Imgproc.THRESH_BINARY_INV);
-		
 		
     	setMinRadius(50);
     	setMaxRadius(500);
@@ -219,19 +213,12 @@ public class EyeTracerImp implements EyeTracer{
     	setDist(source.rows()/8);
     	setCannyUpperThreshold(20);
 		Imgproc.morphologyEx(resMat, resMat, Imgproc.MORPH_GRADIENT, morKernel1);
-		//Imgproc.morphologyEx(resMat, resMat, Imgproc.MORPH_BLACKHAT, morKernel1);
-    	
-    	//Imgproc.calcHist(resMat, 1, null, hist, 10, ranges);
-    	//Imgproc.Canny(resMat, resMat, (threshold2-threshold1)*0.2, (threshold2-threshold1)*0.6);
-		          Imgproc.HoughCircles(resMat, circles, Imgproc.CV_HOUGH_GRADIENT, 1,dist, cannyUpperThreshold, accumulator, minRadius, maxRadius);
-		//markPosition(tempResult3,darkestPosition,false);
-		//markPosition(tempResult3,centerPosition,false);
+		Log.d("OpenCV", "Imgproc.morphologyEx(resMat, resMat, Imgproc.MORPH_GRADIENT, morKernel1);");
+		
+		Imgproc.HoughCircles(resMat, circles, Imgproc.CV_HOUGH_GRADIENT, 1,dist, cannyUpperThreshold, accumulator, minRadius, maxRadius);
+		Log.d("OpenCV", "Imgproc.HoughCircles(resMat, circles, Imgproc.CV_HOUGH_GRADIENT, 1,dist, cannyUpperThreshold, accumulator, minRadius, maxRadius);");
+		
 		Log.d("hough", "circles:"+circles.rows());
-		//resMat.copyTo(tempResult3);
-		//source.copyTo(tempResult5);
-		//markPosition(tempResult5,darkestPosition,false);
-		//markCircle(tempResult3,0,true);
-		//markCircle(tempResult5,0,false);
 		
 		Mat hist = new Mat();
 		List<Mat> sourceList = new ArrayList<Mat>();
@@ -239,6 +226,8 @@ public class EyeTracerImp implements EyeTracer{
 		//mask.copyTo(tempResult4);
 		sourceList.add(source);
 		Imgproc.calcHist(sourceList, new MatOfInt(0), mask, hist, new MatOfInt(50), new MatOfFloat(0.0F,255.0F));
+		Log.d("OpenCV", "Imgproc.calcHist(sourceList, new MatOfInt(0), mask, hist, new MatOfInt(50), new MatOfFloat(0.0F,255.0F));");
+		
 		double binSize = 255.0/50.0;
 		
 		int pupilIndex =9;
@@ -264,10 +253,41 @@ public class EyeTracerImp implements EyeTracer{
 		irisPercent = irisCount/histCount;
 		pupilPercent = irisPercent/10+0.08;
 		Log.d("HIST","IRIS PERCENT = "+irisCount/histCount+" index = "+irisIndex);
+		
 		//Log.d("HIST","IRIS PERCENT = "+irisCount/histCount);
 		Imgproc.threshold(source, tempResult1, irisIndex*binSize, 255, Imgproc.THRESH_BINARY_INV);
-		tempResult1.copyTo(mask);
-		Imgproc.calcHist(sourceList, new MatOfInt(0), mask, hist, new MatOfInt(50), new MatOfFloat(0.0F,255.0F));
+		Log.d("OpenCV","Imgproc.threshold(source, tempResult1, irisIndex*binSize, 255, Imgproc.THRESH_BINARY_INV);");
+		//************************************************************************************************
+				//Find the circle enclosing iris
+
+				List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+				Imgproc.findContours(tempResult1, contours, new Mat(), Imgproc.RETR_EXTERNAL , Imgproc.CHAIN_APPROX_NONE);
+				Log.d("OpenCV","Imgproc.findContours(tempResult1, contours, new Mat(), Imgproc.RETR_EXTERNAL , Imgproc.CHAIN_APPROX_NONE);");
+				Point center = new Point();
+				float[] radius = new float[]{2.2f};
+				MatOfPoint2f contour2f = new MatOfPoint2f();
+				double maxIrisArea=0;
+				double contourIrisArea=0;
+				int maxContourIrisIndex=0;
+				for (int i = 0; i < contours.size();i++) {
+					contourIrisArea = Imgproc.contourArea(contours.get(i));
+					if(contourIrisArea>=maxIrisArea){
+						maxContourIrisIndex=i;
+						maxIrisArea=contourIrisArea;
+					}
+					
+				}
+				//Imgproc.drawContours(tempResult5, contours, maxContourIrisIndex, new Scalar(255,255,255));
+				contours.get(maxContourIrisIndex).convertTo(contour2f, CvType.CV_32F);
+				Imgproc.minEnclosingCircle(contour2f, center, radius);
+				Log.d("OpenCV","Imgproc.minEnclosingCircle(contour2f, center, radius);");
+				Log.d("OpenCV","Imgproc.minEnclosingCircle(contour2f, center, radius); "+center+" "+radius[0]);
+				//source.copyTo(tempResult1);
+				markCircle(source, (int)radius[0], (int)center.x, (int)center.y, 0);
+				Log.d("OpenCV","markCircle(source, (int)radius[0], (int)center.x, (int)center.y, 0);");
+		/***************************************************************************************************/
+		Imgproc.calcHist(sourceList, new MatOfInt(0), tempResult1, hist, new MatOfInt(50), new MatOfFloat(0.0F,255.0F));
+		Log.d("OpenCV","Imgproc.calcHist(sourceList, new MatOfInt(0), tempResult1, hist, new MatOfInt(50), new MatOfFloat(0.0F,255.0F));");
 		
 		histCount=0;
 		for(int i = 0; i < hist.rows(); i++){
@@ -285,20 +305,43 @@ public class EyeTracerImp implements EyeTracer{
 		
 		//Imgproc.threshold(source, tempResult1, irisIndex*binSize, 255, Imgproc.THRESH_BINARY_INV);
 		Imgproc.threshold(source, tempResult2, pupilIndex*binSize, 255, Imgproc.THRESH_BINARY_INV);
-		
+		Log.d("OpenCV","Imgproc.threshold(source, tempResult2, pupilIndex*binSize, 255, Imgproc.THRESH_BINARY_INV);");
 		/*****Detect Iris Circles*****/
 		//Imgproc.morphologyEx(tempResult1, tempResult1, Imgproc.MORPH_GRADIENT, morKernel1);
 		//Imgproc.HoughCircles(tempResult1, circles2, Imgproc.CV_HOUGH_GRADIENT, 1,dist, cannyUpperThreshold, accumulator, minRadius, maxRadius);		
 		/*****Detect Pupil Circles*****/
-		setMinRadius(25);
-		Imgproc.morphologyEx(tempResult2, tempResult2, Imgproc.MORPH_CROSS, morKernel1);
-		Imgproc.morphologyEx(tempResult2, tempResult2, Imgproc.MORPH_GRADIENT, morKernel1);
-		Imgproc.HoughCircles(tempResult2, circles3, Imgproc.CV_HOUGH_GRADIENT, 1,dist, cannyUpperThreshold, accumulator, minRadius, maxRadius);
+		List<MatOfPoint> pupilContours = new ArrayList<MatOfPoint>();
+		//tempResult4.setTo(new Scalar(0));
+		//tempResult2.copyTo(tempResult3);
+		Imgproc.findContours(tempResult2, pupilContours, new Mat(), Imgproc.RETR_EXTERNAL , Imgproc.CHAIN_APPROX_NONE);
+		Log.d("OpenCV","Imgproc.findContours(tempResult2, pupilContours, new Mat(), Imgproc.RETR_EXTERNAL , Imgproc.CHAIN_APPROX_NONE);");
+		double maxArea=0;
+		double contourArea=0;
+		int maxContourIndex=0;
+		for (int i = 0; i < pupilContours.size();i++) {
+			contourArea = Imgproc.contourArea(pupilContours.get(i));
+			if(contourArea>=maxArea){
+				maxContourIndex=i;
+				maxArea=contourArea;
+			}
+			
+		}
+		//Imgproc.drawContours(tempResult4, pupilContours, maxContourIndex, new Scalar(255,255,255));
+		pupilContours.get(maxContourIndex).convertTo(contour2f, CvType.CV_32F);
+		Imgproc.minEnclosingCircle(contour2f, center, radius);
+		Log.d("OpenCV","Imgproc.minEnclosingCircle(contour2f, center, radius);");
+		//source.copyTo(tempResult2);
+		//markCircle(tempResult4, (int)radius[0], (int)center.x, (int)center.y, 255);
+		markCircle(source, (int)radius[0], (int)center.x, (int)center.y, 255);
+		
+		//Imgproc.morphologyEx(tempResult2, tempResult2, Imgproc.MORPH_CROSS, morKernel1);
+		//Imgproc.morphologyEx(tempResult2, tempResult2, Imgproc.MORPH_GRADIENT, morKernel1);
+		//Imgproc.HoughCircles(tempResult2, circles3, Imgproc.CV_HOUGH_GRADIENT, 1,dist, cannyUpperThreshold, accumulator, minRadius, maxRadius);
 		Log.d("hough", "circles:"+circles.rows());
 		
-		markCircle(source ,0,false);			
-		markCirclePupil(source,0,false);
-		return source;
+		//markCircle(source ,0,false);			
+		//markCirclePupil(source,0,false);
+		
 	}
 	private static Mat buildMatFromCircle(Mat source,int index) {
 		Mat result = new Mat(source.rows(), source.cols(), CvType.CV_8UC1, new Scalar(0));

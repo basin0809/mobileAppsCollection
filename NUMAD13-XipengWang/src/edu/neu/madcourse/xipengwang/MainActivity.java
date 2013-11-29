@@ -73,7 +73,12 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-	
+	public void OutputJar()
+	{
+		Intent intent =new Intent();
+		 intent.setClass(MainActivity.this, edu.neu.madcourse.xipengwang.finalProject.MainActivity.class);
+		 startActivity(intent);
+	}
 	class FinalProListener implements OnClickListener{
 
 		@Override

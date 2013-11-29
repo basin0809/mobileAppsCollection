@@ -35,7 +35,8 @@ public class ShowPupilDetecionResults extends Activity{
 		setContentView(R.layout.final_showresults);
 		capture = (ImageView)findViewById(R.id.capture);
 		explain = (TextView)findViewById(R.id.explain);
-		
+		PupilDectTask pupilDectTask = new PupilDectTask();
+		pupilDectTask.execute();
 	}
 	
 
@@ -43,8 +44,7 @@ public class ShowPupilDetecionResults extends Activity{
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		PupilDectTask pupilDectTask = new PupilDectTask();
-		pupilDectTask.execute();
+		
     	//myTimer.scheduleAtFixedRate(myTimerTask, 100, 1000);	
 		
 	}
@@ -53,13 +53,14 @@ public class ShowPupilDetecionResults extends Activity{
 		private int counter = 0;
 	    @Override
 	    public void run() {
-	    	if(++counter >= 10){
-	    		Mat mCaptureMat = PupilImgs.pupilImgSet.get(9);
+	    	if(++counter >= 20){
+	    		Mat mCaptureMat = PupilImgs.pupilImgSet.get(19);
 	        	int width =mCaptureMat.width(); 
 				int height = mCaptureMat.height();
 				Bitmap mCaptureBitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
 				Utils.matToBitmap(mCaptureMat, mCaptureBitmap);
 				capture.setImageBitmap(mCaptureBitmap);
+				PupilImgs.pupilImgSet.clear();
 	    	}
 	    	else{
 	    	Mat mCaptureMat = PupilImgs.pupilImgSet.get(counter);
@@ -71,7 +72,7 @@ public class ShowPupilDetecionResults extends Activity{
 			capture.setImageBitmap(mCaptureBitmap);
 			
 			Log.d("capture", "setImg"+counter);
-			capture.postDelayed(this, 800);
+			capture.postDelayed(this, 1200);
 	    	}
 	    }
 	};
@@ -85,7 +86,7 @@ public class ShowPupilDetecionResults extends Activity{
 	    @Override
 	    protected void onPreExecute() {
 	    	this.pdialog = new ProgressDialog(ShowPupilDetecionResults.this);
-	    	this.pdialog.setTitle("Pupile Detecting");
+	    	this.pdialog.setTitle("Pupil Detecting");
 	    	this.pdialog.setMessage("Processing the video, please wait for seconds");
 	    	this.pdialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 	    	this.pdialog.show();
@@ -95,17 +96,15 @@ public class ShowPupilDetecionResults extends Activity{
 	    @Override
 	    protected Void doInBackground(Void... params) {
 	        // Here is where we need to do the downloading of the 
-	    	Mat[] processedImgs = new Mat[PupilImgs.pupilImgSet.size()];
+	    	//Mat[] processedImgs = new Mat[PupilImgs.pupilImgSet.size()];
 	    	for(int i = 0; i<PupilImgs.pupilImgSet.size(); i++){
-	    		publishProgress((int)(i*100/10));
-	    		processedImgs[i] = EyeTracerImp.findEyes1(PupilImgs.pupilImgSet.get(i));  	
+	    		publishProgress((int)(i*100/20));
+	    		EyeTracerImp.findEyes1(PupilImgs.pupilImgSet.get(i));
+	    		//processedImgs[i] = EyeTracerImp.findEyes1(PupilImgs.pupilImgSet.get(i));  	
 	    		Log.d("asynT", i+"");
 	    		
 	    	}
-	    	PupilImgs.pupilImgSet.clear();
-	    	for(int j = 0; j<10; j++){
-	    		PupilImgs.pupilImgSet.add(processedImgs[j]);
-	    	}
+	    	
 	    	return null;
 	    }
 	    // add in a progress bar update
@@ -126,7 +125,7 @@ public class ShowPupilDetecionResults extends Activity{
 		            Toast.LENGTH_SHORT).show();
 		            explain.setText("the white circles indicate your iris and pupil's edge");
 		            capture.removeCallbacks(swapImage);
-		    		capture.postDelayed(swapImage, 300);
+		    		capture.postDelayed(swapImage, 1000);
 		}
 
 	}
