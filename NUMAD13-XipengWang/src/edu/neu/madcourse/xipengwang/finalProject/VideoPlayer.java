@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.R.integer;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -41,14 +42,19 @@ public class VideoPlayer extends Activity implements Callback{
 	private int flashPosition;
 	
 	private String path;
+	private int flashDuration;
+	private int darkDuration;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Intent intent = getIntent();
 		path = intent.getStringExtra("path");
+		flashDuration = intent.getIntExtra("flashDuration", 2);
+		//darkDuration = intent.getIntExtra("darkDuration", 2);
 		setContentView(R.layout.final_showvideo);
 		// Set the flashPosition
-		flashPosition = 1000;
+		flashPosition = flashDuration*1000;
+	
 		
 		
 
@@ -64,7 +70,7 @@ public class VideoPlayer extends Activity implements Callback{
 		
 		surfaceHolder = surfaceView.getHolder();
 		surfaceHolder.addCallback(this);
-		surfaceHolder.setFixedSize(100,100);
+		surfaceHolder.setFixedSize(200,200);
 		surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 		//Set up MediaPlayer
 		

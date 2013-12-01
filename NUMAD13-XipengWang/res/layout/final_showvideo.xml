@@ -9,7 +9,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
     <SurfaceView android:id="@+id/SurfaceView01"  
-        android:layout_width="fill_parent" android:layout_height="250px"
+        android:layout_width="fill_parent" android:layout_height="500px"
         ></SurfaceView>
     	<LinearLayout 
     	    android:id="@+id/layout_flash_on"

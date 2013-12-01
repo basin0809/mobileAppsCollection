@@ -6,17 +6,15 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.opencv.android.Utils;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
+import android.graphics.Rect;
 import android.hardware.Camera;
+import android.hardware.Camera.AutoFocusCallback;
+import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
 import android.media.CamcorderProfile;
@@ -36,10 +34,8 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.ZoomControls;
 import edu.neu.madcourse.xipengwang.R;
-import edu.neu.madcourse.xipengwang.comm.HighScore;
-import edu.neu.madcourse.xipengwang.dabble.Dabble;
-import edu.neu.madcourse.xipengwang.dabble.TwiceActiveCheck;
 
 
 
@@ -50,18 +46,21 @@ public class MainActivity extends Activity{
     private SurfaceView surfaceView;
     public MediaRecorder mrec = new MediaRecorder();
     private Button startRecording = null;
+    private Button startFocus = null;
     private CamcorderProfile camcorderProfile;
     //private Button stopRecording = null;
     File video;
     private Camera mCamera;
     private Handler mHandler  = new Handler();
     Timer myTimer = new Timer();
+    Timer myTimer2 = new Timer();
     private boolean flashOn = false;
     private boolean mCaptureFrame =false;
     private int frameNumber = 0;
     private byte[] frame = new byte[1];
     private ArrayList<Bitmap> pupilImgSet = new ArrayList<Bitmap>();
     private ImageView capture;
+    Rect focusArea;
     VideoRecordTask videoRecordTask =new VideoRecordTask();
     private String path;
 
@@ -72,9 +71,21 @@ public class MainActivity extends Activity{
 
         setContentView(R.layout.final_main);
         Log.i(null , "Video starting");
-        startRecording = (Button)findViewById(R.id.vedio_start_button);
+        startRecording = (Button)findViewById(R.id.video_start_button);
+        startRecording.setVisibility(View.GONE);
+        startFocus = (Button)findViewById(R.id.video_focus_button);
         capture = (ImageView)findViewById(R.id.capture);
-        startRecording.setOnClickListener(new StartListener());
+        mCamera = getCameraInstance();  	 
+		  camPreview = new CameraPreview(this,mCamera);
+		  
+		  FrameLayout mainLayout = (FrameLayout) findViewById(R.id.camera_preview);
+		  mainLayout.addView(camPreview);
+        setZoomControl(mCamera.getParameters());
+        startFocus.setOnClickListener(new FocusListener());
+        //startRecording.setOnClickListener(new StartListener());
+        
+        
+        
         //surfaceView = (SurfaceView) findViewById(R.id.surface_camera);
         //surfaceHolder = surfaceView.getHolder();
        // surfaceHolder.addCallback(this);
@@ -101,18 +112,55 @@ public class MainActivity extends Activity{
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		  mCamera = getCameraInstance();  	 
-		  		  camPreview = new CameraPreview(this,mCamera);
-		  	  FrameLayout mainLayout = (FrameLayout) findViewById(R.id.camera_preview);
-		  		  mainLayout.addView(camPreview);
+		 
 	}
 
+	public void setZoomControl(Camera.Parameters params) {
+	     
+	    ZoomControls zoomControls = (ZoomControls) findViewById(R.id.CAMERA_ZOOM_CONTROLS);
 
+	    if (params.isZoomSupported()) {
+	        final int maxZoomLevel = params.getMaxZoom();
+	        
+	        Log.i("max ZOOM ", "is " + maxZoomLevel);
+	        zoomControls.setIsZoomInEnabled(true);
+	        zoomControls.setIsZoomOutEnabled(true);
+
+	        zoomControls.setOnZoomInClickListener(new OnClickListener(){
+	            public void onClick(View v){
+	            	Camera.Parameters params2 = mCamera.getParameters();
+	            	int currentZoomLevel = params2.getZoom();
+	                if(currentZoomLevel < maxZoomLevel){
+	                    currentZoomLevel++;
+	                    //mCamera.startSmoothZoom(currentZoomLevel);
+	                    params2.setZoom(currentZoomLevel);
+	                    mCamera.setParameters(params2);
+	                }
+	            }
+	        });
+
+	        zoomControls.setOnZoomOutClickListener(new OnClickListener(){
+	            public void onClick(View v){
+	            	Camera.Parameters params2 = mCamera.getParameters();
+	            	int currentZoomLevel = params2.getZoom();
+	                if(currentZoomLevel > 0){
+	                    currentZoomLevel--;
+	                    params2.setZoom(currentZoomLevel);
+	                    mCamera.setParameters(params2);
+	                }
+	            }
+	        });    
+	    }
+	    else
+	        zoomControls.setVisibility(View.GONE);
+	}
 	@Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
-        menu.add(0, 0, 0, "StartRecording");
-        menu.add(0, 1, 0, "StopRecording");
+        menu.add(0, 0, 0, "ISO 100");
+        menu.add(0, 1, 0, "ISO 200");
+        menu.add(0, 2, 0, "ISO 400");
+        menu.add(0, 3, 0, "ISO 800");
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -122,20 +170,55 @@ public class MainActivity extends Activity{
         switch (item.getItemId())
         {
         case 0:
-            try {
-                startRecording();
-            } catch (Exception e) {
-                String message = e.getMessage();
-                Log.i(null, "Problem Start"+message);
-                mrec.release();
-            }
+        	 mCamera.stopPreview();
+        	 Camera.Parameters params = mCamera.getParameters(); 		     
+		     params.set("iso", "ISO100");
+		     mCamera.setParameters(params);
+		     mCamera.startPreview();
+		     String[] supportedISOs = mCamera.getParameters().get("iso").split(",");
+	            int len = supportedISOs.length;
+	            for(int i=0; i<len; i++){
+	            Log.d("iso", supportedISOs[i]);
+	            }
             break;
 
         case 1: //GoToAllNotes
-            mrec.stop();
-            mrec.release();
-            mrec = null;
+        	mCamera.stopPreview();
+       	     Camera.Parameters params1 = mCamera.getParameters(); 		     
+		     params1.set("iso", "ISO200");
+		     mCamera.setParameters(params1);
+		     mCamera.startPreview();
+		     String[] supportedISOs1 = mCamera.getParameters().get("iso").split(",");
+	            int len1 = supportedISOs1.length;
+	            for(int i=0; i<len1; i++){
+	            Log.d("iso", supportedISOs1[i]);
+	            }
             break;
+            
+        case 2: //GoToAllNotes
+        	mCamera.stopPreview();
+       	     Camera.Parameters params2 = mCamera.getParameters(); 		     
+		     params2.set("iso", "ISO400");
+		     mCamera.setParameters(params2);
+		     mCamera.startPreview();
+		     String[] supportedISOs2 = mCamera.getParameters().get("iso").split(",");
+	            int len2 = supportedISOs2.length;
+	            for(int i=0; i<len2; i++){
+	            Log.d("iso", supportedISOs2[i]);
+	            }
+            break;
+        
+        case 3: //GoToAllNotes
+        	mCamera.stopPreview();
+       	     Camera.Parameters params3 = mCamera.getParameters(); 		     
+		     params3.set("iso", "ISO800");
+		     mCamera.setParameters(params3);
+		     mCamera.startPreview();
+		     String[] supportedISOs3 = mCamera.getParameters().get("iso").split(",");
+	            int len3 = supportedISOs3.length;
+	            for(int i=0; i<len3; i++){
+	            Log.d("iso", supportedISOs3[i]);
+	            };
 
         default:
             break;
@@ -216,6 +299,9 @@ public class MainActivity extends Activity{
         mCamera.setPreviewCallback(previewCallback);
     }
 
+    
+    
+    
     protected void stopRecording() {
     	mCamera.setPreviewCallback(null);
         mrec.stop();
@@ -232,7 +318,31 @@ public class MainActivity extends Activity{
         }
     }
 
+    public class FocusListener implements OnClickListener{
 
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			mCamera.autoFocus(cb);
+			//Parameters parameters = mCamera.getParameters();
+			
+			myTimer.scheduleAtFixedRate(myTimerStartVideoTask, 3000, 500);
+		}
+		
+	    AutoFocusCallback  cb = new AutoFocusCallback (){
+
+			@Override
+			public void onAutoFocus(boolean success, Camera camera) {
+				// TODO Auto-generated method stub
+				 Camera.Parameters params = mCamera.getParameters(); 
+			     
+			     params.setFocusMode(Camera.Parameters.FOCUS_MODE_MACRO);
+			     mCamera.setParameters(params);
+			}
+	    	
+	    };
+	}
+    
     public class StartListener implements OnClickListener{
     	
     			@Override
@@ -248,19 +358,20 @@ public class MainActivity extends Activity{
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-    				myTimer.scheduleAtFixedRate(myTimerTask, 100, 500);	
+    				myTimer.scheduleAtFixedRate(myTimerTakeVideoTask, 100, 250);	
     			}
     			
     		}
-    		TimerTask myTimerTask= new TimerTask(){
+    		TimerTask myTimerTakeVideoTask= new TimerTask(){
     			private int counter = 0;
 
     		@Override		 
     		    public void run() {
     		        mHandler.post(new Runnable() {
     		            public void run() {
-    	    		        if(counter == 11) {
-    	    		        	
+    		            	
+    	    		        if(counter == 17) {
+    	    		     
     	    		        	mrec.stop();
     	    		            mrec.release();
     	    		            //mrec = null;
@@ -268,35 +379,82 @@ public class MainActivity extends Activity{
     	    		        	myTimer.cancel();
     	    		        	Intent intent = new Intent(MainActivity.this, VideoPlayer.class);
     	    		        	intent.putExtra("path", path);
+    	    		        	intent.putExtra("flashDuration", 2);
+    	    		        	//intent.putExtra("darkDuration", 2);
     	    		        	startActivity(intent);
     	    		        	finish();
     	    		        }
     	    		        else{
-    	    		        	if(counter==3){
-	    		            		mCaptureFrame=true;
+    	    		        	if(counter==0){
+	    		            		
 	    		        			Camera.Parameters params = mCamera.getParameters(); 
-	    		        			params.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH); 
+	    		        			params.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);     		        			
+	    		        			//params.setExposureCompensation(params.getExposureCompensation());
+	    		        			//params.setExposureCompensation(-12);
 	   		 				 		mCamera.setParameters(params);
 	   		 				 		mCamera.startPreview();
+	   		 				 	Log.d("iso", params.getMaxExposureCompensation()+"");
+    		        			Log.d("iso", params.getExposureCompensation()+"");
+    		        			Log.d("iso", params.getMinExposureCompensation()+"");
 	   		 				 		System.out.println("run "+flashOn);
 	   		 				 		flashOn=!flashOn;
 	   		 				 		counter++;
     	    		        	}
     	    		        	else {
-	    		            		if(counter==7){
+    	    		        		if(counter==1)
+    	    		        		{
+    	    		        			mCaptureFrame=true;
+    	    		        			Camera.Parameters params = mCamera.getParameters(); 
+    	    		        			if(params.isAutoWhiteBalanceLockSupported())
+    	    		        			{
+    	    		        			params.setAutoExposureLock(true);
+    	    		        			}
+    	    		        			else {
+    										params.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT);
+    									}
+    	    		        			mCamera.setParameters(params);
+    	   		 				 		mCamera.startPreview();
+	    		            			counter++;
+    	    		        		}
+    	    		        		else{
+	    		            		if(counter==8){
 		    		            		mCaptureFrame=true;
-		    		        			Camera.Parameters params = mCamera.getParameters(); 
+		    		        			Camera.Parameters params = mCamera.getParameters();
+		    		        			
 		    		            		params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF); 
+		    		            		if(params.isAutoWhiteBalanceLockSupported())
+		    		            		{
+		    		            		params.setAutoExposureLock(false);
+		    		            		params.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_AUTO);
+		    		            		}
+		    		            		//params.setExposureCompensation(12);
 		    			 				mCamera.setParameters(params);
-		    			 				mCamera.startPreview();
+		    			 				mCamera.startPreview();		    			 				
 		    			 				System.out.println("run "+flashOn);
 		    			 				flashOn=!flashOn;
 		    			 				counter++;
 	    		            		}
 	    		            		else {
+	    		            			if(counter==9)
+	    		            			{
+	    		            				Camera.Parameters params = mCamera.getParameters();
+	    		            				if(params.isAutoWhiteBalanceLockSupported())
+			    		            		{
+			    		            		params.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT);			    		            		
+			    		            		}
+	    		            				else {
+												params.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT);
+											}
+	    		            				mCamera.setParameters(params);
+			    			 				mCamera.startPreview();	
+	    		            				counter++;
+	    		            			}
+	    		            			else{
 	    		            			mCaptureFrame=true;
 	    		            			counter++;
+	    		            			}
 									}
+    	    		        		}
     	    		        	}
     		            	}
     	    		        
@@ -306,6 +464,33 @@ public class MainActivity extends Activity{
     		    }
     			
     		};
+    	
+    		
+    		
+    		
+    		TimerTask myTimerStartVideoTask= new TimerTask(){
+    			private int counter = 0;
+
+    		@Override		 
+    		    public void run() {
+    		        mHandler.post(new Runnable() {
+    		            public void run() {
+    		            	if(counter == 1) {
+     	    		        	myTimer2.cancel();
+     	    		        }
+    		            	else{
+    		            	startFocus.setVisibility(View.GONE);
+    		            	startFocus.setOnClickListener(null);
+    		            	startRecording.setVisibility(View.VISIBLE);
+    		            	startRecording.setOnClickListener(new StartListener());
+    		            	counter++;
+    		            	}
+	    	            }
+	    		        });
+	                     
+	    		    }
+	    			
+	    		};
     		
     		 PreviewCallback previewCallback = new PreviewCallback (){
     				public void onPreviewFrame(byte[] data, Camera camera) {
@@ -401,20 +586,31 @@ public class MainActivity extends Activity{
     			            }
     			        }
     			    }
-    public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback{
+   
+    				
+    				
+    	public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback{
     			public CameraPreview(Context context,Camera camera)
     			{
     				
     				 super(context);
     				
     				 mCamera = camera;
+    				 focusArea = new Rect(-300, -300, 300, 300);
+    				 Camera.Area cArea = new Camera.Area(focusArea, 500);
+    				 ArrayList<Camera.Area> cAreas = new ArrayList<Camera.Area>();
+    				 cAreas.add(cArea);
+    				 Parameters parameters = mCamera.getParameters();
+    				 parameters.setFocusAreas(cAreas);
+    				 Log.d("focusArea",cAreas.get(0).toString());
+    				 mCamera.setParameters(parameters);
     				 surfaceHolder = this.getHolder();
     				 surfaceHolder.addCallback(this);
     			}
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width,
             int height) {
-    	// TODO Auto-generated method stub
+    	  // TODO Auto-generated method stub
 		  //Parameters parameters;
 		  //mSurfHolder = holder;
 		  if (surfaceHolder.getSurface() == null){
@@ -422,11 +618,8 @@ public class MainActivity extends Activity{
 	          return;
 	        }
 		   
-		  try{
-		  //mCamera.setParameters(parameters);
-		 // mCamera.setPreviewDisplay(mSurfHolder);
-		 // mCamera.setPreviewCallback(previewCallback);
-		 
+		  try{	      
+	      
 		  mCamera.startPreview();
 		  Log.d("surfaceChanged", "camera preview set successfully");
 		  }	  
@@ -434,13 +627,22 @@ public class MainActivity extends Activity{
 			  Log.d("surfaceChanged", "Error setting camera preview: " + e.getMessage());
 		  }
     }
-
+    
+    
+    
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
     	try {
             mCamera.setPreviewDisplay(holder);
-            mCamera.startPreview();
-            Log.d("surfaceCreated", "camera preview created successfully ");
+           
+            mCamera.startPreview(); 
+            
+            String[] supportedISOs = mCamera.getParameters().get("iso").split(",");
+            int len = supportedISOs.length;
+            for(int i=0; i<len; i++){
+            Log.d("iso", supportedISOs[i]);
+            }
+            
         } catch (IOException e) {
             Log.d("surfaceCreated", "Error starting camera preview: " + e.getMessage());
         }
@@ -453,9 +655,6 @@ public class MainActivity extends Activity{
     }
 
 
-	
-	
-	
     }
     
     class VideoRecordTask extends AsyncTask<Void, Integer, Void> {
@@ -489,4 +688,6 @@ public class MainActivity extends Activity{
 		}
 
 	}
+
+	
 }
