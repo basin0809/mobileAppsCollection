@@ -1,58 +1,72 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".MainActivity" >
-    <SurfaceView android:id="@+id/SurfaceView01"  
-        android:layout_width="fill_parent" android:layout_height="500px"
-        ></SurfaceView>
-    	<LinearLayout 
+    android:layout_height="match_parent" >
+    	
+    <RelativeLayout 
+    	    android:id="@+id/layout_surface_img"
+    	    android:layout_width="match_parent"
+    	    android:layout_height="500px"  	   
+    	   >		
+   		</RelativeLayout>
+ 		<SurfaceView
+ 		    android:id="@+id/SurfaceView01"
+ 		    android:layout_width="fill_parent"
+ 		    android:layout_height="500px" >
+
+   		 </SurfaceView>
+   		 <ImageView
+            android:id="@+id/play_back_imgs"
+            android:layout_width="fill_parent"
+            android:layout_height="500px"
+            android:layout_alignTop="@+id/SurfaceView01"
+           
+            android:layout_centerHorizontal="true"
+         />
+    	
+   		<RelativeLayout 
     	    android:id="@+id/layout_flash_on"
     	    android:layout_width="match_parent"
     	    android:layout_height="wrap_content"
-    	    android:paddingBottom="15dp"
-    	    android:paddingTop="15dp"   
-    	    android:orientation="horizontal">
-
-   		</LinearLayout>
-		<Button 
-		    android:layout_weight="1"
-		    android:id="@+id/replay_button_flash_on"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:text="replay"
-		    android:gravity="center"
-		    android:layout_gravity="center"
-		    />
-		<LinearLayout 
-		    android:paddingTop="15dp"    
-		    android:id="@+id/layout_flash_off"
+    	    android:layout_below="@+id/layout_surface_img"   
+    	   >		
+   		</RelativeLayout> 
+   		   	<Button
+   		    android:id="@+id/replay_button_flash_on"
+   		    android:layout_width="100dp"
+   		    android:layout_height="wrap_content"
+   		    android:layout_alignLeft="@+id/replay_button_flash_off"
+   		    android:layout_below="@+id/layout_flash_on"/>
+		    <RelativeLayout 
+    	    android:id="@+id/layout_flash_off"
     	    android:layout_width="match_parent"
     	    android:layout_height="wrap_content"
-    	    android:paddingBottom="15dp"
-    	    android:orientation="horizontal">
-  
-   </LinearLayout>
+    	    android:layout_below="@+id/replay_button_flash_on"   
+    	   >
 
-		<Button
-		    android:layout_weight="1" 
+   		</RelativeLayout>   	
+    	<Button
+		   
 		    android:id="@+id/replay_button_flash_off"
-		    android:layout_width="wrap_content"
+		    android:layout_width="100dp"
 		    android:layout_height="wrap_content"
-		    android:text="replay"
-		    android:gravity="center"
-		    android:layout_gravity="center"
-		    />
+		    android:layout_below="@+id/layout_flash_off"
+		    android:layout_centerHorizontal="true"
+	    />
    		<Button
 		    android:id="@+id/review_button"
-		    android:layout_width="fill_parent"
+		    android:layout_width="100dp"
 		    android:layout_height="wrap_content"
-		    android:text="review"
-		    android:gravity="center"
-		    />
-</LinearLayout>
+		     android:layout_below="@+id/replay_button_flash_off"
+		     android:layout_alignParentLeft="true"
+		 
+		    
+			 />
+   		<Button
+		    android:id="@+id/identify_button"
+		    android:layout_width="150dp"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@+id/replay_button_flash_off"
+		 	android:layout_alignParentRight="true"/>
+
+</RelativeLayout>

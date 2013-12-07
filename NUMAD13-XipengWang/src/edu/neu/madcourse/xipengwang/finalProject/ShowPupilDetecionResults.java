@@ -54,7 +54,7 @@ public class ShowPupilDetecionResults extends Activity{
 	    @Override
 	    public void run() {
 	    	if(++counter >= 20){
-	    		Mat mCaptureMat = PupilImgs.pupilImgSet.get(19);
+	    		Mat mCaptureMat = PupilImgs.pupilBitMap.get(19);
 	        	int width =mCaptureMat.width(); 
 				int height = mCaptureMat.height();
 				Bitmap mCaptureBitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
@@ -63,7 +63,7 @@ public class ShowPupilDetecionResults extends Activity{
 				PupilImgs.pupilImgSet.clear();
 	    	}
 	    	else{
-	    	Mat mCaptureMat = PupilImgs.pupilImgSet.get(counter);
+	    	Mat mCaptureMat = PupilImgs.pupilBitMap.get(counter);
 	    	Log.d("capture", "counter: "+counter);
         	int width =mCaptureMat.width(); 
 			int height = mCaptureMat.height();
@@ -99,7 +99,7 @@ public class ShowPupilDetecionResults extends Activity{
 	    	//Mat[] processedImgs = new Mat[PupilImgs.pupilImgSet.size()];
 	    	for(int i = 0; i<PupilImgs.pupilImgSet.size(); i++){
 	    		publishProgress((int)(i*100/20));
-	    		EyeTracerImp.findEyes1(PupilImgs.pupilImgSet.get(i));
+	    		//EyeTracerImp.findEyes1(PupilImgs.pupilBitMap.get(i));
 	    		//processedImgs[i] = EyeTracerImp.findEyes1(PupilImgs.pupilImgSet.get(i));  	
 	    		Log.d("asynT", i+"");
 	    		

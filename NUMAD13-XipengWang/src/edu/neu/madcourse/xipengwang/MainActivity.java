@@ -3,18 +3,18 @@ package edu.neu.madcourse.xipengwang;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import edu.neu.madcourse.xipengwang.comm.OppNameMyName;
-import edu.neu.madcourse.xipengwang.comm.Regist;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import edu.neu.madcourse.xipengwang.dabble.Dabble;
 import edu.neu.madcourse.xipengwang.dabble.TwiceActiveCheck;
 import edu.neu.madcourse.xipengwang.dict.Dictionary;
 import edu.neu.madcourse.xipengwang.sudoku.Sudoku;
 import edu.neu.mhealth.api.KeyValueAPI;
-import edu.neu.mobileClass.PhoneCheckAPI;
 
 
 public class MainActivity extends Activity {
@@ -28,9 +28,14 @@ public class MainActivity extends Activity {
 	private Button commButton;
 	private Button twoPDabbleButton;
 	private Button finalProject;
+    private ImageView grid1;
+    private ImageView grid2;
+    private ImageView grid3;
+    private ImageView grid4;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.d("VPC", "main create");
 		setContentView(R.layout.activity_main);
 		
 		setTitle("Xipeng Wang");
@@ -55,6 +60,17 @@ public class MainActivity extends Activity {
 		commButton.setOnClickListener(new CommButtonListener());
 		finalProject.setOnClickListener(new FinalProListener());
 		quitButton.setOnClickListener(new ExitButtonListener());
+		
+		
+		
+		
+
+		
+		
+		
+		
+		
+		
 		//System.out.println("!!! "+KeyValueAPI.get("basin", "basin576095", "Jim"));
 		//KeyValueAPI.clearKey("basin", "basin576095", "Jim"+"@HS");
 		//KeyValueAPI.clearKey("basin", "basin576095", "Tom"+"@HS");
@@ -73,6 +89,32 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
+	
+	
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		Log.d("VPC", "main destroy");
+	}
+
+
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		Log.d("VPC", "main pause");
+	}
+
+
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		Log.d("VPC", "main resume");
+	}
+
+
 	public void OutputJar()
 	{
 		Intent intent =new Intent();

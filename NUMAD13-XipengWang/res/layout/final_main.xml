@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/final_mian_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
         
@@ -11,66 +12,48 @@
 
         
     </FrameLayout>
-   		<ZoomControls
-            android:id="@+id/CAMERA_ZOOM_CONTROLS"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+
     
-         <ImageView
-             android:id="@+id/grid1"
-             android:layout_width="wrap_content"
-             android:layout_height="fill_parent"
-             android:layout_alignParentLeft="true"
-             android:layout_alignParentTop="true"
-             android:layout_marginLeft="166dp"
-             android:src="@drawable/grid2" />
+        
 
          <ImageView
              android:id="@+id/grid2"
              android:layout_width="wrap_content"
              android:layout_height="fill_parent"
-             android:layout_alignParentRight="true"
-             android:layout_alignParentTop="true"
-             android:layout_marginRight="166dp"
+             
              android:src="@drawable/grid2" />
 
          <ImageView
              android:id="@+id/grid4"
              android:layout_width="fill_parent"
              android:layout_height="wrap_content"
-             android:layout_alignParentLeft="true"
-             android:layout_below="@+id/capture"
-             android:layout_marginTop="66dp"
+             
              android:src="@drawable/grid1" />
 
          <ImageView
              android:id="@+id/grid3"
              android:layout_width="fill_parent"
              android:layout_height="wrap_content"
-             android:layout_alignParentBottom="true"
-             android:layout_alignParentLeft="true"
-             android:layout_marginBottom="67dp"
+            
              android:src="@drawable/grid1" />
-         <Button
-             android:id="@+id/video_start_button"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:layout_alignParentBottom="true"
-             android:layout_centerHorizontal="true"
-             android:text="START" />
          
          <Button
              android:id="@+id/video_focus_button"
-             android:layout_width="wrap_content"
+             android:layout_width="120dp"
              android:layout_height="wrap_content"
              android:layout_alignParentBottom="true"
              android:layout_centerHorizontal="true"
+             
              android:text="FOCUS"/>
-          <ImageView
-             android:id="@+id/capture"
-             android:layout_width="fill_parent"
+
+         <Button
+             android:id="@+id/video_start_button"
+             android:layout_width="120dp"
+              android:layout_centerHorizontal="true"
              android:layout_height="wrap_content"
-             android:layout_toRightOf="@+id/video_start_button"/>
+             android:layout_alignLeft="@+id/video_focus_button"
+             android:layout_alignParentBottom="true"
+             android:layout_marginBottom="45dp"
+             android:text="START" />
          
-    
 </RelativeLayout>

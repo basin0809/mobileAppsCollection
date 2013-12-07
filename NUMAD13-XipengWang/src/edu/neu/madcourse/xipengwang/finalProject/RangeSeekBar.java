@@ -158,7 +158,7 @@ public class RangeSeekBar<T extends Number> extends ImageView {
                         setNormalizedMinValue(0d);
                 }
                 else {
-                        setNormalizedMinValue(valueToNormalized(value));
+                        setNormalizedMinValue(valueToNormalized((Integer) value));
                 }
         }
 
@@ -183,7 +183,7 @@ public class RangeSeekBar<T extends Number> extends ImageView {
                         setNormalizedMaxValue(1d);
                 }
                 else {
-                        setNormalizedMaxValue(valueToNormalized(value));
+                        setNormalizedMaxValue(valueToNormalized((Integer) value));
                 }
         }
         
@@ -199,16 +199,16 @@ public class RangeSeekBar<T extends Number> extends ImageView {
         /**
          * Sets the currently selected secondary progress value. The widget will be invalidated and redrawn.
          * 
-         * @param value
+         * @param minValue
          *            The Number value to set the secondary progress value to. Will be clamped to given absolute minimum/maximum range.
          */
-        public void setSelectedSecondaryProgressValue(T value) {
+        public void setSelectedSecondaryProgressValue(Integer minValue) {
                 // in case absoluteMinValue == absoluteMaxValue, avoid division by zero when normalizing.
                 if (0 == (absoluteMaxValuePrim - absoluteMinValuePrim)) {
                         setNormalizedSecondaryProgressValue(1d);
                 }
                 else {
-                        setNormalizedSecondaryProgressValue(valueToNormalized(value));
+                        setNormalizedSecondaryProgressValue(valueToNormalized(minValue));
                 }
         }
 
@@ -551,7 +551,7 @@ public class RangeSeekBar<T extends Number> extends ImageView {
          *            The Number value to normalize.
          * @return The normalized double.
          */
-        private double valueToNormalized(T value) {
+        private double valueToNormalized(Integer value) {
                 if (0 == absoluteMaxValuePrim - absoluteMinValuePrim) {
                         // prevent division by zero, simply return 0.
                         return 0d;

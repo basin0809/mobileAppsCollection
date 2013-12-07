@@ -1,8 +1,10 @@
 package edu.neu.madcourse.xipengwang.finalProject;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -11,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
@@ -24,15 +27,19 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.widget.ZoomControls;
 import edu.neu.madcourse.xipengwang.R;
@@ -48,6 +55,10 @@ public class MainActivity extends Activity{
     private Button startRecording = null;
     private Button startFocus = null;
     private CamcorderProfile camcorderProfile;
+    private ImageView grid1;
+    private ImageView grid2;
+    private ImageView grid3;
+    private ImageView grid4;
     //private Button stopRecording = null;
     File video;
     private Camera mCamera;
@@ -56,32 +67,87 @@ public class MainActivity extends Activity{
     Timer myTimer2 = new Timer();
     private boolean flashOn = false;
     private boolean mCaptureFrame =false;
+    private boolean mCaptureUserFrame =false;
     private int frameNumber = 0;
     private byte[] frame = new byte[1];
-    private ArrayList<Bitmap> pupilImgSet = new ArrayList<Bitmap>();
-    private ImageView capture;
+    //private ImageView capture;
+    //ZoomControls zoomControls;
+    RelativeLayout relativeLayout;
     Rect focusArea;
     VideoRecordTask videoRecordTask =new VideoRecordTask();
     private String path;
-
+    private int imgCounter =0;
+    private boolean jump= false;
+    File newFile;
+    
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+     public void onCreate(Bundle savedInstanceState) {
+    	Log.d("VPC", "final main create");
         super.onCreate(savedInstanceState);
+        PupilImgs.imgPathes.clear();
+   	 PupilImgs.processedImgSet.clear();
+   	 PupilImgs.pupilBitMap.clear();
+   	 PupilImgs.pupilImgSet.clear();
+   	 PupilImgs.userflashOffIimgPathes.clear();
+   	 PupilImgs.userflashOnImgPathes.clear();
+   	 PupilImgs.userFlashOffPupilBitMap.clear();
+   	 PupilImgs.userFlashOnPupilBitMap.clear();
+   	 PupilImgs.userFlasOffImgSet.clear();
+   	 PupilImgs.userFlasOnImgSet.clear();
         camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
-
+        setFullScreen(this);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
+                                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.final_main);
         Log.i(null , "Video starting");
-        startRecording = (Button)findViewById(R.id.video_start_button);
-        startRecording.setVisibility(View.GONE);
-        startFocus = (Button)findViewById(R.id.video_focus_button);
-        capture = (ImageView)findViewById(R.id.capture);
-        mCamera = getCameraInstance();  	 
-		  camPreview = new CameraPreview(this,mCamera);
-		  
-		  FrameLayout mainLayout = (FrameLayout) findViewById(R.id.camera_preview);
-		  mainLayout.addView(camPreview);
-        setZoomControl(mCamera.getParameters());
-        startFocus.setOnClickListener(new FocusListener());
+        relativeLayout = (RelativeLayout)findViewById(R.id.final_mian_layout); 
+        
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int w = size.x;
+        int h = size.y;
+        PupilImgs.screenW = w;
+        PupilImgs.screenH = h;
+     
+        
+       
+		
+
+		grid1 = new ImageView(this);
+		grid2 = new ImageView(this);
+		grid3 = new ImageView(this);
+		grid4 = new ImageView(this);
+		
+		grid1.setBackgroundResource(R.drawable.grid2);
+		grid2.setBackgroundResource(R.drawable.grid2);
+		grid3.setBackgroundResource(R.drawable.grid1);
+		grid4.setBackgroundResource(R.drawable.grid1);
+		
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(4, h);
+		params.leftMargin = (int)(w*0.375);
+		params.topMargin = 0;
+		
+		RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(4, h);
+		params2.leftMargin = (int)(w*0.625);
+		params2.topMargin = 0;
+		
+		RelativeLayout.LayoutParams params3 = new RelativeLayout.LayoutParams(w, 4);
+		params3.leftMargin =0;
+		params3.topMargin = (int)(h*0.375);
+		
+		RelativeLayout.LayoutParams params4 = new RelativeLayout.LayoutParams(w, 4);
+		params4.leftMargin = 0;
+		params4.topMargin = (int)(h*0.625);
+		
+		relativeLayout.addView(grid1, params);
+		relativeLayout.addView(grid2, params2);
+		relativeLayout.addView(grid3, params3);
+		relativeLayout.addView(grid4, params4);
+        
+        //zoomControls = (ZoomControls) findViewById(R.id.CAMERA_ZOOM_CONTROLS);
+
         //startRecording.setOnClickListener(new StartListener());
         
         
@@ -91,12 +157,43 @@ public class MainActivity extends Activity{
        // surfaceHolder.addCallback(this);
         //surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
     }
-
+    
+    
+    protected void outputUnProcessedImgs(Bitmap unprocessedImg, ArrayList<String> pathes){
+        //Log.i("SAVE IMAGE", "start save");
+		
+       
+        	File newFile = null;
+        	try {
+				newFile =File.createTempFile("unprocessed"+imgCounter, ".PNG", Environment.getExternalStorageDirectory());
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+	        try {    
+	        	pathes.add(newFile.getAbsolutePath());
+	            FileOutputStream fos = new FileOutputStream(newFile);
+	            unprocessedImg.compress(Bitmap.CompressFormat.PNG, 100, fos);
+	            fos.flush();
+	            fos.close();
+	        } catch (IOException e) {
+	            Log.e("error", e.getMessage());
+	            e.printStackTrace();
+	        }
+	        imgCounter++;
+        
+	}
+    
+    protected void setFullScreen(Context currContext) { 
+    	((Activity) currContext).requestWindowFeature(Window.FEATURE_NO_TITLE); 
+    	((Activity) currContext).getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN); 
+    	}
     
     @Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
+		Log.d("VPC", "final main destroy");
 	}
 
 
@@ -104,7 +201,28 @@ public class MainActivity extends Activity{
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		releaseCamera(); 
+		Log.d("VPC", "final main pause");
+		if(jump){
+
+			releaseCamera(); 
+		}
+		else{
+		 PupilImgs.pupilImgSet.clear();
+		  PupilImgs.userFlasOnImgSet.clear();
+		  PupilImgs.userFlasOffImgSet.clear();
+		try {
+			mrec.stop();
+			mrec.release();
+			
+			if(newFile.exists()){
+				newFile.delete();
+			}
+		} catch (IllegalStateException e) {
+			// TODO: handle exception
+		}	
+		myTimer.cancel();
+		myTimer2.cancel();
+		releaseCamera(); }
 	}
 
 
@@ -112,48 +230,27 @@ public class MainActivity extends Activity{
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
+		Log.d("VPC", "final main resume");
+		   startRecording = (Button)findViewById(R.id.video_start_button);
+	        //startRecording.setVisibility(View.GONE);
+	        startFocus = (Button)findViewById(R.id.video_focus_button);
+	        
+	        startFocus.setVisibility(View.VISIBLE);
+	        //capture = (ImageView)findViewById(R.id.capture);
+	        mCamera = getCameraInstance();  	 
+			camPreview = new CameraPreview(this,mCamera);
+			  
+			 FrameLayout mainLayout = (FrameLayout) findViewById(R.id.camera_preview);
+			 mainLayout.addView(camPreview);
+	        
+	        startFocus.setOnClickListener(new FocusListener());
+	        
+	        myTimer = new Timer();
+	        myTimer2 = new Timer();
 		 
 	}
 
-	public void setZoomControl(Camera.Parameters params) {
-	     
-	    ZoomControls zoomControls = (ZoomControls) findViewById(R.id.CAMERA_ZOOM_CONTROLS);
 
-	    if (params.isZoomSupported()) {
-	        final int maxZoomLevel = params.getMaxZoom();
-	        
-	        Log.i("max ZOOM ", "is " + maxZoomLevel);
-	        zoomControls.setIsZoomInEnabled(true);
-	        zoomControls.setIsZoomOutEnabled(true);
-
-	        zoomControls.setOnZoomInClickListener(new OnClickListener(){
-	            public void onClick(View v){
-	            	Camera.Parameters params2 = mCamera.getParameters();
-	            	int currentZoomLevel = params2.getZoom();
-	                if(currentZoomLevel < maxZoomLevel){
-	                    currentZoomLevel++;
-	                    //mCamera.startSmoothZoom(currentZoomLevel);
-	                    params2.setZoom(currentZoomLevel);
-	                    mCamera.setParameters(params2);
-	                }
-	            }
-	        });
-
-	        zoomControls.setOnZoomOutClickListener(new OnClickListener(){
-	            public void onClick(View v){
-	            	Camera.Parameters params2 = mCamera.getParameters();
-	            	int currentZoomLevel = params2.getZoom();
-	                if(currentZoomLevel > 0){
-	                    currentZoomLevel--;
-	                    params2.setZoom(currentZoomLevel);
-	                    mCamera.setParameters(params2);
-	                }
-	            }
-	        });    
-	    }
-	    else
-	        zoomControls.setVisibility(View.GONE);
-	}
 	@Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
@@ -164,6 +261,40 @@ public class MainActivity extends Activity{
         return super.onCreateOptionsMenu(menu);
     }
 
+	private Size getOptimalPreviewSize(List<Size> sizes, int w, int h) {
+	    final double ASPECT_TOLERANCE = 0.05;
+	    double targetRatio = (double) w/h;
+
+	    if (sizes==null) return null;
+
+	    Size optimalSize = null;
+
+	    double minDiff = Double.MAX_VALUE;
+
+	    int targetHeight = h;
+
+	    // Find size
+	    for (Size size : sizes) {
+	        double ratio = (double) size.width / size.height;
+	        if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
+	        if (Math.abs(size.height - targetHeight) < minDiff) {
+	            optimalSize = size;
+	            minDiff = Math.abs(size.height - targetHeight);
+	        }
+	    }
+
+	    if (optimalSize == null) {
+	        minDiff = Double.MAX_VALUE;
+	        for (Size size : sizes) {
+	            if (Math.abs(size.height - targetHeight) < minDiff) {
+	                optimalSize = size;
+	                minDiff = Math.abs(size.height - targetHeight);
+	            }
+	        }
+	    }
+	    return optimalSize;
+	}
+	
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
@@ -247,6 +378,7 @@ public class MainActivity extends Activity{
     
     protected void startRecording() throws IOException 
     {
+    	
         mrec = new MediaRecorder();  // Works well
         mCamera.unlock();
 
@@ -260,7 +392,8 @@ public class MainActivity extends Activity{
         mrec.setPreviewDisplay(surfaceHolder.getSurface());
         if (camcorderProfile.fileFormat == MediaRecorder.OutputFormat.THREE_GPP) {
             try {
-                            File newFile =File.createTempFile("videocapture", ".3gp", Environment.getExternalStorageDirectory());
+            				newFile=File.createTempFile("videocapture", ".3gp", Environment.getExternalStorageDirectory());
+                            
                             mrec.setOutputFile(newFile.getAbsolutePath());
                             path = newFile.getAbsolutePath();
                             System.out.println(path);
@@ -271,7 +404,7 @@ public class MainActivity extends Activity{
                     }
             } else if (camcorderProfile.fileFormat == MediaRecorder.OutputFormat.MPEG_4) {
             try {
-                            File newFile = File.createTempFile("videocapture", ".mp4", Environment.getExternalStorageDirectory());
+                            newFile = File.createTempFile("videocapture", ".mp4", Environment.getExternalStorageDirectory());
                             mrec.setOutputFile(newFile.getAbsolutePath());
                             path = newFile.getAbsolutePath();
                             System.out.println(path);
@@ -282,7 +415,7 @@ public class MainActivity extends Activity{
                     }
             } else {
             try {
-                            File newFile = File.createTempFile("videocapture", ".mp4", Environment.getExternalStorageDirectory());
+                            newFile = File.createTempFile("videocapture", ".mp4", Environment.getExternalStorageDirectory());
                             mrec.setOutputFile(newFile.getAbsolutePath());
                             path = newFile.getAbsolutePath();
                             System.out.println(path);
@@ -323,10 +456,39 @@ public class MainActivity extends Activity{
 		@Override
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
+			v.setOnClickListener(null);
+			startRecording.setOnClickListener(null);
+			startRecording.setVisibility(View.INVISIBLE);
 			mCamera.autoFocus(cb);
 			//Parameters parameters = mCamera.getParameters();
-			
-			myTimer.scheduleAtFixedRate(myTimerStartVideoTask, 3000, 500);
+			myTimer2 = new Timer();
+			myTimer2.scheduleAtFixedRate(new TimerTask(){
+    			private int counter = 0;
+
+    		@Override		 
+    		    public void run() {
+    		        mHandler.post(new Runnable() {
+    		            public void run() {
+    		            	if(counter == 1) {
+    		            		
+    		            		
+    		            		startRecording.setVisibility(View.VISIBLE);
+    		            		startRecording.setOnClickListener(new StartListener());
+     	    		        	myTimer2.cancel();
+     	    		        	startFocus.setOnClickListener(new FocusListener());
+     	    		        }
+    		            	else{
+    		            	
+    		            	//startRecording.setVisibility(View.VISIBLE);
+    		            	//startRecording.setOnClickListener(new StartListener());
+    		            	counter++;
+    		            	}
+	    	            }
+	    		        }); 
+	                     
+	    		    }
+	    			
+	    		}, 1000, 500);
 		}
 		
 	    AutoFocusCallback  cb = new AutoFocusCallback (){
@@ -352,145 +514,129 @@ public class MainActivity extends Activity{
     				//videoRecordTask =new VideoRecordTask();
     				//videoRecordTask.execute();
     				v.setOnClickListener(null);
+    				startFocus.setVisibility(View.INVISIBLE);
+	            	startFocus.setOnClickListener(null);
     				try {
 						startRecording();
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-    				myTimer.scheduleAtFixedRate(myTimerTakeVideoTask, 100, 250);	
+    				myTimer.scheduleAtFixedRate(new TimerTask(){
+    	    			private int counter = 0;
+
+    	        		@Override		 
+    	        		    public void run() {
+    	        		        mHandler.post(new Runnable() {
+    	        		            public void run() {
+    	        		            	switch (counter) {
+    	    							case 67:// JUMP TO VIDEO PLAYER ACTIVITY 67
+    	    								jump = true;
+    	    								 System.out.println("run finish");   	    		          		            
+    	    	    	    		         myTimer.cancel();
+    	    	    	    		         Intent intent = new Intent(MainActivity.this, VideoPlayer.class);
+    	    	    	    		         intent.putExtra("path", path);
+    	    	    	    		         intent.putExtra("flashDuration", 2);
+    	    	    	    		         startActivity(intent);
+    	    	    	    		         finish();
+    	    								break;
+    	    							case 66://COUNTER, WAIT FOR FINISHING VIDEO WRITE
+    	    								counter++;
+    	    								break;
+    	    							case 65://COUNTER, WAIT FOR FINISHING VIDEO WRITE
+    	    								counter++;
+    	    								break;
+    	    							case 64://COUNTER, WAIT FOR FINISHING VIDEO WRITE
+    	    								counter++;
+    	    								break;
+    	    							case 63://COUNTER, WAIT FOR FINISHING VIDEO WRITE
+    	    								counter++;
+    	    								break;
+    	    							case 62://COUNTER, WAIT FOR FINISHING VIDEO WRITE
+    	    								counter++;
+    	    								break;
+    	    							
+    	    							case 61://STOP RECORD VIDEO, WRITE VIDEO FILE TO SDCARD
+    	    								mrec.stop();
+    	        	    		            mrec.release();
+    	        	    		            counter++;
+    	        	    		            System.out.println("record finish");
+    	    								break;
+    	    								
+    	    							case 0://FLASH ON
+    	    								Camera.Parameters params = mCamera.getParameters(); 
+    	        		        			params.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);     		        				    		        			
+    	       		 				 		mCamera.setParameters(params);
+    	       		 				 		mCamera.startPreview();	   		 				 
+    	       		 				 		System.out.println("run "+flashOn);
+    	       		 				 		flashOn=!flashOn;
+    	       		 				 		counter++;
+    	    								break;
+    	    							case 1:// LOCK WHITE BALANCE
+    	    								Camera.Parameters params2 = mCamera.getParameters(); 
+    	        		        			if(params2.isAutoWhiteBalanceLockSupported())
+    	        		        			{
+    	        		        			params2.setAutoExposureLock(true);
+    	        		        			}
+    	        		        			else {
+    	    									params2.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT);
+    	    								}
+    	        		        			mCamera.setParameters(params2);
+    	       		 				 		mCamera.startPreview();
+    	    		            			counter++;
+    	    								break;							
+    	    							case 8:// CAPTURE CONSTRICTION FRAME
+    	    								mCaptureFrame=true;
+    	    								counter++;
+    	    								break;
+    	    							case 30:// FLASH OFF, RELEASE WHITE BALANCE LOCK								
+    	        		        			Camera.Parameters params3 = mCamera.getParameters();    		        			
+    	        		            		params3.setFlashMode(Camera.Parameters.FLASH_MODE_OFF); 
+    	        		            		if(params3.isAutoWhiteBalanceLockSupported())
+    	        		            		{
+    	        		            		params3.setAutoExposureLock(false);
+    	        		            		params3.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_AUTO);
+    	        		            		}
+    	        			 				mCamera.setParameters(params3);
+    	        			 				mCamera.startPreview();		    			 				
+    	        			 				System.out.println("run "+flashOn);
+    	        			 				flashOn=!flashOn;
+    	        			 				counter++;
+    	    								break;
+    	    							case 31:// CHANGE WHITE BALANCE TO CLOUDY 
+    	    								Camera.Parameters params4 = mCamera.getParameters();
+    	    	            				if(params4.isAutoWhiteBalanceLockSupported())
+    	        		            		{
+    	    	            					params4.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT);			    		            		
+    	        		            		}
+    	    	            				else {
+    	    	            					params4.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT);
+    	    								}
+    	    	            				mCamera.setParameters(params4);
+    	        			 				mCamera.startPreview();	
+    	    	            				counter++;
+    	    								break;
+    	    							case 43:// CAPTURE DILATION FRAME
+    	    								mCaptureFrame=true;
+    	    								counter++;
+    	    								break;
+    	    							default:// CAPTURE USER FRAMES		
+    	    								Log.d("ImgCapture", "User Frame captured: "+counter);
+    	    								mCaptureUserFrame=true;
+    	    								counter++;						
+    	    								break;
+    	    							}
+    	        		            }}
+    	        		        );
+    	                         
+    	        		    }
+    	        			
+    	        		}, 0, 66);	
     			}
     			
     		}
-    		TimerTask myTimerTakeVideoTask= new TimerTask(){
-    			private int counter = 0;
-
-    		@Override		 
-    		    public void run() {
-    		        mHandler.post(new Runnable() {
-    		            public void run() {
-    		            	
-    	    		        if(counter == 17) {
-    	    		     
-    	    		        	mrec.stop();
-    	    		            mrec.release();
-    	    		            //mrec = null;
-    	    		            System.out.println("run finish");
-    	    		        	myTimer.cancel();
-    	    		        	Intent intent = new Intent(MainActivity.this, VideoPlayer.class);
-    	    		        	intent.putExtra("path", path);
-    	    		        	intent.putExtra("flashDuration", 2);
-    	    		        	//intent.putExtra("darkDuration", 2);
-    	    		        	startActivity(intent);
-    	    		        	finish();
-    	    		        }
-    	    		        else{
-    	    		        	if(counter==0){
-	    		            		
-	    		        			Camera.Parameters params = mCamera.getParameters(); 
-	    		        			params.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);     		        			
-	    		        			//params.setExposureCompensation(params.getExposureCompensation());
-	    		        			//params.setExposureCompensation(-12);
-	   		 				 		mCamera.setParameters(params);
-	   		 				 		mCamera.startPreview();
-	   		 				 	Log.d("iso", params.getMaxExposureCompensation()+"");
-    		        			Log.d("iso", params.getExposureCompensation()+"");
-    		        			Log.d("iso", params.getMinExposureCompensation()+"");
-	   		 				 		System.out.println("run "+flashOn);
-	   		 				 		flashOn=!flashOn;
-	   		 				 		counter++;
-    	    		        	}
-    	    		        	else {
-    	    		        		if(counter==1)
-    	    		        		{
-    	    		        			mCaptureFrame=true;
-    	    		        			Camera.Parameters params = mCamera.getParameters(); 
-    	    		        			if(params.isAutoWhiteBalanceLockSupported())
-    	    		        			{
-    	    		        			params.setAutoExposureLock(true);
-    	    		        			}
-    	    		        			else {
-    										params.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT);
-    									}
-    	    		        			mCamera.setParameters(params);
-    	   		 				 		mCamera.startPreview();
-	    		            			counter++;
-    	    		        		}
-    	    		        		else{
-	    		            		if(counter==8){
-		    		            		mCaptureFrame=true;
-		    		        			Camera.Parameters params = mCamera.getParameters();
-		    		        			
-		    		            		params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF); 
-		    		            		if(params.isAutoWhiteBalanceLockSupported())
-		    		            		{
-		    		            		params.setAutoExposureLock(false);
-		    		            		params.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_AUTO);
-		    		            		}
-		    		            		//params.setExposureCompensation(12);
-		    			 				mCamera.setParameters(params);
-		    			 				mCamera.startPreview();		    			 				
-		    			 				System.out.println("run "+flashOn);
-		    			 				flashOn=!flashOn;
-		    			 				counter++;
-	    		            		}
-	    		            		else {
-	    		            			if(counter==9)
-	    		            			{
-	    		            				Camera.Parameters params = mCamera.getParameters();
-	    		            				if(params.isAutoWhiteBalanceLockSupported())
-			    		            		{
-			    		            		params.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT);			    		            		
-			    		            		}
-	    		            				else {
-												params.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT);
-											}
-	    		            				mCamera.setParameters(params);
-			    			 				mCamera.startPreview();	
-	    		            				counter++;
-	    		            			}
-	    		            			else{
-	    		            			mCaptureFrame=true;
-	    		            			counter++;
-	    		            			}
-									}
-    	    		        		}
-    	    		        	}
-    		            	}
-    	    		        
-    	            }
-    		        });
-                     
-    		    }
-    			
-    		};
-    	
     		
     		
-    		
-    		TimerTask myTimerStartVideoTask= new TimerTask(){
-    			private int counter = 0;
-
-    		@Override		 
-    		    public void run() {
-    		        mHandler.post(new Runnable() {
-    		            public void run() {
-    		            	if(counter == 1) {
-     	    		        	myTimer2.cancel();
-     	    		        }
-    		            	else{
-    		            	startFocus.setVisibility(View.GONE);
-    		            	startFocus.setOnClickListener(null);
-    		            	startRecording.setVisibility(View.VISIBLE);
-    		            	startRecording.setOnClickListener(new StartListener());
-    		            	counter++;
-    		            	}
-	    	            }
-	    		        });
-	                     
-	    		    }
-	    			
-	    		};
     		
     		 PreviewCallback previewCallback = new PreviewCallback (){
     				public void onPreviewFrame(byte[] data, Camera camera) {
@@ -508,26 +654,78 @@ public class MainActivity extends Activity{
     								  decodeYUV(argb8888, data, width, height);
     								  Bitmap bitmap = Bitmap.createBitmap(argb8888, width,
     								                      height, Config.ARGB_8888);
-    								/*  Mat mat = new Mat(bitmap.getHeight(), bitmap.getWidth(), CvType.CV_8UC4);
-    								  Mat partFrameMat = new Mat();
-    								  Utils.bitmapToMat(bitmap, mat);
-    								  mat.submat((int)(mat.rows()*0.33), 
-    										  (int)(mat.rows()*0.67), 
-    										  (int)(mat.cols()*0.33), 
-    										  (int)(mat.cols()*0.67)).copyTo(partFrameMat);
-    								  Bitmap partFrameBitmap = Bitmap.createBitmap(partFrameMat.rows(), partFrameMat.cols(), Config.ARGB_8888);*/
+    								
     								  if(bitmap==null){
     									  System.out.println("bitmap is null");
     								  }
     								  else {
-    									  pupilImgSet.add(bitmap);
+    									  PupilImgs.pupilImgSet.add(bitmap);
+    									  Log.d("ImgCapture", "pupilImgSet"+PupilImgs.pupilImgSet.size());
     									  System.out.println("Frame captured");
-    									  capture.setImageBitmap(pupilImgSet.get(pupilImgSet.size()-1));
-    									  System.out.println("image "+pupilImgSet.size());
+    									 // capture.setImageBitmap(PupilImgs.pupilImgSet.get(PupilImgs.pupilImgSet.size()-1));
+    									  System.out.println("image "+PupilImgs.pupilImgSet.size());
     								  }
     								  
     								  frameNumber++;
     								  }
+    								else {
+										if (mCaptureUserFrame&&flashOn) {
+											mCaptureUserFrame=false;
+											mCaptureFrame=false;
+	    									frame[0] = (byte)frameNumber;
+	    								  Size previewSize = camera.getParameters().getPreviewSize(); 
+	    								  int width = previewSize.width;
+	    								  
+	    								  int height = previewSize.height;
+	    								  System.out.println("mCamera width: "+width+" mCamera height: "+height);
+	    								  int[] argb8888 = new int[width*height*3/2];
+	    								  decodeYUV(argb8888, data, width, height);
+	    								  Bitmap bitmap = Bitmap.createBitmap(argb8888, width,
+	    								                      height, Config.ARGB_8888);
+	    								  
+	    								  if(bitmap==null){
+	    									  System.out.println("bitmap is null");
+	    								  }
+	    								  else {
+	    									  //outputUnProcessedImgs(bitmap);
+	    									  PupilImgs.userFlasOnImgSet.add(bitmap);	    									 
+	    									  Log.d("ImgCapture", "Flash On User Frame captured");
+	    									 // capture.setImageBitmap(PupilImgs.userFlasOnImgSet.get(PupilImgs.userFlasOnImgSet.size()-1));
+	    									  //System.out.println("image "+PupilImgs.pupilImgSet.size());
+	    								  }
+										}
+										else {
+											if (mCaptureUserFrame&&!flashOn) {
+												mCaptureUserFrame=false;
+												mCaptureFrame=false;
+		    									frame[0] = (byte)frameNumber;
+		    								  Size previewSize = camera.getParameters().getPreviewSize(); 
+		    								  int width = previewSize.width;
+		    								  
+		    								  int height = previewSize.height;
+		    								  System.out.println("mCamera width: "+width+" mCamera height: "+height);
+		    								  int[] argb8888 = new int[width*height*3/2];
+		    								  decodeYUV(argb8888, data, width, height);
+		    								  Bitmap bitmap = Bitmap.createBitmap(argb8888, width,
+		    								                      height, Config.ARGB_8888);
+		    								  
+		    								  if(bitmap==null){
+		    									  System.out.println("bitmap is null");
+		    								  }
+		    								  else {
+		    									  //outputUnProcessedImgs(bitmap);
+		    									  PupilImgs.userFlasOffImgSet.add(bitmap);
+		    									  Log.d("ImgCapture", "Flash Off User Frame captured");		    									  
+		    									  //capture.setImageBitmap(PupilImgs.userFlasOffImgSet.get(PupilImgs.userFlasOffImgSet.size()-1));
+		    									 // System.out.println("image "+PupilImgs.pupilImgSet.size());
+		    								  }
+											}
+											else {
+												mCaptureUserFrame=false;
+												mCaptureFrame=false;
+											}
+										}
+									}
     				}};
 
     				
@@ -634,7 +832,17 @@ public class MainActivity extends Activity{
     public void surfaceCreated(SurfaceHolder holder) {
     	try {
             mCamera.setPreviewDisplay(holder);
-           
+            Camera.Parameters params2 = mCamera.getParameters();
+        	//int currentZoomLevel = params2.getMaxZoom();
+            //int maxZoomRatio = params2.getZoomRatios().get(params2.getZoomRatios().size());
+                params2.setZoom(30);
+               
+                //PupilImgs.zoomLevel = currentZoomLevel;
+                List<Size> sizes = params2.getSupportedPreviewSizes();
+                Size optimalSize = getOptimalPreviewSize(sizes, getResources().getDisplayMetrics().widthPixels, getResources().getDisplayMetrics().heightPixels);
+
+                params2.setPreviewSize(optimalSize.width, optimalSize.height);
+                mCamera.setParameters(params2);
             mCamera.startPreview(); 
             
             String[] supportedISOs = mCamera.getParameters().get("iso").split(",");

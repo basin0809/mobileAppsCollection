@@ -14,6 +14,7 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import android.R.integer;
 import android.util.Log;
 
 public class EyeTracerImp implements EyeTracer{
@@ -27,6 +28,7 @@ public class EyeTracerImp implements EyeTracer{
 	private static Mat circles = new Mat();
 	private static Mat circles2 = new Mat();
 	private static Mat circles3 = new Mat();
+	
 	@Override
 	public Mat getEyeMat(Mat originalMat) {
 	
@@ -180,20 +182,10 @@ public class EyeTracerImp implements EyeTracer{
 
 	
 
-	public static void findEyes1(Mat sourceMat) {
-	
-		preprocessEye(sourceMat);
-		
-		/*
-		Imgproc.HoughCircles(processedMat, circles, Imgproc.CV_HOUGH_GRADIENT, 1,dist, cannyUpperThreshold, accumulator, minRadius, maxRadius);
-		if(circles.cols()>0){
-			bestCircle = circles.get(0, 0);
-		} else {
-			bestCircle = null;
-		}*/
-	}
+
 //	Center point of image must be inside the pupil
-	private static void preprocessEye(Mat source) {
+	static double[] preprocessEye(Mat source) {
+		double results[] =  new double[6];	
 		Mat resMat = new Mat();
 		Mat tempResult1 = new Mat();
 		Mat tempResult2 = new Mat();
@@ -262,9 +254,14 @@ public class EyeTracerImp implements EyeTracer{
 
 				List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
 				Imgproc.findContours(tempResult1, contours, new Mat(), Imgproc.RETR_EXTERNAL , Imgproc.CHAIN_APPROX_NONE);
+				
+				
+		if(contours.size()!=0){
 				Log.d("OpenCV","Imgproc.findContours(tempResult1, contours, new Mat(), Imgproc.RETR_EXTERNAL , Imgproc.CHAIN_APPROX_NONE);");
-				Point center = new Point();
-				float[] radius = new float[]{2.2f};
+				Point centerIris = new Point();
+				Point centerPupil = new Point();
+				float[] radiusIris = new float[]{2.2f};
+				float[] radiusPupil = new float[]{2.2f};
 				MatOfPoint2f contour2f = new MatOfPoint2f();
 				double maxIrisArea=0;
 				double contourIrisArea=0;
@@ -279,11 +276,11 @@ public class EyeTracerImp implements EyeTracer{
 				}
 				//Imgproc.drawContours(tempResult5, contours, maxContourIrisIndex, new Scalar(255,255,255));
 				contours.get(maxContourIrisIndex).convertTo(contour2f, CvType.CV_32F);
-				Imgproc.minEnclosingCircle(contour2f, center, radius);
+				Imgproc.minEnclosingCircle(contour2f, centerIris, radiusIris);
 				Log.d("OpenCV","Imgproc.minEnclosingCircle(contour2f, center, radius);");
-				Log.d("OpenCV","Imgproc.minEnclosingCircle(contour2f, center, radius); "+center+" "+radius[0]);
+				Log.d("OpenCV","Imgproc.minEnclosingCircle(contour2f, center, radius); "+centerIris+" "+radiusIris[0]);
 				//source.copyTo(tempResult1);
-				markCircle(source, (int)radius[0], (int)center.x, (int)center.y, 0);
+				markCircle(source, (int)radiusIris[0], (int)centerIris.x, (int)centerIris.y, 0);
 				Log.d("OpenCV","markCircle(source, (int)radius[0], (int)center.x, (int)center.y, 0);");
 		/***************************************************************************************************/
 		Imgproc.calcHist(sourceList, new MatOfInt(0), tempResult1, hist, new MatOfInt(50), new MatOfFloat(0.0F,255.0F));
@@ -328,20 +325,38 @@ public class EyeTracerImp implements EyeTracer{
 		}
 		//Imgproc.drawContours(tempResult4, pupilContours, maxContourIndex, new Scalar(255,255,255));
 		pupilContours.get(maxContourIndex).convertTo(contour2f, CvType.CV_32F);
-		Imgproc.minEnclosingCircle(contour2f, center, radius);
+		Imgproc.minEnclosingCircle(contour2f, centerPupil, radiusPupil);
 		Log.d("OpenCV","Imgproc.minEnclosingCircle(contour2f, center, radius);");
 		//source.copyTo(tempResult2);
 		//markCircle(tempResult4, (int)radius[0], (int)center.x, (int)center.y, 255);
-		markCircle(source, (int)radius[0], (int)center.x, (int)center.y, 255);
+		
+		markCircle(source, (int)radiusPupil[0], (int)centerPupil.x, (int)centerPupil.y, 255);
 		
 		//Imgproc.morphologyEx(tempResult2, tempResult2, Imgproc.MORPH_CROSS, morKernel1);
 		//Imgproc.morphologyEx(tempResult2, tempResult2, Imgproc.MORPH_GRADIENT, morKernel1);
 		//Imgproc.HoughCircles(tempResult2, circles3, Imgproc.CV_HOUGH_GRADIENT, 1,dist, cannyUpperThreshold, accumulator, minRadius, maxRadius);
 		Log.d("hough", "circles:"+circles.rows());
 		
-		//markCircle(source ,0,false);			
-		//markCirclePupil(source,0,false);
+			
+		results[0]= radiusIris[0];
+		results[1]= radiusPupil[0];
+		results[2]= centerIris.x;
+		results[3]= centerIris.y;
+		results[4]= centerPupil.x;
+		results[5]= centerPupil.y;
 		
+		
+		}	
+		else {
+			results[0]= PupilImgs.screenW/4;
+			results[1]= PupilImgs.screenW/8;
+			results[2]= PupilImgs.screenW/2;
+			results[3]= PupilImgs.screenH/2;
+			results[4]= PupilImgs.screenW/2;
+			results[5]= PupilImgs.screenH/2;
+			
+		}
+		return results;
 	}
 	private static Mat buildMatFromCircle(Mat source,int index) {
 		Mat result = new Mat(source.rows(), source.cols(), CvType.CV_8UC1, new Scalar(0));
