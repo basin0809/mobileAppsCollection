@@ -67,6 +67,7 @@ public class IdentifyPupilIris extends Activity implements Callback{
 	private float defaultIrisR;
 	private float defaultPupilR;
 	private Rect bitmapRect;
+	private Button tutButton;
 	int w;
 	int h;
 	
@@ -86,9 +87,9 @@ public class IdentifyPupilIris extends Activity implements Callback{
         w = size.x;
         h = size.y;
         
-        bitmapRect = new Rect(0, 0, w*w/h, w);
-        defaultIrisR = w/4;
-        defaultPupilR = w/6;
+       // bitmapRect = new Rect(0, 0, w*w/h, w);
+        defaultIrisR = h/4;
+        defaultPupilR = h/6;
         irisX = (float) PupilImgs.dilationRes[2];
         irisY = (float) PupilImgs.dilationRes[3];
         pupilX = (float) PupilImgs.dilationRes[4];
@@ -113,6 +114,7 @@ public class IdentifyPupilIris extends Activity implements Callback{
 		mScaleGestureDetector = new ScaleGestureDetector(this, new ScaleGesturListener());
 		dilationButton = (TextView) findViewById(R.id.dilation_image_button);
 		
+		tutButton = (Button)findViewById(R.id.show_id_tut);
 		pupilButton = (Button) findViewById(R.id.pupil_button);
 		irisButton = (Button) findViewById(R.id.iris_button);
 		jumpButton = (Button) findViewById(R.id.dilation_confirm_button);
@@ -124,6 +126,7 @@ public class IdentifyPupilIris extends Activity implements Callback{
 		pupilButton.setOnClickListener(bl);
 		irisButton.setOnClickListener(bl);
 		jumpButton.setOnClickListener(bl);
+		tutButton.setOnClickListener(bl);
 		pupilButton.setBackgroundColor(pupilColor);
 		irisButton.setBackgroundColor(irisColor);
 		//DrawAll();
@@ -145,6 +148,12 @@ public class IdentifyPupilIris extends Activity implements Callback{
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
+		
+		isIdentifyingIris=false;
+		isIdentifyingPupil =true;
+		irisButton.setBackgroundResource(android.R.drawable.button_onoff_indicator_off);
+		
+		pupilButton.setBackgroundResource(android.R.drawable.button_onoff_indicator_on);
 		
 		
 	}
@@ -302,6 +311,72 @@ public class IdentifyPupilIris extends Activity implements Callback{
 				
 				break;	
 
+			case R.id.show_id_tut:
+				 final AlertDialog.Builder alertDialogBuilderNext=new AlertDialog.Builder(IdentifyPupilIris.this);  					
+				 alertDialogBuilderNext.setTitle("Tutorial 4/4")
+				  .setMessage("Press Next button to check the final measurement result.")            
+			      .setNegativeButton("Get it",   new DialogInterface.OnClickListener(){
+			              public void onClick(DialogInterface dialoginterface, int i){
+			            	  setResult(RESULT_CANCELED);
+			              }
+			      });
+				 
+				 
+				  final AlertDialog.Builder alertDialogBuilderSeek=new AlertDialog.Builder(IdentifyPupilIris.this);  					
+				  alertDialogBuilderSeek.setTitle("Tutorial 3/4")
+				 .setMessage("Press Identify Iris button to modify the red circle. Touch the screen to change the circle's location. Drag the seekbar"
+		           		+ "to change the circle's radius."+"\n"+"CAUTION: changing the circles will result in the changes to the final measurement result.")	            
+			      .setNegativeButton("Get it",   new DialogInterface.OnClickListener(){
+			              public void onClick(DialogInterface dialoginterface, int i){
+			            	  setResult(RESULT_CANCELED);
+			              }
+			      })
+			      .setPositiveButton("Next one", new DialogInterface.OnClickListener(){
+			           public void onClick(DialogInterface dialoginterface, int i){
+				          	 setResult(RESULT_OK); 
+				          	AlertDialog alertDialogNext = alertDialogBuilderNext.show(); 
+				           }
+				   });
+				  
+				  
+				   final AlertDialog.Builder alertDialogBuilderStep=new AlertDialog.Builder(IdentifyPupilIris.this);  
+					
+				   alertDialogBuilderStep.setTitle("Tutorial 2/4")
+		           .setMessage("Press Identify Puplil button to modify the green circle. Touch the screen to change the circle's location. Drag the seekbar"
+		           		+ "to change the circle's radius."+"\n"+"CAUTION: changing the circles will result in the changes to the final measurement result.")     
+				   .setNegativeButton("Get it",   new DialogInterface.OnClickListener(){
+				           public void onClick(DialogInterface dialoginterface, int i){
+				         	  setResult(RESULT_CANCELED);
+				         	  
+				           }
+				   })
+				   .setPositiveButton("Next one", new DialogInterface.OnClickListener(){
+				           public void onClick(DialogInterface dialoginterface, int i){
+				          	 setResult(RESULT_OK); 
+				          	AlertDialog alertDialogSeek = alertDialogBuilderSeek.show(); 
+				           }
+				   });
+				   
+				   
+				   
+				   AlertDialog.Builder alertDialogBuilderLocation=new AlertDialog.Builder(IdentifyPupilIris.this);  				
+				   alertDialogBuilderLocation.setTitle("Tutorial 1/4")
+		          .setMessage("The circles displayed on the screen indicate the dilated pupil and iris of tester."+"\n"+"Red circle: iris"+"\n"+"Green circle: pupil")    
+			       .setNegativeButton("Get it",   new DialogInterface.OnClickListener(){
+			              public void onClick(DialogInterface dialoginterface, int i){
+			            	  setResult(RESULT_CANCELED);
+			              }
+			       })
+			      .setPositiveButton("Next one", new DialogInterface.OnClickListener(){
+			              public void onClick(DialogInterface dialoginterface, int i){
+			             	 setResult(RESULT_OK);
+			             	AlertDialog alertDialogstep = alertDialogBuilderStep.show(); 
+					        
+			              }
+			      });
+				  AlertDialog alertDialogLocation = alertDialogBuilderLocation.show(); 
+				
+				break;
 			default:
 				break;
 			}

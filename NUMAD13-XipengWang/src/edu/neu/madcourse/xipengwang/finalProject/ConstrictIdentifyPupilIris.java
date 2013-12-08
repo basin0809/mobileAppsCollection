@@ -62,6 +62,11 @@ public class ConstrictIdentifyPupilIris extends Activity implements Callback{
 	private float pupilFactor =1;
 	private float imgX = 0;
 	private float imgY = 0;
+	private float defaultIrisR;
+	private float defaultPupilR;
+	private Button tutButton;
+	int w;
+	int h;
 	
 	
 	@Override
@@ -75,8 +80,10 @@ public class ConstrictIdentifyPupilIris extends Activity implements Callback{
 		Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        int w = size.x;
-        int h = size.y;
+        w = size.x;
+        h = size.y;
+        defaultIrisR = h/4;
+        defaultPupilR = h/6;
         irisX = (float) PupilImgs.constrictionRes[2];
         irisY = (float) PupilImgs.constrictionRes[3];
         pupilX = (float) PupilImgs.constrictionRes[4];
@@ -101,6 +108,7 @@ public class ConstrictIdentifyPupilIris extends Activity implements Callback{
 		mScaleGestureDetector = new ScaleGestureDetector(this, new ScaleGesturListener());
 		dilationButton = (TextView) findViewById(R.id.cdilation_image_button);
 		
+		tutButton = (Button) findViewById(R.id.show_cid_tut);
 		pupilButton = (Button) findViewById(R.id.cpupil_button);
 		irisButton = (Button) findViewById(R.id.ciris_button);
 		jumpButton = (Button) findViewById(R.id.cdilation_confirm_button);
@@ -111,6 +119,7 @@ public class ConstrictIdentifyPupilIris extends Activity implements Callback{
 		pupilButton.setOnClickListener(bl);
 		irisButton.setOnClickListener(bl);
 		jumpButton.setOnClickListener(bl);
+		tutButton.setOnClickListener(bl);
 		pupilButton.setBackgroundColor(pupilColor);
 		irisButton.setBackgroundColor(irisColor);
 		//DrawAll();
@@ -122,6 +131,12 @@ public class ConstrictIdentifyPupilIris extends Activity implements Callback{
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
+		
+		isIdentifyingIris=false;
+		isIdentifyingPupil =true;
+		irisButton.setBackgroundResource(android.R.drawable.button_onoff_indicator_off);
+		
+		pupilButton.setBackgroundResource(android.R.drawable.button_onoff_indicator_on);
 		
 		
 	}
@@ -200,7 +215,71 @@ public class ConstrictIdentifyPupilIris extends Activity implements Callback{
 			        startActivity(intent);
 			        finish();		
 				break;	
-
+			case R.id.show_cid_tut:
+				 final AlertDialog.Builder alertDialogBuilderNext=new AlertDialog.Builder(ConstrictIdentifyPupilIris.this);  					
+				 alertDialogBuilderNext.setTitle("Tutorial 4/4")
+				  .setMessage("Press Next button to check the dilated pupil detection result.")            
+			      .setNegativeButton("Get it",   new DialogInterface.OnClickListener(){
+			              public void onClick(DialogInterface dialoginterface, int i){
+			            	  setResult(RESULT_CANCELED);
+			              }
+			      });
+				 
+				 
+				  final AlertDialog.Builder alertDialogBuilderSeek=new AlertDialog.Builder(ConstrictIdentifyPupilIris.this);  					
+				  alertDialogBuilderSeek.setTitle("Tutorial 3/4")
+				 .setMessage("Press Identify Iris button to modify the red circle. Touch the screen to change the circle's location. Drag the seekbar"
+		           		+ " to change the circle's radius."+"\n"+"CAUTION: changing the circles will result in the changes to the final measurement result.")	            
+			      .setNegativeButton("Get it",   new DialogInterface.OnClickListener(){
+			              public void onClick(DialogInterface dialoginterface, int i){
+			            	  setResult(RESULT_CANCELED);
+			              }
+			      })
+			      .setPositiveButton("Next one", new DialogInterface.OnClickListener(){
+			           public void onClick(DialogInterface dialoginterface, int i){
+				          	 setResult(RESULT_OK); 
+				          	AlertDialog alertDialogNext = alertDialogBuilderNext.show(); 
+				           }
+				   });
+				  
+				  
+				   final AlertDialog.Builder alertDialogBuilderStep=new AlertDialog.Builder(ConstrictIdentifyPupilIris.this);  
+					
+				   alertDialogBuilderStep.setTitle("Tutorial 2/4")
+		           .setMessage("Press Identify Puplil button to modify the green circle. Touch the screen to change the circle's location. Drag the seekbar"
+		           		+ " to change the circle's radius."+"\n"+"CAUTION: changing the circles will result in the changes to the final measurement result.")     
+				   .setNegativeButton("Get it",   new DialogInterface.OnClickListener(){
+				           public void onClick(DialogInterface dialoginterface, int i){
+				         	  setResult(RESULT_CANCELED);
+				         	  
+				           }
+				   })
+				   .setPositiveButton("Next one", new DialogInterface.OnClickListener(){
+				           public void onClick(DialogInterface dialoginterface, int i){
+				          	 setResult(RESULT_OK); 
+				          	AlertDialog alertDialogSeek = alertDialogBuilderSeek.show(); 
+				           }
+				   });
+				   
+				   
+				   
+				   AlertDialog.Builder alertDialogBuilderLocation=new AlertDialog.Builder(ConstrictIdentifyPupilIris.this);  				
+				   alertDialogBuilderLocation.setTitle("Tutorial 1/4")
+		          .setMessage("The circles displayed on the screen indicate the constricted pupil and iris of tester."+"\n"+"Red circle: iris"+"\n"+"Green circle: pupil")    
+			       .setNegativeButton("Get it",   new DialogInterface.OnClickListener(){
+			              public void onClick(DialogInterface dialoginterface, int i){
+			            	  setResult(RESULT_CANCELED);
+			              }
+			       })
+			      .setPositiveButton("Next one", new DialogInterface.OnClickListener(){
+			              public void onClick(DialogInterface dialoginterface, int i){
+			             	 setResult(RESULT_OK);
+			             	AlertDialog alertDialogstep = alertDialogBuilderStep.show(); 
+					        
+			              }
+			      });
+				  AlertDialog alertDialogLocation = alertDialogBuilderLocation.show(); 
+				break;
 			default:
 				break;
 			}
@@ -223,8 +302,8 @@ public class ConstrictIdentifyPupilIris extends Activity implements Callback{
 		} else{
 			mCanvas.drawBitmap(mBitmap, imgX,imgY,null);
 		}
-		mCanvas.drawCircle(scaleFactor*irisX, (irisY*scaleFactor-topPos), irisR*irisFactor, irisPaint);
-		mCanvas.drawCircle(scaleFactor*pupilX, (pupilY*scaleFactor-topPos), pupilR*pupilFactor, pupilPaint);
+		mCanvas.drawCircle(scaleFactor*irisX, (irisY*scaleFactor-topPos), defaultIrisR*irisFactor, irisPaint);
+		mCanvas.drawCircle(scaleFactor*pupilX, (pupilY*scaleFactor-topPos), defaultPupilR*pupilFactor, pupilPaint);
 		mSurfaceHolder.unlockCanvasAndPost(mCanvas);
 		mSurfaceHolder.lockCanvas(new Rect(0,0,0,0));
 		mSurfaceHolder.unlockCanvasAndPost(mCanvas);
@@ -239,12 +318,12 @@ public class ConstrictIdentifyPupilIris extends Activity implements Callback{
 			//DrawAll();
 		} if(isIdentifyingIris){
 			irisX = event.getX();
-			irisY = event.getY()-irisR;
+			irisY = event.getY()-defaultIrisR;
 			DrawAll();
 			 
 		} else if(isIdentifyingPupil){
 			pupilX = event.getX();
-			pupilY = event.getY()-pupilR;
+			pupilY = event.getY()-defaultPupilR;
 			DrawAll();
 		}
 		/*if(pointCount==1){

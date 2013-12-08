@@ -9,7 +9,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -34,6 +36,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.AlphaAnimation;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -78,6 +81,11 @@ public class MainActivity extends Activity{
     private String path;
     private int imgCounter =0;
     private boolean jump= false;
+    private ImageView welcome;
+    private AlphaAnimation alphaDes;
+    
+    private Button tutorialButton;
+    private Button ackButton;
     File newFile;
     
     @Override
@@ -100,6 +108,9 @@ public class MainActivity extends Activity{
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
                                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.final_main);
+        
+       // welcome.startAnimation(alphaDes);
+       
         Log.i(null , "Video starting");
         relativeLayout = (RelativeLayout)findViewById(R.id.final_mian_layout); 
         
@@ -119,12 +130,13 @@ public class MainActivity extends Activity{
 		grid2 = new ImageView(this);
 		grid3 = new ImageView(this);
 		grid4 = new ImageView(this);
-		
+		welcome = new ImageView(this);
+        
 		grid1.setBackgroundResource(R.drawable.grid2);
 		grid2.setBackgroundResource(R.drawable.grid2);
 		grid3.setBackgroundResource(R.drawable.grid1);
 		grid4.setBackgroundResource(R.drawable.grid1);
-		
+		welcome.setBackgroundResource(R.drawable.welcome);
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(4, h);
 		params.leftMargin = (int)(w*0.375);
 		params.topMargin = 0;
@@ -141,11 +153,22 @@ public class MainActivity extends Activity{
 		params4.leftMargin = 0;
 		params4.topMargin = (int)(h*0.625);
 		
+		RelativeLayout.LayoutParams params5 = new RelativeLayout.LayoutParams(w, h);
+		params5.leftMargin =(int)(w*0.2);
+		params5.topMargin = (int)(h*0.2);
+		params5.rightMargin=(int)(w*0.2);
+		params5.bottomMargin = (int)(h*0.1);
+		
 		relativeLayout.addView(grid1, params);
 		relativeLayout.addView(grid2, params2);
 		relativeLayout.addView(grid3, params3);
 		relativeLayout.addView(grid4, params4);
-        
+		relativeLayout.addView(welcome, params5);
+		
+		alphaDes = new AlphaAnimation(1.0f, 0.0f);
+        alphaDes.setDuration(10000);
+        VideoWelcomeTask videoWelcomeTask = new VideoWelcomeTask();
+        videoWelcomeTask.execute();
         //zoomControls = (ZoomControls) findViewById(R.id.CAMERA_ZOOM_CONTROLS);
 
         //startRecording.setOnClickListener(new StartListener());
@@ -234,7 +257,8 @@ public class MainActivity extends Activity{
 		   startRecording = (Button)findViewById(R.id.video_start_button);
 	        //startRecording.setVisibility(View.GONE);
 	        startFocus = (Button)findViewById(R.id.video_focus_button);
-	        
+	        tutorialButton = (Button)findViewById(R.id.video_tut_button);
+	       ackButton = (Button)findViewById(R.id.video_ack_button);
 	        startFocus.setVisibility(View.VISIBLE);
 	        //capture = (ImageView)findViewById(R.id.capture);
 	        mCamera = getCameraInstance();  	 
@@ -244,22 +268,15 @@ public class MainActivity extends Activity{
 			 mainLayout.addView(camPreview);
 	        
 	        startFocus.setOnClickListener(new FocusListener());
-	        
+	        startRecording.setOnClickListener(new StartListener());
+	        tutorialButton.setOnClickListener(new TutorialListener());
+	        ackButton.setOnClickListener(new AckListener());
 	        myTimer = new Timer();
 	        myTimer2 = new Timer();
 		 
 	}
 
 
-	@Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        menu.add(0, 0, 0, "ISO 100");
-        menu.add(0, 1, 0, "ISO 200");
-        menu.add(0, 2, 0, "ISO 400");
-        menu.add(0, 3, 0, "ISO 800");
-        return super.onCreateOptionsMenu(menu);
-    }
 
 	private Size getOptimalPreviewSize(List<Size> sizes, int w, int h) {
 	    final double ASPECT_TOLERANCE = 0.05;
@@ -295,67 +312,7 @@ public class MainActivity extends Activity{
 	    return optimalSize;
 	}
 	
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        switch (item.getItemId())
-        {
-        case 0:
-        	 mCamera.stopPreview();
-        	 Camera.Parameters params = mCamera.getParameters(); 		     
-		     params.set("iso", "ISO100");
-		     mCamera.setParameters(params);
-		     mCamera.startPreview();
-		     String[] supportedISOs = mCamera.getParameters().get("iso").split(",");
-	            int len = supportedISOs.length;
-	            for(int i=0; i<len; i++){
-	            Log.d("iso", supportedISOs[i]);
-	            }
-            break;
 
-        case 1: //GoToAllNotes
-        	mCamera.stopPreview();
-       	     Camera.Parameters params1 = mCamera.getParameters(); 		     
-		     params1.set("iso", "ISO200");
-		     mCamera.setParameters(params1);
-		     mCamera.startPreview();
-		     String[] supportedISOs1 = mCamera.getParameters().get("iso").split(",");
-	            int len1 = supportedISOs1.length;
-	            for(int i=0; i<len1; i++){
-	            Log.d("iso", supportedISOs1[i]);
-	            }
-            break;
-            
-        case 2: //GoToAllNotes
-        	mCamera.stopPreview();
-       	     Camera.Parameters params2 = mCamera.getParameters(); 		     
-		     params2.set("iso", "ISO400");
-		     mCamera.setParameters(params2);
-		     mCamera.startPreview();
-		     String[] supportedISOs2 = mCamera.getParameters().get("iso").split(",");
-	            int len2 = supportedISOs2.length;
-	            for(int i=0; i<len2; i++){
-	            Log.d("iso", supportedISOs2[i]);
-	            }
-            break;
-        
-        case 3: //GoToAllNotes
-        	mCamera.stopPreview();
-       	     Camera.Parameters params3 = mCamera.getParameters(); 		     
-		     params3.set("iso", "ISO800");
-		     mCamera.setParameters(params3);
-		     mCamera.startPreview();
-		     String[] supportedISOs3 = mCamera.getParameters().get("iso").split(",");
-	            int len3 = supportedISOs3.length;
-	            for(int i=0; i<len3; i++){
-	            Log.d("iso", supportedISOs3[i]);
-	            };
-
-        default:
-            break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     public static Camera getCameraInstance(){
     	    Camera c = null;
@@ -392,6 +349,8 @@ public class MainActivity extends Activity{
         mrec.setPreviewDisplay(surfaceHolder.getSurface());
         if (camcorderProfile.fileFormat == MediaRecorder.OutputFormat.THREE_GPP) {
             try {
+            	
+            	String state = Environment.getExternalStorageState();
             				newFile=File.createTempFile("videocapture", ".3gp", Environment.getExternalStorageDirectory());
                             
                             mrec.setOutputFile(newFile.getAbsolutePath());
@@ -450,7 +409,90 @@ public class MainActivity extends Activity{
             //mCamera.lock();           // lock camera for later use
         }
     }
+    
+    
+    public class AckListener implements OnClickListener{
 
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			final AlertDialog.Builder alertDialogBuilderAck=new AlertDialog.Builder(MainActivity.this);  					
+			alertDialogBuilderAck.setTitle("Acknowledgement")
+			  .setMessage("Thanks to:"+"\n"+"Stephen Intille, Ph.D. "+"\n"+"Mansoor Pervaiz"
+					 +"\n" +"Stack Overflow "+"\n"+"http://stackoverflow.com/"
+					  +"\n"+"OpenCV docs"+"\n"+ "http://docs.opencv.org/"
+					  	+"\n"+"Icon image: Eye of Horus"
+					  	 +"\n"+"en.wikipedia.org/wiki/Eye_of_Horus")		            
+		      .setNegativeButton("OK",   new DialogInterface.OnClickListener(){
+		              public void onClick(DialogInterface dialoginterface, int i){
+		            	  setResult(RESULT_CANCELED);
+		              }
+		      });
+			AlertDialog alertDialogAck = alertDialogBuilderAck.show(); 
+		}
+    	
+    }
+    
+
+    public class TutorialListener implements OnClickListener{
+
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			View dialogView = View.inflate(MainActivity.this, R.layout.final_dialogview, null);
+			
+			 final AlertDialog.Builder alertDialogBuilderStart=new AlertDialog.Builder(MainActivity.this);  					
+			  alertDialogBuilderStart.setTitle("Tutorial 3/3")
+			  .setMessage("Press start button to take a video. The taking process will last for 4 seconds and the flash will be turned on for 2 seconds."
+			  		+ " Please keep tester's eye open.")		            
+		      .setNegativeButton("Get it",   new DialogInterface.OnClickListener(){
+		              public void onClick(DialogInterface dialoginterface, int i){
+		            	  setResult(RESULT_CANCELED);
+		              }
+		      });
+			   final AlertDialog.Builder alertDialogBuilderFocus=new AlertDialog.Builder(MainActivity.this);  
+				
+			   alertDialogBuilderFocus.setTitle("Tutorial 2/3")
+	           .setMessage("Before start to take a video, you can press the focus button to make the image clearer.")  
+	           
+			   .setNegativeButton("Get it",   new DialogInterface.OnClickListener(){
+			           public void onClick(DialogInterface dialoginterface, int i){
+			         	  setResult(RESULT_CANCELED);
+			         	  
+			           }
+			   })
+			   .setPositiveButton("Next one", new DialogInterface.OnClickListener(){
+			           public void onClick(DialogInterface dialoginterface, int i){
+			          	 setResult(RESULT_OK); 
+			          	AlertDialog alertDialogStart = alertDialogBuilderStart.show(); 
+			           }
+			   });
+			   
+			   
+			   
+			   AlertDialog.Builder alertDialogBuilderLocation=new AlertDialog.Builder(MainActivity.this);  				
+			   alertDialogBuilderLocation.setTitle("Tutorial 1/3")
+	           .setView(dialogView)	            
+		       .setNegativeButton("Get it",   new DialogInterface.OnClickListener(){
+		              public void onClick(DialogInterface dialoginterface, int i){
+		            	  setResult(RESULT_CANCELED);
+		              }
+		       })
+		      .setPositiveButton("Next one", new DialogInterface.OnClickListener(){
+		              public void onClick(DialogInterface dialoginterface, int i){
+		             	 setResult(RESULT_OK);
+		             	AlertDialog alertDialogFocus = alertDialogBuilderFocus.show(); 
+				        
+		              }
+		      });
+			  AlertDialog alertDialogLocation = alertDialogBuilderLocation.show(); 
+				
+				
+		}
+    	
+    }
+    
+    
     public class FocusListener implements OnClickListener{
 
 		@Override
@@ -513,9 +555,26 @@ public class MainActivity extends Activity{
     				//mHandler.postDelayed(TakePicture, 300);
     				//videoRecordTask =new VideoRecordTask();
     				//videoRecordTask.execute();
+    				String state = Environment.getExternalStorageState();
+               	 	if (!Environment.MEDIA_MOUNTED.equals(state)){
+                     //We can read and write the media
+               	 	 AlertDialog.Builder alertDialogBuilderQuit=new AlertDialog.Builder(MainActivity.this);  					
+               	 	alertDialogBuilderQuit.setTitle("SDCard not found")
+               	 	.setMessage("The app needs to write video file into the SDCard, please check your SDCard setting.")		            
+       			  		.setNegativeButton("Quit",   new DialogInterface.OnClickListener(){
+       		              public void onClick(DialogInterface dialoginterface, int i){
+       		            	  setResult(RESULT_CANCELED);
+       		            	 finish();
+       		              }
+       		      });
+               	 	} 
     				v.setOnClickListener(null);
+    				v.setVisibility(View.INVISIBLE);
     				startFocus.setVisibility(View.INVISIBLE);
 	            	startFocus.setOnClickListener(null);
+	            	tutorialButton.setOnClickListener(null);
+	            	ackButton.setVisibility(View.INVISIBLE);
+	            	ackButton.setOnClickListener(null);
     				try {
 						startRecording();
 					} catch (IOException e) {
@@ -530,7 +589,7 @@ public class MainActivity extends Activity{
     	        		        mHandler.post(new Runnable() {
     	        		            public void run() {
     	        		            	switch (counter) {
-    	    							case 67:// JUMP TO VIDEO PLAYER ACTIVITY 67
+    	    							case 72:// JUMP TO VIDEO PLAYER ACTIVITY 67
     	    								jump = true;
     	    								 System.out.println("run finish");   	    		          		            
     	    	    	    		         myTimer.cancel();
@@ -539,6 +598,22 @@ public class MainActivity extends Activity{
     	    	    	    		         intent.putExtra("flashDuration", 2);
     	    	    	    		         startActivity(intent);
     	    	    	    		         finish();
+    	    								break;
+    	    							
+    	    							case 71://COUNTER, WAIT FOR FINISHING VIDEO WRITE
+    	    								counter++;
+    	    								break;
+    	    							case 70://COUNTER, WAIT FOR FINISHING VIDEO WRITE
+    	    								counter++;
+    	    								break;
+    	    							case 69://COUNTER, WAIT FOR FINISHING VIDEO WRITE
+    	    								counter++;
+    	    								break;
+    	    							case 68://COUNTER, WAIT FOR FINISHING VIDEO WRITE
+    	    								counter++;
+    	    								break;
+    	    							case 67://COUNTER, WAIT FOR FINISHING VIDEO WRITE
+    	    								counter++;
     	    								break;
     	    							case 66://COUNTER, WAIT FOR FINISHING VIDEO WRITE
     	    								counter++;
@@ -897,5 +972,30 @@ public class MainActivity extends Activity{
 
 	}
 
-	
+    class VideoWelcomeTask extends AsyncTask<Void, Integer, Void> {
+		//private  ProgressDialog pdialog = new ProgressDialog(ShowPupilDetecionResults.this);
+
+	    @Override
+	    protected void onPreExecute() {
+	    	
+	    }
+
+	    // automatically done on worker thread (separate from UI thread)
+	    @Override
+	    protected Void doInBackground(Void... params) {
+	        // Here is where we need to do the downloading of the 
+	    	//Mat[] processedImgs = new Mat[PupilImgs.pupilImgSet.size()];
+	    	
+	    	welcome.startAnimation(alphaDes);
+	    	return null;
+	    }
+	    // add in a progress bar update
+
+	    @Override
+		protected void onPostExecute(Void result) {
+			
+	    	welcome.setVisibility(View.GONE);
+		}
+
+	}
 }

@@ -14,6 +14,7 @@ import org.opencv.highgui.Highgui;
 
 import android.R.integer;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -43,11 +44,11 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 import edu.neu.madcourse.xipengwang.R;
 import edu.neu.madcourse.xipengwang.comm.OnlineUsers;
-
 import edu.neu.madcourse.xipengwang.finalProject.RangeSeekBar.OnRangeSeekBarChangeListener;
 
 public class VideoPlayer extends Activity implements Callback{
 	String TAG = "RangeSeekBarTAG";
+	private final int DEFAULT_DURATION = 4000;
 	private final static int FLASH_ON =7;
 	private final static int FLASH_OFF =53;
 	private Button btn_replay_flashon = null;
@@ -91,6 +92,7 @@ public class VideoPlayer extends Activity implements Callback{
 	Handler handler;
 	private boolean jump = false;
 	
+	private Button tutButton;
 	//private int constrictionTime;
 
 	
@@ -146,7 +148,8 @@ public class VideoPlayer extends Activity implements Callback{
 		
 		
 
-
+		tutButton = (Button)findViewById(R.id.show_tut);
+		tutButton.setOnClickListener(new TutListener());
 		capture = (ImageView)this.findViewById(R.id.play_back_imgs);
 		btn_replay_flashoff = (Button) this.findViewById(R.id.replay_button_flash_off);
 		btn_replay_flashon = (Button) this.findViewById(R.id.replay_button_flash_on);
@@ -162,6 +165,14 @@ public class VideoPlayer extends Activity implements Callback{
 		l_flashon = (RelativeLayout) this.findViewById(R.id.layout_flash_on);
 		l_flashoff = (RelativeLayout) this.findViewById(R.id.layout_flash_off);
 		surfaceView = (SurfaceView) this.findViewById(R.id.SurfaceView01);
+		
+        rskb_flashon = new RangeSeekBar<Integer>(0, flashPosition, this);
+		
+		rskb_flashoff = new RangeSeekBar<Integer>(flashPosition, DEFAULT_DURATION, this);
+		
+		l_flashon.addView(rskb_flashon);
+		
+		l_flashoff.addView(rskb_flashoff);
 		//l_sur_img.addView(surfaceView);
 		//l_sur_img.addView(capture);
 		
@@ -183,6 +194,36 @@ public class VideoPlayer extends Activity implements Callback{
 	
 	
 	
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onRestoreInstanceState(savedInstanceState);
+		rskb_flashoff.setSelectedMinValue(savedInstanceState.getInt("seekBarOffMinValue"));
+		rskb_flashoff.setSelectedMaxValue(savedInstanceState.getInt("seekBarOffMaxValue"));
+		rskb_flashon.setSelectedMinValue(savedInstanceState.getInt("seekBarOnMinValue"));
+		rskb_flashon.setSelectedMaxValue(savedInstanceState.getInt("seekBarOnMaxValue"));
+		
+	}
+
+
+
+
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		// TODO Auto-generated method stub
+		super.onSaveInstanceState(outState);
+		outState.putInt("seekBarOffMinValue", rskb_flashoff.getSelectedMinValue());
+		outState.putInt("seekBarOffMaxValue", rskb_flashoff.getSelectedMaxValue());
+		outState.putInt("seekBarOnMaxValue", rskb_flashon.getSelectedMaxValue());
+		outState.putInt("seekBarOnMaxValue", rskb_flashon.getSelectedMaxValue());
+		
+	}
+
+
+
+
+
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
@@ -238,7 +279,82 @@ public class VideoPlayer extends Activity implements Callback{
 	}
 
 
+    public class TutListener implements OnClickListener{
 
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			View dialogView1 = View.inflate(VideoPlayer.this, R.layout.final_dialogviewplay, null);
+			View dialogView2 = View.inflate(VideoPlayer.this, R.layout.final_dialogviewstep, null);
+			View dialogView3 = View.inflate(VideoPlayer.this, R.layout.final_dialogviewseek, null);
+			View dialogView4 = View.inflate(VideoPlayer.this, R.layout.final_dialogviewnext, null);
+			
+			 final AlertDialog.Builder alertDialogBuilderNext=new AlertDialog.Builder(VideoPlayer.this);  					
+			 alertDialogBuilderNext.setTitle("Tutorial 4/4")
+			  .setView(dialogView4)            
+		      .setNegativeButton("Get it",   new DialogInterface.OnClickListener(){
+		              public void onClick(DialogInterface dialoginterface, int i){
+		            	  setResult(RESULT_CANCELED);
+		              }
+		      });
+			 
+			 
+			  final AlertDialog.Builder alertDialogBuilderSeek=new AlertDialog.Builder(VideoPlayer.this);  					
+			  alertDialogBuilderSeek.setTitle("Tutorial 3/4")
+			  .setView(dialogView3)		            
+		      .setNegativeButton("Get it",   new DialogInterface.OnClickListener(){
+		              public void onClick(DialogInterface dialoginterface, int i){
+		            	  setResult(RESULT_CANCELED);
+		              }
+		      })
+		      .setPositiveButton("Next one", new DialogInterface.OnClickListener(){
+		           public void onClick(DialogInterface dialoginterface, int i){
+			          	 setResult(RESULT_OK); 
+			          	AlertDialog alertDialogNext = alertDialogBuilderNext.show(); 
+			           }
+			   });
+			  
+			  
+			   final AlertDialog.Builder alertDialogBuilderStep=new AlertDialog.Builder(VideoPlayer.this);  
+				
+			   alertDialogBuilderStep.setTitle("Tutorial 2/4")
+	           .setView(dialogView2)      
+			   .setNegativeButton("Get it",   new DialogInterface.OnClickListener(){
+			           public void onClick(DialogInterface dialoginterface, int i){
+			         	  setResult(RESULT_CANCELED);
+			         	  
+			           }
+			   })
+			   .setPositiveButton("Next one", new DialogInterface.OnClickListener(){
+			           public void onClick(DialogInterface dialoginterface, int i){
+			          	 setResult(RESULT_OK); 
+			          	AlertDialog alertDialogSeek = alertDialogBuilderSeek.show(); 
+			           }
+			   });
+			   
+			   
+			   
+			   AlertDialog.Builder alertDialogBuilderLocation=new AlertDialog.Builder(VideoPlayer.this);  				
+			   alertDialogBuilderLocation.setTitle("Tutorial 1/4")
+	           .setView(dialogView1)          
+		       .setNegativeButton("Get it",   new DialogInterface.OnClickListener(){
+		              public void onClick(DialogInterface dialoginterface, int i){
+		            	  setResult(RESULT_CANCELED);
+		              }
+		       })
+		      .setPositiveButton("Next one", new DialogInterface.OnClickListener(){
+		              public void onClick(DialogInterface dialoginterface, int i){
+		             	 setResult(RESULT_OK);
+		             	AlertDialog alertDialogstep = alertDialogBuilderStep.show(); 
+				        
+		              }
+		      });
+			  AlertDialog alertDialogLocation = alertDialogBuilderLocation.show(); 
+				
+				
+		}
+    	
+    }
 
 	class RangeSeekBarChangeListener implements OnRangeSeekBarChangeListener<Integer>{
 
@@ -504,9 +620,11 @@ public class VideoPlayer extends Activity implements Callback{
 		btn_replay_flashon.setOnTouchListener(rl);
 		btn_review.setOnClickListener(bel);
 		btn_jump.setOnClickListener(bel);
-		rskb_flashon = new RangeSeekBar<Integer>(0, flashPosition, this);
+		//rskb_flashon = new RangeSeekBar<Integer>(0, flashPosition, this);
 		
-		rskb_flashoff = new RangeSeekBar<Integer>(flashPosition, m.getDuration(), this);
+		//rskb_flashoff = new RangeSeekBar<Integer>(flashPosition, m.getDuration(), this);
+		//rskb_flashoff.setAbsoluteMaxValue(m.getDuration());
+		
 		RangeSeekBarChangeListener rsbcl = new RangeSeekBarChangeListener();
 		rskb_flashon.setOnRangeSeekBarChangeListener(rsbcl);
 		
@@ -514,8 +632,7 @@ public class VideoPlayer extends Activity implements Callback{
 		//rskb_flashoff.setOnClickListener(bel);
 		
 		rskb_flashoff.setOnRangeSeekBarChangeListener(rsbcl);
-		l_flashon.addView(rskb_flashon);
-		l_flashoff.addView(rskb_flashoff);
+
 	
 	}
 
@@ -549,7 +666,7 @@ public class VideoPlayer extends Activity implements Callback{
 	    @Override
 	    protected void onPreExecute() {
 	    	
-	    	pdialog.setTitle("Pupil Detecting");
+	    	pdialog.setTitle("Pupil and Iris Detecting");
 	    	pdialog.setMessage("Processing the video, please wait for seconds");
 	    	pdialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 	    	pdialog.setButton(ProgressDialog.BUTTON_NEGATIVE, "Cancel", 

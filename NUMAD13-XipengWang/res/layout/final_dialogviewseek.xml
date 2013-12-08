@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:orientation="vertical" >
+
+<ImageView
+    android:id="@+id/imageViewSeek"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:src="@drawable/seekbar" />
+
+<TextView
+    android:id="@+id/video_dialog_seek"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/imageViewSeek"
+    android:text="Drag the first seekbar to choose the time when tester's pupil's size constricts to be smallest. Drag the second seekbar to choose the time when tester's pupil's size dilates to be largest"/>
+</RelativeLayout>

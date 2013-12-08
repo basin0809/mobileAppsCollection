@@ -1,13 +1,20 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/first_main"
+<ScrollView
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   android:layout_width="fill_parent"
+   android:layout_height="fill_parent"
+   android:padding="10dip">
+   
+	<RelativeLayout 
+   android:id="@+id/first_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".MainActivity" >
+   
+    >
+
 
     
     <Button
@@ -50,7 +57,7 @@
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:layout_below="@+id/dabble_button"
-        android:text="Communication"/>"
+        android:text="Communication"/>
         
      <Button
         android:id="@+id/twoPDabble_button"
@@ -64,13 +71,20 @@
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:layout_below="@+id/twoPDabble_button"
-        android:text="Trickiest Part"/>"
+        android:text="Trickiest Part"/>
+      <Button
+        android:id="@+id/pupilResponce_button"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_below="@+id/finalProject_button"
+        android:text="Final Project"/>
         
     <Button
         android:id="@+id/exit_button"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:layout_below="@+id/finalProject_button"
+        android:layout_below="@+id/pupilResponce_button"
         android:text="Quit"/>"
 
-</RelativeLayout>
+	</RelativeLayout>
+</ScrollView>

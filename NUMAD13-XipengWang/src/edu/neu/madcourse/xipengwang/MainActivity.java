@@ -13,8 +13,10 @@ import android.widget.RelativeLayout;
 import edu.neu.madcourse.xipengwang.dabble.Dabble;
 import edu.neu.madcourse.xipengwang.dabble.TwiceActiveCheck;
 import edu.neu.madcourse.xipengwang.dict.Dictionary;
+import edu.neu.madcourse.xipengwang.finalProject.Description;
 import edu.neu.madcourse.xipengwang.sudoku.Sudoku;
 import edu.neu.mhealth.api.KeyValueAPI;
+import edu.neu.mobileClass.PhoneCheckAPI;
 
 
 public class MainActivity extends Activity {
@@ -28,6 +30,7 @@ public class MainActivity extends Activity {
 	private Button commButton;
 	private Button twoPDabbleButton;
 	private Button finalProject;
+	private Button pupilResponse;
     private ImageView grid1;
     private ImageView grid2;
     private ImageView grid3;
@@ -40,7 +43,7 @@ public class MainActivity extends Activity {
 		
 		setTitle("Xipeng Wang");
 		
-		//PhoneCheckAPI.doAuthorization(this);
+		PhoneCheckAPI.doAuthorization(this);
 		TwiceActiveCheck.musicTwicePressed.add(0);
 		aboutButton = (Button)findViewById(R.id.about_button);
 		sudokuButton = (Button)findViewById(R.id.sudoku_button);
@@ -50,6 +53,7 @@ public class MainActivity extends Activity {
 		commButton = (Button)findViewById(R.id.comm_button);
 		twoPDabbleButton = (Button)findViewById(R.id.twoPDabble_button);
 		finalProject = (Button)findViewById(R.id.finalProject_button);
+		pupilResponse = (Button)findViewById(R.id.pupilResponce_button);
 		quitButton = (Button)findViewById(R.id.exit_button);
 		sudokuButton.setOnClickListener(new SudokuButtonListener());
 		aboutButton.setOnClickListener(new AboutButtonListener());
@@ -59,6 +63,7 @@ public class MainActivity extends Activity {
 		twoPDabbleButton.setOnClickListener(new DabbleButtonListener());
 		commButton.setOnClickListener(new CommButtonListener());
 		finalProject.setOnClickListener(new FinalProListener());
+		pupilResponse.setOnClickListener(new PupilResponseListener());
 		quitButton.setOnClickListener(new ExitButtonListener());
 		
 		
@@ -194,6 +199,17 @@ public class MainActivity extends Activity {
 		 Intent intent =new Intent();
 		 intent.setClass(MainActivity.this, Dabble.class);
 		 startActivity(intent);
+		}
+		
+	}
+	class PupilResponseListener implements OnClickListener{
+
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			Intent intent =new Intent();
+			intent.setClass(MainActivity.this, Description.class);
+			startActivity(intent);
 		}
 		
 	}

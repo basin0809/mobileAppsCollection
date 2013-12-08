@@ -39,7 +39,8 @@ public class RangeSeekBar<T extends Number> extends ImageView {
         private final float thumbHalfHeight = 0.5f * thumbImage.getHeight();
         private final float lineHeight = 0.3f * thumbHalfHeight;
         private final float padding = thumbHalfWidth;
-        private final T absoluteMinValue, absoluteMaxValue;
+        private final T absoluteMinValue;
+		private T absoluteMaxValue;
         private final NumberType numberType;
         private final double absoluteMinValuePrim, absoluteMaxValuePrim;
         private double normalizedMinValue = 0d;
@@ -100,6 +101,9 @@ public class RangeSeekBar<T extends Number> extends ImageView {
                 init();
         }
 
+        void setAbsoluteMaxValue(T value){
+        	absoluteMaxValue = value;
+        }
         private final void init() {
                 mScaledTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
         }
