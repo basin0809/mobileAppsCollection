@@ -589,7 +589,7 @@ public class MainActivity extends Activity{
     	        		        mHandler.post(new Runnable() {
     	        		            public void run() {
     	        		            	switch (counter) {
-    	    							case 72:// JUMP TO VIDEO PLAYER ACTIVITY 67
+    	    							case 37:// JUMP TO VIDEO PLAYER ACTIVITY 67
     	    								jump = true;
     	    								 System.out.println("run finish");   	    		          		            
     	    	    	    		         myTimer.cancel();
@@ -600,39 +600,25 @@ public class MainActivity extends Activity{
     	    	    	    		         finish();
     	    								break;
     	    							
-    	    							case 71://COUNTER, WAIT FOR FINISHING VIDEO WRITE
+    	    							
+    	    							case 36://COUNTER, WAIT FOR FINISHING VIDEO WRITE
     	    								counter++;
     	    								break;
-    	    							case 70://COUNTER, WAIT FOR FINISHING VIDEO WRITE
+    	    							case 35://COUNTER, WAIT FOR FINISHING VIDEO WRITE
     	    								counter++;
     	    								break;
-    	    							case 69://COUNTER, WAIT FOR FINISHING VIDEO WRITE
+    	    							case 34://COUNTER, WAIT FOR FINISHING VIDEO WRITE
     	    								counter++;
     	    								break;
-    	    							case 68://COUNTER, WAIT FOR FINISHING VIDEO WRITE
+    	    							case 33://COUNTER, WAIT FOR FINISHING VIDEO WRITE
     	    								counter++;
     	    								break;
-    	    							case 67://COUNTER, WAIT FOR FINISHING VIDEO WRITE
-    	    								counter++;
-    	    								break;
-    	    							case 66://COUNTER, WAIT FOR FINISHING VIDEO WRITE
-    	    								counter++;
-    	    								break;
-    	    							case 65://COUNTER, WAIT FOR FINISHING VIDEO WRITE
-    	    								counter++;
-    	    								break;
-    	    							case 64://COUNTER, WAIT FOR FINISHING VIDEO WRITE
-    	    								counter++;
-    	    								break;
-    	    							case 63://COUNTER, WAIT FOR FINISHING VIDEO WRITE
-    	    								counter++;
-    	    								break;
-    	    							case 62://COUNTER, WAIT FOR FINISHING VIDEO WRITE
+    	    							case 32://COUNTER, WAIT FOR FINISHING VIDEO WRITE
     	    								counter++;
     	    								break;
     	    							
-    	    							case 61://STOP RECORD VIDEO, WRITE VIDEO FILE TO SDCARD
-    	    								mrec.stop();
+    	    							case 31://STOP RECORD VIDEO, WRITE VIDEO FILE TO SDCARD
+    	    								//mrec.stop();
     	        	    		            mrec.release();
     	        	    		            counter++;
     	        	    		            System.out.println("record finish");
@@ -664,7 +650,7 @@ public class MainActivity extends Activity{
     	    								mCaptureFrame=true;
     	    								counter++;
     	    								break;
-    	    							case 30:// FLASH OFF, RELEASE WHITE BALANCE LOCK								
+    	    							case 15:// FLASH OFF, RELEASE WHITE BALANCE LOCK								
     	        		        			Camera.Parameters params3 = mCamera.getParameters();    		        			
     	        		            		params3.setFlashMode(Camera.Parameters.FLASH_MODE_OFF); 
     	        		            		if(params3.isAutoWhiteBalanceLockSupported())
@@ -678,7 +664,7 @@ public class MainActivity extends Activity{
     	        			 				flashOn=!flashOn;
     	        			 				counter++;
     	    								break;
-    	    							case 31:// CHANGE WHITE BALANCE TO CLOUDY 
+    	    							case 16:// CHANGE WHITE BALANCE TO CLOUDY 
     	    								Camera.Parameters params4 = mCamera.getParameters();
     	    	            				if(params4.isAutoWhiteBalanceLockSupported())
     	        		            		{
@@ -691,7 +677,7 @@ public class MainActivity extends Activity{
     	        			 				mCamera.startPreview();	
     	    	            				counter++;
     	    								break;
-    	    							case 43:// CAPTURE DILATION FRAME
+    	    							case 23:// CAPTURE DILATION FRAME
     	    								mCaptureFrame=true;
     	    								counter++;
     	    								break;
@@ -706,7 +692,7 @@ public class MainActivity extends Activity{
     	                         
     	        		    }
     	        			
-    	        		}, 0, 66);	
+    	        		}, 0, 132);	
     			}
     			
     		}
@@ -920,11 +906,11 @@ public class MainActivity extends Activity{
                 mCamera.setParameters(params2);
             mCamera.startPreview(); 
             
-            String[] supportedISOs = mCamera.getParameters().get("iso").split(",");
-            int len = supportedISOs.length;
-            for(int i=0; i<len; i++){
-            Log.d("iso", supportedISOs[i]);
-            }
+            //String[] supportedISOs = mCamera.getParameters().get("iso").split(",");
+            //int len = supportedISOs.length;
+            //for(int i=0; i<len; i++){
+            //Log.d("iso", supportedISOs[i]);
+           // }
             
         } catch (IOException e) {
             Log.d("surfaceCreated", "Error starting camera preview: " + e.getMessage());

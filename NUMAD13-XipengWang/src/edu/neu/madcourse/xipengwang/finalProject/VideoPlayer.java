@@ -93,6 +93,7 @@ public class VideoPlayer extends Activity implements Callback{
 	private boolean jump = false;
 	
 	private Button tutButton;
+	private  ProgressDialog pdialog = new ProgressDialog(VideoPlayer.this);
 	//private int constrictionTime;
 
 	
@@ -254,6 +255,9 @@ public class VideoPlayer extends Activity implements Callback{
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
+		if(pdialog == null){
+			pdialog.dismiss();
+		}
 		Log.d("VPC", "DESTROY");
 	}
 
@@ -662,7 +666,7 @@ public class VideoPlayer extends Activity implements Callback{
 	
 	
 	class PupilDectTask extends AsyncTask<Void, Integer, Void> {
-		private  ProgressDialog pdialog = new ProgressDialog(VideoPlayer.this);	
+			
 	    @Override
 	    protected void onPreExecute() {
 	    	
