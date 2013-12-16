@@ -96,12 +96,7 @@ public class MainActivity extends Activity{
    	 PupilImgs.processedImgSet.clear();
    	 PupilImgs.pupilBitMap.clear();
    	 PupilImgs.pupilImgSet.clear();
-   	 PupilImgs.userflashOffIimgPathes.clear();
-   	 PupilImgs.userflashOnImgPathes.clear();
-   	 PupilImgs.userFlashOffPupilBitMap.clear();
-   	 PupilImgs.userFlashOnPupilBitMap.clear();
-   	 PupilImgs.userFlasOffImgSet.clear();
-   	 PupilImgs.userFlasOnImgSet.clear();
+   	
         camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
         setFullScreen(this);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -231,8 +226,7 @@ public class MainActivity extends Activity{
 		}
 		else{
 		 PupilImgs.pupilImgSet.clear();
-		  PupilImgs.userFlasOnImgSet.clear();
-		  PupilImgs.userFlasOffImgSet.clear();
+		
 		try {
 			mrec.stop();
 			mrec.release();
@@ -618,7 +612,7 @@ public class MainActivity extends Activity{
     	    								break;
     	    							
     	    							case 31://STOP RECORD VIDEO, WRITE VIDEO FILE TO SDCARD
-    	    								//mrec.stop();
+    	    								mrec.stop();
     	        	    		            mrec.release();
     	        	    		            counter++;
     	        	    		            System.out.println("record finish");
@@ -683,7 +677,7 @@ public class MainActivity extends Activity{
     	    								break;
     	    							default:// CAPTURE USER FRAMES		
     	    								Log.d("ImgCapture", "User Frame captured: "+counter);
-    	    								mCaptureUserFrame=true;
+    	    								//mCaptureUserFrame=true;
     	    								counter++;						
     	    								break;
     	    							}
@@ -749,7 +743,7 @@ public class MainActivity extends Activity{
 	    								  }
 	    								  else {
 	    									  //outputUnProcessedImgs(bitmap);
-	    									  PupilImgs.userFlasOnImgSet.add(bitmap);	    									 
+	    									 // PupilImgs.userFlasOnImgSet.add(bitmap);	    									 
 	    									  Log.d("ImgCapture", "Flash On User Frame captured");
 	    									 // capture.setImageBitmap(PupilImgs.userFlasOnImgSet.get(PupilImgs.userFlasOnImgSet.size()-1));
 	    									  //System.out.println("image "+PupilImgs.pupilImgSet.size());
@@ -775,7 +769,7 @@ public class MainActivity extends Activity{
 		    								  }
 		    								  else {
 		    									  //outputUnProcessedImgs(bitmap);
-		    									  PupilImgs.userFlasOffImgSet.add(bitmap);
+		    									 // PupilImgs.userFlasOffImgSet.add(bitmap);
 		    									  Log.d("ImgCapture", "Flash Off User Frame captured");		    									  
 		    									  //capture.setImageBitmap(PupilImgs.userFlasOffImgSet.get(PupilImgs.userFlasOffImgSet.size()-1));
 		    									 // System.out.println("image "+PupilImgs.pupilImgSet.size());

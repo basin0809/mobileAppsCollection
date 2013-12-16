@@ -16,7 +16,7 @@ import org.opencv.highgui.Highgui;
 import android.graphics.Bitmap;
 import android.os.Environment;
 import android.util.Log;
-import edu.neu.madcourse.xipengwang.R;
+
 
 public class PupilImgs {
 	
@@ -28,18 +28,18 @@ public class PupilImgs {
 	public static int screenH;
 	public static ArrayList<Bitmap> pupilImgSet = new ArrayList<Bitmap>();
 	public static ArrayList<Bitmap> processedImgSet = new ArrayList<Bitmap>();
-	public static ArrayList<Bitmap> userFlasOnImgSet = new ArrayList<Bitmap>();
-	public static ArrayList<Bitmap> userFlasOffImgSet = new ArrayList<Bitmap>();
+	//public static ArrayList<Bitmap> userFlasOnImgSet = new ArrayList<Bitmap>();
+	//public static ArrayList<Bitmap> userFlasOffImgSet = new ArrayList<Bitmap>();
 	
 	
 	public static ArrayList<String> imgPathes = new ArrayList<String>();
 	//public static ArrayList<String> processedImgPathes = new ArrayList<String>();
-	public static ArrayList<String> userflashOnImgPathes = new ArrayList<String>();
-	public static ArrayList<String> userflashOffIimgPathes = new ArrayList<String>();
+	//public static ArrayList<String> userflashOnImgPathes = new ArrayList<String>();
+	//public static ArrayList<String> userflashOffIimgPathes = new ArrayList<String>();
 	
 	public static ArrayList<Mat> pupilBitMap = new ArrayList<Mat>();
-	public static ArrayList<Mat> userFlashOnPupilBitMap = new ArrayList<Mat>();
-	public static ArrayList<Mat> userFlashOffPupilBitMap = new ArrayList<Mat>();
+	//public static ArrayList<Mat> userFlashOnPupilBitMap = new ArrayList<Mat>();
+	//public static ArrayList<Mat> userFlashOffPupilBitMap = new ArrayList<Mat>();
 	
 	//public Mat mat = Highgui.imread(Utils.exportResource(this, R.drawable.pupil29), Highgui.CV_LOAD_IMAGE_COLOR);
 	//public static int zoomLevel;

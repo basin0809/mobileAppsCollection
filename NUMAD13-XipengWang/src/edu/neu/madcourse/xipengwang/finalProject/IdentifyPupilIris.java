@@ -277,12 +277,7 @@ public class IdentifyPupilIris extends Activity implements Callback{
 	                	 PupilImgs.processedImgSet.clear();
 	                	 PupilImgs.pupilBitMap.clear();
 	                	 PupilImgs.pupilImgSet.clear();
-	                	 PupilImgs.userflashOffIimgPathes.clear();
-	                	 PupilImgs.userflashOnImgPathes.clear();
-	                	 PupilImgs.userFlashOffPupilBitMap.clear();
-	                	 PupilImgs.userFlashOnPupilBitMap.clear();
-	                	 PupilImgs.userFlasOffImgSet.clear();
-	                	 PupilImgs.userFlasOnImgSet.clear();
+	                	
 	                		                	 
 	                	 Intent intent = new Intent(IdentifyPupilIris.this,MainActivity.class);	       
 		 			        startActivity(intent);
@@ -296,12 +291,7 @@ public class IdentifyPupilIris extends Activity implements Callback{
 	                	 PupilImgs.processedImgSet.clear();
 	                	 PupilImgs.pupilBitMap.clear();
 	                	 PupilImgs.pupilImgSet.clear();
-	                	 PupilImgs.userflashOffIimgPathes.clear();
-	                	 PupilImgs.userflashOnImgPathes.clear();
-	                	 PupilImgs.userFlashOffPupilBitMap.clear();
-	                	 PupilImgs.userFlashOnPupilBitMap.clear();
-	                	 PupilImgs.userFlasOffImgSet.clear();
-	                	 PupilImgs.userFlasOnImgSet.clear();
+	                	
 
 	                	
 		 			        finish();	 

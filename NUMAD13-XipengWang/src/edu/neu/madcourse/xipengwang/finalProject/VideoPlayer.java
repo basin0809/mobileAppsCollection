@@ -2,8 +2,6 @@ package edu.neu.madcourse.xipengwang.finalProject;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.xml.datatype.Duration;
-
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
@@ -12,18 +10,14 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.highgui.Highgui;
 
-import android.R.integer;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,13 +32,10 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.SeekBar;
-import android.widget.Toast;
-import edu.neu.madcourse.xipengwang.R;
-import edu.neu.madcourse.xipengwang.comm.OnlineUsers;
 import edu.neu.madcourse.xipengwang.finalProject.RangeSeekBar.OnRangeSeekBarChangeListener;
+import edu.neu.madcourse.xipengwang.R;
+
 
 public class VideoPlayer extends Activity implements Callback{
 	String TAG = "RangeSeekBarTAG";
@@ -82,18 +73,21 @@ public class VideoPlayer extends Activity implements Callback{
 
 	private float dilationTime = 0;
 	
-	private ImageView capture;
+	//private ImageView capture;
 	private int userFlashOnImgNum;
 	private int userFlashOffImgNum;
 	
 	private int playDuration;
+	private int cDur = 2000;
+	private int dDur = 2000;
 	private long startTime;
 	PupilDectTask pupilDectTask;
 	Handler handler;
 	private boolean jump = false;
 	
 	private Button tutButton;
-	private  ProgressDialog pdialog = new ProgressDialog(VideoPlayer.this);
+	private  ProgressDialog pdialog;
+	private Handler mhandler = new Handler();;
 	//private int constrictionTime;
 
 	
@@ -114,10 +108,10 @@ public class VideoPlayer extends Activity implements Callback{
 	                    Log.i("ImgProcess", "OpenCV loaded successfully");    
 	                    
 	                    Log.i("ImgProcess", "imgs converting imgNum:"+PupilImgs.pupilImgSet.size());
-	                    Log.i("ImgProcess", "userFlasOnImgSet imgNum:"+PupilImgs.userFlasOnImgSet.size());
-	                    userFlashOnImgNum = PupilImgs.userFlasOnImgSet.size();
-	                    Log.i("ImgProcess", "userFlasOffImgSet imgNum:"+PupilImgs.userFlasOffImgSet.size());
-	                    userFlashOffImgNum = PupilImgs.userFlasOffImgSet.size();
+	                    //Log.i("ImgProcess", "userFlasOnImgSet imgNum:"+PupilImgs.userFlasOnImgSet.size());
+	                    //userFlashOnImgNum = PupilImgs.userFlasOnImgSet.size();
+	                   // Log.i("ImgProcess", "userFlasOffImgSet imgNum:"+PupilImgs.userFlasOffImgSet.size());
+	                    //userFlashOffImgNum = PupilImgs.userFlasOffImgSet.size();
 	                    PupilImgs.convertToMat();
 	                    PupilImgs.rescaleImgs();
 	                    Log.i("ImgProcess", "imgs converted MatType:"+CvType.CV_8UC1);
@@ -151,7 +145,7 @@ public class VideoPlayer extends Activity implements Callback{
 
 		tutButton = (Button)findViewById(R.id.show_tut);
 		tutButton.setOnClickListener(new TutListener());
-		capture = (ImageView)this.findViewById(R.id.play_back_imgs);
+		//capture = (ImageView)this.findViewById(R.id.play_back_imgs);
 		btn_replay_flashoff = (Button) this.findViewById(R.id.replay_button_flash_off);
 		btn_replay_flashon = (Button) this.findViewById(R.id.replay_button_flash_on);
 		btn_review = (Button) this.findViewById(R.id.review_button);
@@ -180,7 +174,7 @@ public class VideoPlayer extends Activity implements Callback{
 		surfaceHolder = surfaceView.getHolder();
 		surfaceHolder.addCallback(this);
 		surfaceHolder.setFixedSize(200,200);
-	
+		pdialog = new ProgressDialog(VideoPlayer.this);	
 		//Set up MediaPlayer
 		
 		
@@ -255,7 +249,7 @@ public class VideoPlayer extends Activity implements Callback{
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-		if(pdialog == null){
+		if(pdialog != null){
 			pdialog.dismiss();
 		}
 		Log.d("VPC", "DESTROY");
@@ -365,35 +359,37 @@ public class VideoPlayer extends Activity implements Callback{
 		@Override
 		public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar,
 				Integer minValue, Integer maxValue) {
-			capture.setVisibility(View.GONE);
+			//capture.setVisibility(View.GONE);
 			Log.d(TAG,  "User selected new date range: MIN=" + minValue + ", MAX=" + maxValue);
 			Log.d(TAG,  "USER selected new date range: MIN=" + (Integer)bar.getSelectedMinValue() + ", MAX=" + (Integer)bar.getSelectedMaxValue());
 			//bar.setSelectedSecondaryProgressValue(minValue);
+			if(bar == rskb_flashoff){
+				dDur = maxValue - minValue;
+			} else if(bar == rskb_flashon){
+				cDur = maxValue - minValue;
+			}
 			m.seekTo((Integer)bar.getSelectedMinValue());
 			m.start();
 			isPlaying = true;
 			btn_review.setBackgroundResource(R.drawable.pause);
 			//int playDuration = (Integer)bar.getSelectedMaxValue()-(Integer)bar.getSelectedMinValue();
-			playDuration = maxValue-minValue;
+			//playDuration = maxValue-minValue;
 			Handler handler = new Handler();
 			startTime = System.currentTimeMillis();
-			
-			handler.post(new Runnable(){
-				public void run(){
-					
+			handler.postDelayed(new Runnable() {					
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub							
 					long endTime = System.currentTimeMillis();
 					Log.d(TAG, playDuration-endTime+startTime+"");
-					try {
-						Thread.sleep(playDuration-endTime+startTime);
-					} catch (Exception e) {
-						// TODO: handle exception
-					}
+				
 					m.pause();
 					btn_review.setBackgroundResource(R.drawable.play);
 					isPlaying = false;
 					
 				}
-			});
+			}, (bar==rskb_flashoff)?dDur:cDur);
+
 			
 		}
 		
@@ -403,7 +399,7 @@ public class VideoPlayer extends Activity implements Callback{
 
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			capture.setVisibility(View.VISIBLE);
+			//capture.setVisibility(View.VISIBLE);
 			//surfaceView.setVisibility( View.GONE);
 			switch (v.getId()) {
 			case R.id.replay_button_flash_on:
@@ -411,10 +407,26 @@ public class VideoPlayer extends Activity implements Callback{
 					
 					isPlayingFlashOff=false;
 					canPlayBack = true;
-					m.pause();
+					if(m.isPlaying()){
+					m.pause();}
+					int startTime = rskb_flashon.getSelectedMinValue();
+					int endTime = rskb_flashon.getSelectedMaxValue();
+					m.seekTo(startTime);
+					m.start();
+					mhandler.postDelayed(new Runnable() {					
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub							
+							if(m.isPlaying()){
+								m.pause();
+								btn_review.setBackgroundResource(R.drawable.play);
+								isPlaying = false;}
+						}
+					}, cDur);
+				
 					//capture.removeCallbacks(swapFlasOnImage);
 					
-			    	capture.postDelayed(new Runnable() {
+			    /*	capture.postDelayed(new Runnable() {
 			    		
 			    		int startTime = rskb_flashon.getSelectedMinValue();
 			    		
@@ -427,9 +439,16 @@ public class VideoPlayer extends Activity implements Callback{
 			    		
 			    		int currentPosition = startTime;
 			    		int finish =1;
-			    		double interval = (endTime-startTime)/(stop-start);
+			    		double interval = 0;
 			    	    @Override
 			    	    public void run() {
+			    	    	if(stop == start){
+				    			 interval = 0;
+				    			}
+				    	    	else {
+				    	    		 interval = (endTime-startTime)/(stop-start);
+								}
+				    	    	
 			    	    	Log.d("Time matters!", "startTime:"+startTime+" endTime:"+endTime+" startImg:"+start+" stopImg:"+stop+" currentPosition"+currentPosition);
 			    	    	if(counter >= userFlashOnImgNum-1||counter>=stop){
 			    	    		
@@ -464,9 +483,10 @@ public class VideoPlayer extends Activity implements Callback{
 			    	    	
 			    	    }
 			    	}, 0);
-					
+					*/
 				} else if(event.getAction()==MotionEvent.ACTION_UP){
 					//capture.removeCallbacks(swapFlasOnImage);
+					if(m.isPlaying()){m.pause();}
 					constrictionTime = rskb_flashon.getSelectedSecondaryProgressValue();
 					Log.d("Time matters!","constrictionTime: "+constrictionTime);
 					PupilImgs.constirctionTime = (float) (constrictionTime/1000.0);
@@ -478,9 +498,22 @@ public class VideoPlayer extends Activity implements Callback{
 				if(event.getAction()==MotionEvent.ACTION_DOWN){
 					isPlayingFlashOff=true;
 					canPlayBack = true;
-					m.pause();
+					int startTime = rskb_flashoff.getSelectedMinValue();
+					int endTime = rskb_flashoff.getSelectedMaxValue();
+					m.seekTo(startTime);
+					m.start();
+					mhandler.postDelayed(new Runnable() {					
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub							
+							if(m.isPlaying()){
+								m.pause();
+								btn_review.setBackgroundResource(R.drawable.play);
+								isPlaying = false;}
+						}
+					}, dDur);
 					//capture.removeCallbacks(swapFlashOffImage);
-			    	capture.postDelayed(new Runnable() {
+			    /*	capture.postDelayed(new Runnable() {
 			    		//private int counter = 0;
 			    		int startTime = rskb_flashoff.getSelectedMinValue();
 			    		int start = (int)((userFlashOffImgNum)*(startTime-2000)/2000);
@@ -490,9 +523,17 @@ public class VideoPlayer extends Activity implements Callback{
 			    		
 			    		int currentPosition = startTime;
 			    		int finish =1;
-			    		double interval = (endTime-startTime)/(stop-start);
+			    		double interval = 0;
+			    		 
 			    	    @Override
 			    	    public void run() {
+			    	    	if(stop == start){
+			    			 interval = 0;
+			    			}
+			    	    	else {
+			    	    	 interval = (endTime-startTime)/(stop-start);
+							}
+			    	    	
 			    	    	Log.d("Time matters!", "startTime:"+startTime+" endTime:"+endTime+" startImg:"+start+" stopImg:"+stop+" currentPosition"+currentPosition);
 			    	    	if(counter >= userFlashOffImgNum-1||counter>=stop){
 			    	    		
@@ -526,13 +567,19 @@ public class VideoPlayer extends Activity implements Callback{
 			    	    	}
 			    	    }
 			    	}, 0);
-				
+				*/
 				} else if (event.getAction()==MotionEvent.ACTION_UP){
 					//capture.removeCallbacks(swapFlashOffImage);
 					dilationTime = (float) ((rskb_flashoff.getSelectedSecondaryProgressValue()-flashPosition)/1000.0);
 					PupilImgs.dilationTime = dilationTime;
 					Log.d("Time matters!","dilationTime: "+dilationTime);
 					canPlayBack = false;
+					if(m.isPlaying()){
+					m.pause();
+					btn_review.setBackgroundResource(R.drawable.play);
+					isPlaying = false;}
+					//m.pause();
+					
 				}
 						
 						
@@ -552,7 +599,7 @@ public class VideoPlayer extends Activity implements Callback{
 		public void onClick(View v) {
 
 			if(v==btn_review){
-				capture.setVisibility(View.GONE);
+				//capture.setVisibility(View.GONE);
 				//surfaceView.setVisibility( View.VISIBLE);
 				
 				if(m.isPlaying()){
@@ -592,7 +639,7 @@ public class VideoPlayer extends Activity implements Callback{
 				int currentPosition = m.getCurrentPosition();
 				rskb_flashon.setSelectedSecondaryProgressValue(currentPosition);
 				rskb_flashoff.setSelectedSecondaryProgressValue(currentPosition);
-				Log.d(TAG, "Set secondary progress value to "+currentPosition);
+				//Log.d(TAG, "Set secondary progress value to "+currentPosition);
 				
 				
 			}
@@ -666,7 +713,7 @@ public class VideoPlayer extends Activity implements Callback{
 	
 	
 	class PupilDectTask extends AsyncTask<Void, Integer, Void> {
-			
+		
 	    @Override
 	    protected void onPreExecute() {
 	    	
