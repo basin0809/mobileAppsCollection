@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="NewApi" severity="ignore">
+        <ignore path="src/edu/neu/madcourse/xipengwang/dabble/Game.java" />
+    </issue>
+</lint>

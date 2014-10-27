@@ -8,7 +8,6 @@
 ***/
 package edu.neu.madcourse.xipengwang.sudoku;
 
-import edu.neu.madcourse.xipengwang.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -20,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import edu.neu.madcourse.xipengwang.R;
 
 public class Sudoku extends Activity implements OnClickListener {
    private static final String TAG = "Sudoku";

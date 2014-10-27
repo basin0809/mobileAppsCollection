@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:orientation="vertical" >
+
+<ImageView
+    android:id="@+id/imageViewNext"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:src="@drawable/next" />
+
+<TextView
+    android:id="@+id/video_dialog_next"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/imageViewNext"
+    android:text="Press the next button so that the app will detect the tester's pupil, it may take a few seconds"/>
+</RelativeLayout>

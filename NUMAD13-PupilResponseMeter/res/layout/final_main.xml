@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/final_mian_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+        
+    
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/camera_preview" >
+
+        
+    </FrameLayout>
+
+    
+        
+
+         <ImageView
+             android:id="@+id/grid2"
+             android:layout_width="wrap_content"
+             android:layout_height="fill_parent"
+             
+             android:src="@drawable/grid2" />
+
+         <ImageView
+             android:id="@+id/grid4"
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             
+             android:src="@drawable/grid1" />
+
+         <ImageView
+             android:id="@+id/grid3"
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+            
+             android:src="@drawable/grid1" />
+         
+         <Button
+             android:id="@+id/video_focus_button"
+             android:layout_width="120dp"
+             android:layout_height="wrap_content"
+             android:layout_alignParentBottom="true"
+             android:layout_centerHorizontal="true"
+             
+             android:text="FOCUS"/>
+         <Button
+             android:id="@+id/video_tut_button"
+             android:layout_width="120dp"
+             android:layout_height="wrap_content"
+             android:layout_alignParentTop="true"
+             android:layout_alignParentRight="true"
+             
+             android:text="tutorial"/>
+         <Button
+             android:id="@+id/video_ack_button"
+             android:layout_width="180dp"
+             android:layout_height="wrap_content"
+             android:layout_alignParentTop="true"
+             android:layout_alignParentLeft="true"
+             
+             android:text="Acknowledgement"/>
+		
+         <Button
+             android:id="@+id/video_start_button"
+             android:layout_width="120dp"
+              android:layout_centerHorizontal="true"
+             android:layout_height="wrap_content"
+             android:layout_alignLeft="@+id/video_focus_button"
+             android:layout_alignParentBottom="true"
+             android:layout_marginBottom="45dp"
+             android:text="START" />
+         
+</RelativeLayout>

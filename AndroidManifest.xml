@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="edu.neu.madcourse.xipengwang"
+    android:versionCode="7"
+    android:versionName="1.6" >
+
+    <uses-sdk
+        android:minSdkVersion="7"
+        android:targetSdkVersion="7" />
+	
+	
+	 <uses-permission android:name="android.permission.INTERNET" />
+		<uses-permission android:name="android.permission.READ_PHONE_DATA" />
+		<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.VIBRATE"/>
+	<uses-permission android:name="android.permission.RECORD_AUDIO"/>             
+	<uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+	<uses-feature android:name="android.hardware.camera"/>  
+	 <uses-feature android:name="android.hardware.camera.autofocus"/>
+	   <uses-permission android:name="android.permission.CAMERA"/>
+	 	 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+	 		<uses-permission android:name="android.permission.FLASHLIGHT"/>
+	
+	
+	
+	
+    <application
+        android:allowBackup="true"
+        
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="edu.neu.madcourse.xipengwang.MainActivity"
+            android:label="@string/app_name" 
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+         <activity android:name=".AboutMe"
+              android:label="AboutMe"
+              android:screenOrientation="portrait"
+              android:theme="@android:style/Theme.Dialog">
+        </activity>
+        
+        <activity android:name=".Warning"
+              android:label="Warning"
+              android:screenOrientation="portrait"
+              android:theme="@android:style/Theme.Dialog">
+        </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.sudoku.Sudoku"
+              android:label="@string/app_name"
+              android:screenOrientation="portrait">
+        </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.sudoku.About"
+              android:label="@string/about_title"
+              android:screenOrientation="portrait"
+              android:theme="@android:style/Theme.Dialog">
+        </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.sudoku.Prefs"
+              android:label="@string/settings_title"
+              android:screenOrientation="portrait">
+        </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.sudoku.Game"
+              android:label="@string/game_title"
+              android:screenOrientation="portrait"/>
+         <activity android:name="edu.neu.madcourse.xipengwang.dict.Dictionary"
+              android:label="Dictionary"
+              android:screenOrientation="portrait">
+        </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.dict.Acknowledgements"
+              android:label="ack"
+              android:screenOrientation="portrait">
+        </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.dabble.Dabble"
+              android:label="Dabble"
+              android:screenOrientation="portrait">
+        </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.dabble.Game"
+              android:label="New Game"
+              android:screenOrientation="portrait">
+        </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.dabble.TestGame"
+              android:label="TestGame"
+              android:screenOrientation="portrait">
+        </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.dabble.Cong"
+              android:label="Congratulation"
+              android:screenOrientation="portrait">
+        </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.dabble.Finish"
+              android:label="Game Over"
+              android:screenOrientation="portrait">
+        </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.dabble.DabbleACK"
+              android:label="Acknowledgement"
+              android:theme="@android:style/Theme.Dialog">
+           
+        </activity>
+        
+        <activity android:name="edu.neu.madcourse.xipengwang.dabble.Introduction"
+              android:label="Rules"
+              android:theme="@android:style/Theme.Dialog">
+        </activity>
+        
+        <activity android:name="edu.neu.madcourse.xipengwang.dabble.Setting"
+              android:label="Options"
+               android:theme="@android:style/Theme.Dialog">
+            
+        </activity>
+        
+        <activity android:name="edu.neu.madcourse.xipengwang.comm.Regist"
+              android:label="Menu"
+              
+              android:screenOrientation="portrait">
+        </activity>
+                <activity android:name="edu.neu.madcourse.xipengwang.comm.Finish"
+              android:label="Opps..."
+              
+              android:screenOrientation="portrait">
+        </activity>
+                <activity android:name="edu.neu.madcourse.xipengwang.comm.CommGame"
+              android:label="Two players game"
+              
+              android:screenOrientation="portrait">
+        </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.comm.Cong"
+              android:label="Tada!"
+              
+              android:screenOrientation="portrait">
+        </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.comm.HighScore"
+              android:label="High Score"
+               android:theme="@android:style/Theme.Dialog"
+              android:screenOrientation="portrait">
+         </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.comm.Alert"
+              android:label="Alert"
+               android:theme="@android:style/Theme.Dialog"
+              android:screenOrientation="portrait">
+        </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.comm.HowToUse"
+              android:label="How to play?"
+               android:theme="@android:style/Theme.Dialog"
+              android:screenOrientation="portrait">
+        </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.comm.ChooseName"
+              android:label="Choose a name"
+              android:screenOrientation="portrait">
+        </activity>
+        <activity android:name="edu.neu.madcourse.xipengwang.comm.OnlineUsers"
+              android:label="Online Users list"
+              android:screenOrientation="portrait">
+        </activity>
+       	<activity android:name="edu.neu.madcourse.xipengwang.finalProject.MainActivity" 
+			  android:label="Pupil Meter"
+              android:screenOrientation="portrait"> 
+	    </activity>
+       
+         <service android:name="edu.neu.madcourse.xipengwang.comm.AsyncPullService" />
+        
+    </application>
+    
+    
+    
+    
+    
+	 
+			   
+			        
+			
+    
+    
+    
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    
+
+</manifest>

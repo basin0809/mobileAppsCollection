@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    	
+    <RelativeLayout 
+    	    android:id="@+id/layout_surface_img"
+    	    android:layout_width="match_parent"
+    	    android:layout_height="500px"  	   
+    	   >		
+   		</RelativeLayout>
+ 		<SurfaceView
+ 		    android:id="@+id/SurfaceView01"
+ 		    android:layout_width="fill_parent"
+ 		    android:layout_height="500px" >
+
+   		 </SurfaceView>
+   		 <ImageView
+            android:id="@+id/play_back_imgs"
+            android:layout_width="fill_parent"
+            android:layout_height="500px"
+            android:layout_alignTop="@+id/SurfaceView01"
+           
+            android:layout_centerHorizontal="true"
+         />
+   		 <Button
+   		    android:id="@+id/show_tut"
+   		     android:layout_width="120dp"
+             android:layout_height="wrap_content"
+             android:layout_alignParentTop="true"
+             android:layout_alignParentRight="true"
+             
+             android:text="tutorial"/>
+    	
+   		<RelativeLayout 
+    	    android:id="@+id/layout_flash_on"
+    	    android:layout_width="match_parent"
+    	    android:layout_height="wrap_content"
+    	    android:layout_below="@+id/layout_surface_img"   
+    	   >		
+   		</RelativeLayout> 
+   		   	<Button
+   		    android:id="@+id/replay_button_flash_on"
+   		    android:layout_width="100dp"
+   		    android:layout_height="wrap_content"
+   		    android:layout_alignLeft="@+id/replay_button_flash_off"
+   		    android:layout_below="@+id/layout_flash_on"/>
+		    <RelativeLayout 
+    	    android:id="@+id/layout_flash_off"
+    	    android:layout_width="match_parent"
+    	    android:layout_height="wrap_content"
+    	    android:layout_below="@+id/replay_button_flash_on"   
+    	   >
+
+   		</RelativeLayout>   	
+    	<Button
+		   
+		    android:id="@+id/replay_button_flash_off"
+		    android:layout_width="100dp"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@+id/layout_flash_off"
+		    android:layout_centerHorizontal="true"
+	    />
+   		<Button
+		    android:id="@+id/review_button"
+		    android:layout_width="100dp"
+		    android:layout_height="wrap_content"
+		     android:layout_below="@+id/replay_button_flash_off"
+		     android:layout_alignParentLeft="true"
+		 
+		    
+			 />
+   		<Button
+		    android:id="@+id/identify_button"
+		    android:layout_width="150dp"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@+id/replay_button_flash_off"
+		 	android:layout_alignParentRight="true"/>
+
+</RelativeLayout>

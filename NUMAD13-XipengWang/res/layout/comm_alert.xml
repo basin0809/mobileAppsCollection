@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+<Button
+    android:id="@+id/comm_alertConfirm"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/comm_alertMsg"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="27dp"
+    android:text="OK" />
+
+<TextView
+    android:id="@+id/comm_alertMsg"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/comm_alertTitle"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="16dp"
+    android:text="Cannot connect to server, please check network." />
+
+<TextView
+    android:id="@+id/comm_alertTitle"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignLeft="@+id/comm_alertMsg"
+    android:layout_alignParentTop="true"
+    android:text="Opps" />
+
+"
+</RelativeLayout>
